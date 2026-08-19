@@ -1,2 +1,38 @@
-# rdb-artifact
-Repozytorium zawierające odtwarzalne artefakty do pracy naukowej
+# rdb-artifact — pakiet artefaktów RetractorDB
+
+To repozytorium jest **wejściem do wyników**. Nie zawiera ani silnika, ani danych
+badawczych — zawiera przypięcia do nich, mapę kampanii i instrukcję odtworzenia.
+Jeśli trafiłeś tu z artykułu i nie wiesz, od czego zacząć, czytaj w tej kolejności:
+
+1. [`MAP.md`](MAP.md) — **czym są te wyniki**: która kampania odpowiada na jakie
+   pytanie, który werdykt obowiązuje, a który został zastąpiony. Bez tego
+   czterdzieści katalogów `results_*` w repozytorium eksperymentu jest nieczytelne.
+2. [`MANIFEST.md`](MANIFEST.md) — **na czym je zmierzono**: pełne SHA repozytoriów
+   i rewizji pomiarowych, po jednej na kampanię, plus sumy kontrolne archiwów.
+3. [`REPRODUCE.md`](REPRODUCE.md) — **jak je powtórzyć**: tryb analityczny
+   (regeneracja tabel i figur z zachowanych danych) i tryb pomiarowy.
+
+## Czym jest RetractorDB
+
+Silnik ciągłych zapytań nad strumieniami o deklarowanym takcie, z językiem RQL
+i kompilatorem planów. Repozytorium silnika: `retractordb`. Repozytorium
+eksperymentów: `rdb-experiment`. Oba są przypięte w [`MANIFEST.md`](MANIFEST.md).
+
+## Zasada przypięcia
+
+**Pakiet nie ma jednego SHA silnika.** Pięć kampanii mierzono na sześciu różnych
+rewizjach, a wersja wydana jest jeszcze inna. Manifest rozdziela te dwie osie
+i mówi wprost, która kampania opisuje który stan silnika. Każda rewizja pomiarowa
+jest utrwalona **tagiem adnotowanym** `campaign/*` w obu repozytoriach i leży na
+gałęzi głównej — gałęzie robocze w tym projekcie nie przechowują niczego.
+
+## Stan
+
+Repozytorium jest w budowie w ramach kroku **K9b** planu badawczego. Pozycje
+oznaczone `[K9b/Krok N]` czekają na swój krok i nie są jeszcze wypełnione.
+Plan: `paper-arXiv/debs/plan-realizacji-K9b.md`.
+
+## Licencja i cytowanie
+
+Patrz [`CITATION.cff`](CITATION.cff). DOI zostanie nadany przed zgłoszeniem
+artykułu (decyzja D-2 planu K9b).

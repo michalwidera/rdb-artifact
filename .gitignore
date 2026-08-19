@@ -1,0 +1,3 @@
+# Katalog roboczy tworzony przez bin/checkout.sh - zawiera klony innych
+# repozytoriow i nigdy nie wchodzi do tego repozytorium.
+artifact-workspace/

@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "Jesli korzystasz z tego pakietu artefaktow, zacytuj go jak nizej."
+title: "rdb-artifact: pakiet artefaktow RetractorDB"
+abstract: >-
+  Przypiecia, mapa kampanii i instrukcja odtworzenia wynikow silnika ciaglych
+  zapytan RetractorDB. Repozytorium nie zawiera silnika ani danych badawczych,
+  tylko odwolania do nich po pelnych SHA.
+type: software
+authors:
+  - family-names: Widera
+    given-names: Michal
+repository-code: "https://github.com/michalwidera/rdb-artifact"
+license: MIT
+# DOI zostanie nadany przed zgloszeniem artykulu - decyzja D-2 planu K9b.
+# doi: TBA
