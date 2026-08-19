@@ -44,6 +44,30 @@ z zachowanych danych, bez powtarzania pomiarów.
 platformę i provenance **przed** startem, zapisuje wersje kernela, toolchainu
 i ustawienia CPU/schedulera, i **nie obiecuje identycznych czasów**.
 
+### Autonomia przebiegu — wymaganie, nie udogodnienie
+
+Kampanie tego projektu trwają **dobami** (K26v3 P8: trzy). Odtworzenie nie może
+wymagać, żeby maszyna sterująca stała włączona przez cały ten czas — to jest
+warunek wykonalności, nie wygody. Tryb pomiarowy realizuje wzorzec sprawdzony
+w K26v3 P8 (`rdb-experiment/results_20260814_K26v3/`):
+
+* maszyna sterująca **startuje i odbiera**; między jednym a drugim może być
+  wyłączona i przebieg na tym nie ucierpi;
+* przebieg prowadzi **usługa `systemd` na maszynie pomiarowej**, wstająca po
+  boocie, więc przeżywa restart i zanik zasilania;
+* długi przebieg jest **łańcuchem odcinków**, nie jednym procesem; między
+  odcinkami maszyna pomiarowa restartuje się sama;
+* **postęp widać w plikach**, nie w pamięci procesu: dopisywany log, znacznik
+  ukończenia odcinka, status odcinka, znacznik zatrzymania;
+* **skrypt odbiorczy jest bezstanowy i idempotentny** — wolno go uruchomić
+  kiedykolwiek i dowolną liczbę razy, także dopiero po całym pomiarze;
+* zakończenie ma **jednoznaczny sygnał**, odróżnialny od „jeszcze liczy"
+  i od „przerwane z błędem";
+* przebieg można **zatrzymać zdalnie jednym poleceniem**.
+
+W praktyce oznacza to, że nadzór sprowadza się do okresowego, ręcznego odczytu
+stanu — raz na kilka godzin albo raz na dobę, jak wygodnie.
+
 ## 5. Co jest celowo niedeterministyczne
 
 `[K9b/Krok 6]` — lista bajtów `.meta`, które różnią się między przebiegami
