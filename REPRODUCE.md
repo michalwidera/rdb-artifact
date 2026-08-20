@@ -14,29 +14,51 @@ Ninja, kompilator C++23) — opisany w `retractordb/CLAUDE.md`.
 ```bash
 git clone https://github.com/michalwidera/rdb-artifact.git
 cd rdb-artifact
-./bin/checkout.sh ./artifact-workspace campaign/H10-K24e
+./bin/checkout.sh ./artifact-workspace
 ```
 
-Skrypt klonuje `retractordb` i `rdb-experiment` **osobno**, do jawnego układu,
-i przełącza je na przypięcie wskazanej kampanii. Nie ma tu submodułów.
+Skrypt klonuje pięć repozytoriów **osobno**, do jawnego układu, i przełącza je
+na pełne SHA domyślnego snapshotu z manifestu. Nie ma tu submodułów. Snapshot
+używa aktualnego HEAD silnika, ponieważ zawiera krytyczne poprawki narzędzi.
+
+Audyt historycznego układu kampanii jest osobnym trybem:
+
+```bash
+./bin/checkout.sh ./historical-workspace campaign/H10-K24e
+```
+
+Nie używaj tego trybu jako domyślnego środowiska nowego pomiaru. Zachowuje on
+rzeczywiste provenance kampanii, nie bieżące narzędzia.
 
 ## 2. Kontrola przypięć — wykonać przed czymkolwiek innym
 
 ```bash
-RDB_ENGINE=./artifact-workspace/retractordb \
-RDB_EXPERIMENT=./artifact-workspace/rdb-experiment \
-./bin/verify_pins.sh
+RDB_WORKSPACE=./artifact-workspace \
+RDB_XRETRACTOR=./artifact-workspace/retractordb/build/Debug/src/retractor/xretractor \
+./bin/verify_pins.sh snapshot
 ```
 
-Skrypt sprawdza cztery rzeczy: czy tagi kampanii wskazują SHA z manifestu, czy
-każde przypięcie leży na gałęzi głównej, czy zgadza się dowód równoważności
-drzewa `src/` dla K24e, i czy parzystość archiwów raw jest taka, jak opisuje
-manifest. Kod wyjścia różny od zera oznacza rozjazd — **nie kontynuuj**.
+Skrypt sprawdza faktyczne `HEAD` pięciu checkoutów, tagi i ich osiągalność,
+dowód równoważności drzewa `src/` K24e, 15 obecnych archiwów po SHA-256, trzy
+jawne braki oraz — gdy podano `RDB_XRETRACTOR` — rewizję osadzoną w binarium.
+Kod wyjścia różny od zera oznacza rozjazd — **nie kontynuuj**.
+
+Kontrola binarium porównuje siedmioznakowy prefiks SHA publikowany obecnie przez
+`xretractor --help` z pełnym SHA oczekiwanym przez manifest. Jest to granica
+metadanych istniejącej binarki; skrypt nie udaje kontroli pełnych 40 znaków.
 
 ## 3. Tryb analityczny — regeneracja tabel i figur
 
-`[K9b/Krok 5]` — deterministyczna regeneracja każdej tabeli i figury artykułu
-z zachowanych danych, bez powtarzania pomiarów.
+Stan 2026-08-20: osobno zweryfikowano regenerację K6c, K24e, K26v3, G3,
+SDF/CSDF, K19 oraz testy replay/ECG. Wyniki miały niezerową liczność; werdykty K24e
+były bajtowo identyczne z zachowanymi plikami, a pozostałe raporty różniły się
+co najwyżej nagłówkiem czasu/commita. Nie ma jeszcze jednego autonomicznego
+skryptu uruchamiającego cały ten zestaw, więc Krok 5 nie jest zamknięty.
+
+`fig:qrs` także pozostaje otwarty. Przepis `xqry -s qrs_out -p 400,400` nie
+określa, które okno 400 rekordów należy utrwalić. Końcowe okno bieżącego replay
+ma inną liczbę widocznych pików niż PNG z 2026-07-14. Bez jawnego wyboru okna
+podmiana rysunku nie byłaby deterministycznym odtworzeniem.
 
 ## 4. Tryb pomiarowy — powtórzenie pomiarów
 
@@ -70,12 +92,24 @@ stanu — raz na kilka godzin albo raz na dobę, jak wygodnie.
 
 ## 5. Co jest celowo niedeterministyczne
 
-`[K9b/Krok 6]` — lista bajtów `.meta`, które różnią się między przebiegami
-z założenia. Znany punkt wyjścia: 8-bajtowy znacznik utworzenia w nagłówku,
-wyłączany z porównania już w kampanii K18.
+Jedynym celowo niedeterministycznym polem trwałych artefaktów jest zakres
+**offset 0–7** każdego głównego pliku `*.meta`: `int64_t` zawierający liczbę
+nanosekund czasu utworzenia od epoki zegara systemowego, zapisany w natywnym
+porządku bajtów platformy. Implementuje to `MetaIndexStore::writeHeader()`.
+
+Porównanie wyłącza dokładnie te osiem bajtów (`tail -c +9`). Cała pozostała
+część `.meta` — flaga luki, `recordCount`, liczba bitów i spakowany wzorzec
+`NULL` — musi być identyczna. Plik `*.meta.shadow` **nie ma tego nagłówka** i
+jest porównywany w całości. Dane, `.desc`, `.shadow` i pozostałe artefakty też
+są porównywane w całości.
+
+Kontrola nie może przejść na pustym zbiorze: wypisuje liczbę porównanych plików,
+wymaga identycznego zbioru nazw i niezerowej liczności wskazanych strumieni.
+Regresja silnika `it_replay_stability-run` wymaga co najmniej 36 plików i
+niepustych danych dziewięciu nazwanych strumieni; K18 porównał 67 plików.
 
 ## 6. Granice
 
-Patrz [`MANIFEST.md`](MANIFEST.md) sekcja 5. W skrócie: `fig:qrs` pochodzi
-z rewizji sprzed napraw silnika, cztery archiwa raw są nieobecne, a tryb
-pomiarowy nie odtwarza czasów.
+Patrz [`MANIFEST.md`](MANIFEST.md) sekcja 5. W skrócie: `fig:qrs` wymaga
+rozstrzygnięcia okna danych, trzy archiwa raw są nieobecne, tryb analityczny
+nie ma jeszcze wspólnego entrypointu, a tryb pomiarowy nie odtwarza czasów.

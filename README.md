@@ -20,11 +20,11 @@ eksperymentów: `rdb-experiment`. Oba są przypięte w [`MANIFEST.md`](MANIFEST.
 
 ## Zasada przypięcia
 
-**Pakiet nie ma jednego SHA silnika.** Pięć kampanii mierzono na sześciu różnych
-rewizjach, a wersja wydana jest jeszcze inna. Manifest rozdziela te dwie osie
-i mówi wprost, która kampania opisuje który stan silnika. Każda rewizja pomiarowa
-jest utrwalona **tagiem adnotowanym** `campaign/*` w obu repozytoriach i leży na
-gałęzi głównej — gałęzie robocze w tym projekcie nie przechowują niczego.
+**Pakiet nie ma jednego historycznego SHA silnika.** Domyślne odtworzenie i nowe
+pomiary używają przypiętego snapshotu aktualnego HEAD z poprawkami narzędzi.
+Manifest osobno zachowuje faktyczne rewizje, na których wykonano kampanie.
+Tryb historyczny służy do audytu provenance i nigdy nie przedstawia dawnego
+pomiaru jako wyniku wykonanego na HEAD.
 
 ## Stan
 
