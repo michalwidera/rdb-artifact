@@ -89,12 +89,22 @@ testów, nie drzewa `src/`.
 | `tab:k6-primary` | K6c | `results_20260730_K6c/` | `campaign/K6c-W2-W7`, `campaign/K6c-W8-W9` |
 | `tab:h9-primary` | K26v3 | `results_20260814_K26v3/` | `campaign/H9-K26v3` |
 | `fig:arch` | diagram | — | nie dotyczy |
-| `fig:qrs` | potok ECG | `retractordb/examples/ecg/rec205` | obraz z 2026-07-14; regeneracja z HEAD wymaga wskazania konkretnego okna 400 rekordów |
+| `fig:qrs` | potok ECG | `retractordb/examples/ecg/rec205` | zregenerowany 2026-08-20 na `6616350…`; okno przypięte przez `-m 1671` |
 
 Liczby wniesione do tekstu poza tabelami: 75 548 przypadków / 143 065 922
-pozycji (K2/G3, `results_20260726_G3/`), 468 220 faz różnicy + 2 239 488 faz
-AGSE (K19, `results_20260728_K19/`), 13 silnikowych sprawdzeń tożsamości
-(K18, `results_20260728_K18/`) oraz liczby planów i obserwacji z K24e.
+pozycji (K2/G3, `results_20260726_G3/`, `results/equivalence.json`, klucz
+`totals`), 468 220 faz różnicy + 2 239 488 faz AGSE (K19,
+`results_20260728_K19/`), **13 silnikowych sprawdzeń tożsamości** (K2/G3, most
+oracle — silnik, `results/engine.json`, klucz `cases`) oraz liczby planów
+i obserwacji z K24e (10 010 planów, 35 835 obserwacji węzłowych w próbie,
+35 703 poza próbą).
+
+Do 2026-08-20 te 13 sprawdzeń było w planie i w tym manifeście przypisane do
+K18. Przypisanie było błędne: K18 wnosi do tego zdania artykułu **deterministyczne
+artefakty** (67 porównanych plików z dwóch przebiegów replay plus sześć
+sprawdzeń round-trip, `results_20260728_K18/exactness/`), a nie sprawdzenia
+tożsamości. Sama liczba 13 jest poprawna i nie zmienia się — zmienia się jej
+źródło (znalezisko K9b-F4).
 
 ## 4. Surowe archiwa poza git
 
@@ -130,8 +140,29 @@ archiwa mają zostać sprawdzone na komputerze stacjonarnym w tygodniu od
 
 ## 5. Znane granice tego pakietu
 
-1. `fig:qrs` wymaga decyzji o deterministycznym oknie 400 rekordów przed regeneracją.
+1. `fig:qrs` jest jedyną pozycją §3 wymagającą działającego silnika, więc
+   `bin/reproduce_analytic.sh` odtwarza ją tylko wtedy, gdy poda mu się
+   `--xretractor` i `--xqry`; bez nich zgłasza `SKIP` wraz z przepisem.
+   Okno jest przypięte limitem `-m 1671` (próbki `[1271,1670]`, piki na
+   `x=128` i `x=371`) — patrz `REPRODUCE.md` §3.
 2. Trzy archiwa raw są nieobecne — patrz §4.
 3. Tryb pomiarowy nie obiecuje identycznych czasów. Sprawdza platformę
-   i provenance przed startem.
-4. DOI nie jest jeszcze nadany — decyzja D-2: po decyzji o zgłoszeniu artykułu.
+   i provenance przed startem i **niczego nie uruchamia**: start wielodniowego
+   przebiegu jest osobnym, świadomym poleceniem wydanym maszynie pomiarowej.
+4. Autonomia przebiegu (W-1) jest **zapisana i wskazana**, ale nie sprawdzona
+   empirycznie: próba z faktycznie odłączoną maszyną sterującą wymaga sprzętu
+   pomiarowego i pozostaje otwarta.
+5. DOI nie jest jeszcze nadany — decyzja D-2: po decyzji o zgłoszeniu artykułu.
+6. Dwie kampanie niosą aparaturę związaną z miejscem i chwilą pomiaru, co
+   `bin/reproduce_analytic.sh` obchodzi jawnie, nie po cichu:
+   * K22v5 — `analyze.py` woła `freeze_check.sh`, bramkę **proweniencji
+     pomiaru** (gałąź `experiment/20260801_K22`, `retractordb` na `dd733e3`,
+     dwa binaria po SHA-256). Po scaleniu gałęzi bramka nie może już przejść
+     i nie jest potrzebna do ponownego wyprowadzenia tabeli z danych.
+     Proweniencję trybu analitycznego poświadcza `bin/verify_pins.sh`.
+   * K22v5 — `manual_hits_review.csv` przechowuje **ścieżki bezwzględne**
+     z chwili przeglądu, więc `verify_hits()` przechodzi wyłącznie pod
+     `/home/michal/github/rdb-experiment`. `bin/analytic_k22v5.py` powtarza tę
+     bramkę na ścieżkach względnych wobec korzenia repozytorium: sprawdza to
+     samo (każde trafienie przejrzane i potwierdzone), bez zależności od
+     jednego układu katalogów (znalezisko K9b-F3).

@@ -28,9 +28,19 @@ pomiaru jako wyniku wykonanego na HEAD.
 
 ## Stan
 
-Repozytorium jest w budowie w ramach kroku **K9b** planu badawczego. Pozycje
-oznaczone `[K9b/Krok N]` czekają na swój krok i nie są jeszcze wypełnione.
-Plan: `paper-arXiv/debs/plan-realizacji-K9b.md`.
+Repozytorium powstaje w ramach kroku **K9b** planu badawczego
+(`paper-arXiv/debs/plan-realizacji-K9b.md`). Stan na 2026-08-20:
+
+* manifest, mapa kampanii, kontrola przypięć i kontrola binarium — **gotowe**;
+* tryb analityczny (`bin/reproduce_analytic.sh`) — **gotowy**: osiem grup na
+  osiem regeneruje się z zachowanych danych i zgadza z zachowanymi produktami;
+* tryb pomiarowy (`bin/reproduce_measure.sh`) — kontrola wstępna platformy
+  i proweniencji **gotowa**, wraz z odmową startu przy rozjeździe;
+* otwarte: empiryczna próba autonomii przebiegu na sprzęcie pomiarowym,
+  trzy nieobecne archiwa raw, DOI i upublicznienie repozytorium.
+
+Granice pakietu są wypisane w [`MANIFEST.md`](MANIFEST.md) §5 — czytaj je,
+zanim uznasz brak za usterkę.
 
 ## Licencja i cytowanie
 

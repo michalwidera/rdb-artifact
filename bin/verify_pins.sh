@@ -119,6 +119,14 @@ actual="$(git -C "$ENGINE" rev-parse -q --verify 'campaign/H10-K24e^{}:src' 2>/d
 
 echo
 echo "=== 4. Raw archive inventory ==="
+# The archive table in MANIFEST.md describes the experiment repository at the
+# SNAPSHOT revision. A campaign checkout sits at an older revision, where later
+# archives and indexes legitimately do not exist yet, so checking the current
+# table against it would report absence as corruption. The inventory is a
+# snapshot-level invariant and is verified there.
+if [[ "$SELECTION" != snapshot ]]; then
+  echo "SKIP  snapshot-level invariant; run 'verify_pins.sh snapshot' to check it"
+else
 index_count="$(git -C "$EXPERIMENT" ls-files | grep -Ei 'raw\.index\.tsv$' | wc -l)"
 [[ "$index_count" -eq 16 ]] && ok "index files = 16" \
   || bad "index files = $index_count, expected 16"
@@ -161,6 +169,7 @@ while read -r path; do
   [[ ! -e "$EXPERIMENT/$path" ]] && ok "$path explicitly absent" \
     || bad "$path now exists; MANIFEST.md must be updated"
 done <<<"$MISSING"
+fi
 
 if [[ -n "${RDB_XRETRACTOR:-}" ]]; then
   echo
