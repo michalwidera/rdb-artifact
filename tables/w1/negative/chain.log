@@ -1,0 +1,12 @@
+2026-08-23 20:36:08 CEST chain start (boot 1711s ago); settling for 20 s
+2026-08-23 20:36:28 CEST START: segment S1 (3 of 3 left)
+2026-08-23 20:36:28 CEST [S1] start, 9000 rounds on isolated CPU 3
+2026-08-23 20:37:44 CEST [S1] RUN_COMPLETE
+2026-08-23 20:37:44 CEST [S1] archive closed: 3c44e6678674bf3c65be83f7fe4b82fa28921fc80ba3a9d4c92893fe71916513
+2026-08-23 20:37:44 CEST END: segment S1 rc=0, RUN_COMPLETE
+2026-08-23 20:37:44 CEST rebooting the worker before the next segment; the unit comes up from boot by itself
+2026-08-23 20:37:53 CEST chain start (boot 18s ago); settling for 20 s
+2026-08-23 20:38:43 CEST START: segment S2 (2 of 3 left)
+2026-08-23 20:38:43 CEST [S2] start, 9000 rounds on isolated CPU 3
+2026-08-23 20:38:43 CEST [S2] STOP requested for this segment; failing on purpose with rc=8
+2026-08-23 20:38:43 CEST HALT: stop (segment=S2 rc=8); chain stopped until a human decides

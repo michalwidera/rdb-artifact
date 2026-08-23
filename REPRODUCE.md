@@ -163,6 +163,14 @@ w K26v3 P8 (`rdb-experiment/results_20260814_K26v3/`):
 W praktyce oznacza to, że nadzór sprowadza się do okresowego, ręcznego odczytu
 stanu — raz na kilka godzin albo raz na dobę, jak wygodnie.
 
+**Sprawdzone empirycznie 2026-08-23, nie tylko zapisane.** `bin/w1_trial/`
+przenosi ten wzorzec na skrócony przebieg i wykonuje go na maszynie pomiarowej
+`pi400` z **faktycznie odciętym kanałem sterującym**: trzy odcinki, dwa
+samodzielne restarty workera, `W1_COMPLETE` po 5 min 57 s, zero sesji z maszyny
+sterującej w oknie przebiegu. Przebieg negatywny (`W1_FAIL_SEGMENT`) potwierdził
+trzeci stan — `HALT` i zatrzymanie zamiast pętli. Dowody: `tables/w1/`,
+opis i mapa ośmiu własności: [`bin/w1_trial/README.md`](bin/w1_trial/README.md).
+
 ## 5. Co jest celowo niedeterministyczne
 
 Jedynym celowo niedeterministycznym polem trwałych artefaktów jest zakres
@@ -183,7 +191,7 @@ niepustych danych dziewięciu nazwanych strumieni; K18 porównał 67 plików.
 
 ## 6. Granice
 
-Patrz [`MANIFEST.md`](MANIFEST.md) sekcja 5. W skrócie: `fig:qrs` wymaga
-rozstrzygnięcia okna danych, trzy archiwa raw są nieobecne, tryb pomiarowy nie
-odtwarza czasów, a jego autonomia (§4) jest zapisana, lecz jeszcze nie sprawdzona
-próbą z faktycznie odłączoną maszyną sterującą.
+Patrz [`MANIFEST.md`](MANIFEST.md) sekcja 5. W skrócie: `fig:qrs` wymaga podania
+zbudowanego silnika, a tryb pomiarowy nie odtwarza czasów. Wszystkie 18 archiwów
+raw jest obecnych, zweryfikowanych i w repozytorium (2026-08-23); `study_06_W8`
+przychodzi w częściach i wymaga jednego polecenia składającego.

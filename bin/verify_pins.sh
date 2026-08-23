@@ -13,11 +13,11 @@ DOCS_EN="${RDB_DOCS_EN:-$WORKSPACE/documentation-rdb}"
 PAPER="${RDB_PAPER:-$WORKSPACE/paper-arXiv}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-ENGINE_SNAPSHOT="661635072872b2a3dbd432f3d4a2654f0fc1b32e"
-EXPERIMENT_SNAPSHOT="a9d5e18e75ef7cf5dd8a63619f469517e13aa4af"
-DOCS_PL_SNAPSHOT="f094ac9699dc9dcd2a704619d0d27570afaa1e11"
-DOCS_EN_SNAPSHOT="7ed35ee86005496cfcf22d596ced36919fa943d4"
-PAPER_SNAPSHOT="0c2e562b28f015d663610add667ab392366f6cf2"
+ENGINE_SNAPSHOT="6dec187e6b0cc66d119d4d9a9dc384e93adf6839"
+EXPERIMENT_SNAPSHOT="b713e1df47a5f94357f708706b85f5603f261534"
+DOCS_PL_SNAPSHOT="ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1"
+DOCS_EN_SNAPSHOT="8d543c8cbf95ab7cdb41049be3b30163e225bf5b"
+PAPER_SNAPSHOT="933a9ffbcdb80ebd489dd00d5d7b1eeb189b9082"
 SRC_TREE_K24E="5ddad0fc7d56fb9b468d31905a6689e9896ddb39"
 
 ERRORS=0
@@ -144,6 +144,8 @@ results_20260730_K6c/ablation/study_04_W5/raw.tar.gz ce46589c8c850d9eb0a538e63c9
 results_20260730_K6c/ablation/study_05_W7/raw.tar.gz 3d6bf640c7a0ddbe4bb32f87dcb084cabebbf5efa119352473ba5621d684dec4
 results_20260730_hygiene/results/raw.tar.gz b582f33356f73bf0a4e2f200733d5cc0c8a5bd2cac2c5367f61c61db290695b5
 results_20260731_hygiene/results/raw.tar.gz 42bc80319943ad697dede45e1cab78b4b9fb9ff94c0671ed66217872ca54b50f
+results_20260730_K6c/ablation/study_07_W9/results_20260730_K6c_study_07_W9_raw.tar.gz 0f0b504a0dd3f50f12ae4ef5bd60e90c2e2702215388fd84d6dc54ee06055280
+results_20260731_hygiene220/results/raw.tar.gz 6993a2877741d65e480167a7068370b06416dee278c00f4f156c4232a205963c
 artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R1.tar.gz 8c4ac248eb8e5f91f35ca90ce61f1f3ff10eef7db58042ab62238cd349b256a3
 artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R2.tar.gz 62b065a89e82126c08f2a973195e10688bd1adfcbdb2840d5f57ea22248c0db7
 artifacts/K26v3/k26v3_archives/K26v3-P8-F9-X.tar.gz 3deb300733f3662dd042ca0109eb73aa696c4eb5da7d8b3b62745735c94c2e04
@@ -159,16 +161,56 @@ while read -r path expected; do
     || bad "$path SHA-256 = $actual, expected $expected"
 done <<<"$PRESENT"
 
-MISSING=$(cat <<'MISSING_EOF'
-results_20260730_K6c/ablation/study_06_W8/results_20260730_K6c_study_06_W8_raw.tar.gz
-results_20260730_K6c/ablation/study_07_W9/results_20260730_K6c_study_07_W9_raw.tar.gz
-results_20260731_hygiene220/results/raw.tar.gz
-MISSING_EOF
+# The one archive too large for a single file on GitHub (154.6 MiB against a
+# 100 MB hard limit). Since 2026-08-23 the repository carries it in four parts
+# plus an index; the parts ARE tracked, so a fresh clone can rebuild it with
+# rdb-experiment/lib/raw_parts.sh join. What is checked here is what a clone
+# actually has -- the parts and their checksums -- and, when the whole file also
+# happens to be on this machine, that too. Checking only the whole file would
+# pass on the author's disk and fail on every clone.
+W8="results_20260730_K6c/ablation/study_06_W8/results_20260730_K6c_study_06_W8_raw.tar.gz"
+W8_WHOLE_SHA="03f503fee2504ef46d8d5f367807442be28593f8081a487911475726609d4e51"
+PARTS=$(cat <<'PARTS_EOF'
+part-00 47185920 afec4ccbf170b9c249b46c0d45f3522a0320379c0e1db2020edb3b04ad2b0ebd
+part-01 47185920 a16250bedca656037d277021d3e08376d98ef035b9a45a5dba14cc6327774775
+part-02 47185920 5621333ffc9b565bfae41e8cc28fda16e002cdcf5a48636780c4cc66148e502f
+part-03 20610225 3891943a91ce7f86d9e70319aaa64aa4d33853884996349b3cbad6bf4ee71d26
+PARTS_EOF
 )
-while read -r path; do
-  [[ ! -e "$EXPERIMENT/$path" ]] && ok "$path explicitly absent" \
-    || bad "$path now exists; MANIFEST.md must be updated"
-done <<<"$MISSING"
+while read -r part bytes expected; do
+  f="$EXPERIMENT/$W8.$part"
+  if [[ ! -f "$f" ]]; then bad "missing W8 part: $W8.$part"; continue; fi
+  actual="$(sha256sum "$f" | awk '{print $1}')"
+  if [[ "$actual" == "$expected" && "$(stat -c %s "$f")" == "$bytes" ]]; then ok "W8 $part"
+  else bad "W8 $part SHA-256 = $actual, expected $expected"; fi
+done <<<"$PARTS"
+
+if [[ -f "$EXPERIMENT/$W8.parts.tsv" ]]; then
+  ok "W8 parts index present"
+else
+  bad "missing W8 parts index: $W8.parts.tsv"
+fi
+
+if [[ -f "$EXPERIMENT/$W8" ]]; then
+  actual="$(sha256sum "$EXPERIMENT/$W8" | awk '{print $1}')"
+  [[ "$actual" == "$W8_WHOLE_SHA" ]] && ok "W8 whole archive (assembled, outside git)" \
+    || bad "W8 whole archive SHA-256 = $actual, expected $W8_WHOLE_SHA"
+else
+  echo "SKIP  W8 whole archive not assembled here; rebuild with lib/raw_parts.sh join"
+fi
+
+# Archives believed lost. Empty since 2026-08-23: the last three turned up on
+# the desktop host and were committed the same day. This list stays as the place
+# where a real loss gets declared -- silence is not availability.
+MISSING=""
+if [[ -n "$MISSING" ]]; then
+  while read -r path; do
+    [[ ! -e "$EXPERIMENT/$path" ]] && ok "$path explicitly absent" \
+      || bad "$path now exists; MANIFEST.md must be updated"
+  done <<<"$MISSING"
+else
+  ok "no archive is declared lost (17 of 18 in git; W8 in four tracked parts)"
+fi
 fi
 
 if [[ -n "${RDB_XRETRACTOR:-}" ]]; then

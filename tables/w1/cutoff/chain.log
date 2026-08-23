@@ -1,0 +1,24 @@
+2026-08-23 20:40:32 CEST chain start (boot 146s ago); settling for 20 s
+2026-08-23 20:40:32 CEST control channel to 192.168.88.21 cut (watchdog 1800s)
+2026-08-23 20:40:52 CEST START: segment S1 (3 of 3 left)
+2026-08-23 20:40:52 CEST [S1] start, 9000 rounds on isolated CPU 3
+2026-08-23 20:42:09 CEST [S1] RUN_COMPLETE
+2026-08-23 20:42:10 CEST [S1] archive closed: 71d160a37c43718edb15cfaf797d7bb29746ec97e2bde4200905b7effc2d0e6b
+2026-08-23 20:42:10 CEST END: segment S1 rc=0, RUN_COMPLETE
+2026-08-23 20:42:10 CEST rebooting the worker before the next segment; the unit comes up from boot by itself
+2026-08-23 20:42:19 CEST chain start (boot 18s ago); settling for 20 s
+2026-08-23 20:42:20 CEST control channel to 192.168.88.21 cut (watchdog 1800s)
+2026-08-23 20:43:10 CEST START: segment S2 (2 of 3 left)
+2026-08-23 20:43:11 CEST [S2] start, 9000 rounds on isolated CPU 3
+2026-08-23 20:44:11 CEST [S2] RUN_COMPLETE
+2026-08-23 20:44:11 CEST [S2] archive closed: 7416bd91efda9e3ef09a56a158f21ab8cbab31f996f163e8c557c105916927c9
+2026-08-23 20:44:11 CEST END: segment S2 rc=0, RUN_COMPLETE
+2026-08-23 20:44:11 CEST rebooting the worker before the next segment; the unit comes up from boot by itself
+2026-08-23 20:44:20 CEST chain start (boot 17s ago); settling for 20 s
+2026-08-23 20:44:22 CEST control channel to 192.168.88.21 cut (watchdog 1800s)
+2026-08-23 20:45:12 CEST START: segment S3 (1 of 3 left)
+2026-08-23 20:45:12 CEST [S3] start, 9000 rounds on isolated CPU 3
+2026-08-23 20:46:29 CEST [S3] RUN_COMPLETE
+2026-08-23 20:46:29 CEST [S3] archive closed: 87562aa4ffaf700decdc9c0891388d070b61be9a5ecd0f1b67944eecaa4b6be4
+2026-08-23 20:46:29 CEST END: segment S3 rc=0, RUN_COMPLETE
+2026-08-23 20:46:29 CEST W1_COMPLETE: 3/3 segments; archives wait in /home/michal/w1_archives
