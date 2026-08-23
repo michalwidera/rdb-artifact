@@ -16,7 +16,7 @@ kampanii z §2.2: dawnych pomiarów nie przepisuje się na nowszy kod.
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b713e1df47a5f94357f708706b85f5603f261534` | kampanie i dane |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | dokumentacja PL (kanoniczna) |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | dokumentacja EN (pochodna) |
-| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `8fce2a70148f1279d821077b146ab89cd440618e` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) |
+| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `a9947abe9a16acab0455965f2e1c675dfb8ba81d` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) |
 
 Repozytorium `rdb-artifact` jest punktem wejścia, więc nie przypina własnego
 SHA w tym samym commicie. Jego URL to
