@@ -73,8 +73,16 @@ clone_or_fetch() {
   local name="$1" url="$2" rev="$3"
   local repo="$TARGET/$name"
   if [[ -d "$repo/.git" ]]; then
+    # The workspace is disposable: reproduce_analytic.sh runs each campaign's own
+    # frozen analysis code, and some of it writes next to its inputs. That is
+    # expected and reported there -- but it means a second checkout.sh over the
+    # same directory finds a dirty tree. Say what to do about it, because
+    # "refusing to switch revisions" alone reads like corruption.
     [[ -z "$(git -C "$repo" status --porcelain)" ]] \
-      || fail "$name has local changes; refusing to switch revisions"
+      || fail "$name has local changes; refusing to switch revisions.
+  If you have already run bin/reproduce_analytic.sh here, this is expected: the
+  workspace is disposable and some frozen analysis code writes next to its
+  inputs. Delete '$TARGET' and run this script again."
     echo "== fetch $name"
     git -C "$repo" fetch --tags --prune origin
   elif [[ -e "$repo" ]]; then
