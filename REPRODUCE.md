@@ -38,7 +38,11 @@ RDB_XRETRACTOR=./artifact-workspace/retractordb/build/Debug/src/retractor/xretra
 ./bin/verify_pins.sh snapshot
 ```
 
-Skrypt sprawdza faktyczne `HEAD` czterech wymaganych checkoutów, tagi i ich
+Skrypt zaczyna od sekcji 0: **czy trzy deklaracje tego samego przypięcia są
+zgodne** — `MANIFEST.md`, `verify_pins.sh` i `checkout.sh` trzymają każdą z nich
+osobno, więc podbicie, które dotarło tylko do części z nich, zatrzymuje bramkę
+zamiast podróżować razem z nią. Dalej sprawdza faktyczne `HEAD` czterech
+wymaganych checkoutów, tagi i ich
 osiągalność, dowód równoważności drzewa `src/` K24e, siedemnaście archiwów po
 SHA-256, cztery części archiwum `study_06_W8` wraz z indeksem oraz — gdy podano
 `RDB_XRETRACTOR` — rewizję osadzoną w binarium. Piąty checkout, `paper-arXiv`,

@@ -79,6 +79,111 @@ check_head() {
   else bad "$name HEAD = $actual, expected $expected"; fi
 }
 
+# --- 0. The three declarations of every pin must agree ----------------------
+# Each pin is written down three times: in MANIFEST.md, in this script and in
+# checkout.sh. On 2026-08-23 a bump reached only the manifest and the two
+# scripts kept the old paper-arXiv SHA for two commits. Nothing caught it --
+# there was nothing to catch it with, because every checker used its own copy
+# as the truth.
+#
+# What makes that drift dangerous is not the mismatch itself but where it can
+# hide: paper-arXiv is optional, so a stranger's run ends in SKIP and a wrong
+# provenance pin is unverifiable from outside. This section compares the three
+# declarations against each other, so a half-finished bump stops the gate rather
+# than travelling with it.
+
+MANIFEST_FILE="$HERE/../MANIFEST.md"
+CHECKOUT_FILE="$HERE/checkout.sh"
+
+# Third column of a section 1 table row, which is the only 40-hex field there.
+manifest_snapshot() {
+  grep -E "^\| \`$1\` \| \`https" "$MANIFEST_FILE" 2>/dev/null \
+    | head -n 1 | grep -oE '[0-9a-f]{40}' | head -n 1
+}
+# Section 2.2 row: engine SHA first, experiment SHA second.
+manifest_campaign() {
+  grep -E "^\| \`$1\` \|" "$MANIFEST_FILE" 2>/dev/null \
+    | head -n 1 | grep -oE '[0-9a-f]{40}' | head -n 2 | paste -sd' ' -
+}
+checkout_snapshot() {
+  grep -E "^$1=\"[0-9a-f]{40}\"" "$CHECKOUT_FILE" 2>/dev/null \
+    | head -n 1 | grep -oE '[0-9a-f]{40}'
+}
+# checkout.sh spells its campaign pairs across three lines, so take the first
+# two 40-hex tokens after the case label.
+checkout_campaign() {
+  awk -v tag="$1)" '
+    index($0, tag) { found = 1; next }
+    found {
+      line = $0
+      while (match(line, /[0-9a-f]{40}/)) {
+        printf "%s%s", (n++ ? " " : ""), substr(line, RSTART, RLENGTH)
+        line = substr(line, RSTART + RLENGTH)
+        if (n == 2) { printf "\n"; exit }
+      }
+    }
+  ' "$CHECKOUT_FILE" 2>/dev/null
+}
+
+agree() {
+  local what="$1" mine="$2" manifest="$3" checkout="$4"
+  if [[ -z "$manifest" || -z "$checkout" ]]; then
+    bad "$what not declared in MANIFEST.md and/or checkout.sh (manifest='${manifest:-missing}' checkout='${checkout:-missing}')"
+  elif [[ "$mine" == "$manifest" && "$mine" == "$checkout" ]]; then
+    ok "$what declared identically in all three files"
+  else
+    bad "$what disagrees: verify_pins='$mine' MANIFEST.md='$manifest' checkout.sh='$checkout'"
+  fi
+}
+
+echo "=== 0. Pin declarations agree across MANIFEST.md, verify_pins.sh, checkout.sh ==="
+if [[ ! -r "$MANIFEST_FILE" || ! -r "$CHECKOUT_FILE" ]]; then
+  echo "SKIP  MANIFEST.md or checkout.sh not readable next to this script"
+else
+  agree retractordb       "$ENGINE_SNAPSHOT"     "$(manifest_snapshot retractordb)"       "$(checkout_snapshot ENGINE_SNAPSHOT)"
+  agree rdb-experiment    "$EXPERIMENT_SNAPSHOT" "$(manifest_snapshot rdb-experiment)"    "$(checkout_snapshot EXPERIMENT_SNAPSHOT)"
+  agree dokumentacja-rdb  "$DOCS_PL_SNAPSHOT"    "$(manifest_snapshot dokumentacja-rdb)"  "$(checkout_snapshot DOCS_PL_SNAPSHOT)"
+  agree documentation-rdb "$DOCS_EN_SNAPSHOT"    "$(manifest_snapshot documentation-rdb)" "$(checkout_snapshot DOCS_EN_SNAPSHOT)"
+  agree paper-arXiv       "$PAPER_SNAPSHOT"      "$(manifest_snapshot paper-arXiv)"       "$(checkout_snapshot PAPER_SNAPSHOT)"
+  # campaign/H10-K24e is the one row where MANIFEST.md's engine column is NOT the
+  # tag target. It records the revision the campaign was actually measured on,
+  # e2a61ff, which a squash-merge left outside master; the tag points at ef18105,
+  # whose src/ tree is object-identical (MANIFEST.md section 2.4 carries the
+  # proof). Comparing the two columns literally would report that documented
+  # exception as drift. So for this one tag the guard checks what has to hold
+  # instead: the manifest names the measured revision in the table AND names the
+  # tag target next to the equivalence chain.
+  K24E_MEASURED="e2a61ffff77f0ec393aded2c220379db1564af44"
+  K24E_REACHABLE="ef18105701158db9986d57fd74defdda72920871"
+
+  for tag in campaign/K6c-W2-W7 campaign/K6c-W8-W9 campaign/K18 campaign/K22v5 \
+             campaign/H9-K26v3 campaign/H10-K24d campaign/H10-K24e; do
+    mine="$(campaign_pair "$tag" | tr '\t' ' ')"
+    expect_manifest="$mine"
+    if [[ "$tag" == campaign/H10-K24e ]]; then
+      expect_manifest="${mine/$K24E_REACHABLE/$K24E_MEASURED}"
+    fi
+    checkout_value="$(checkout_campaign "$tag")"
+    if [[ "$tag" == campaign/H10-K24e && -n "$checkout_value" ]]; then
+      checkout_value="${checkout_value/$K24E_REACHABLE/$K24E_MEASURED}"
+    fi
+    agree "$tag" "$expect_manifest" "$(manifest_campaign "$tag")" "$checkout_value"
+    if [[ "$tag" == campaign/H10-K24e ]]; then
+      # The exception is only legitimate while the equivalence it rests on is
+      # written down. If section 2.4 loses either SHA or the tree hash, the
+      # manifest is claiming provenance it no longer proves.
+      missing=""
+      for needed in "$K24E_MEASURED" "$K24E_REACHABLE" "$SRC_TREE_K24E"; do
+        grep -q "$needed" "$MANIFEST_FILE" || missing="$missing $needed"
+      done
+      [[ -z "$missing" ]] \
+        && ok "campaign/H10-K24e equivalence (measured, reachable, src tree) stated in MANIFEST.md" \
+        || bad "campaign/H10-K24e equivalence incomplete in MANIFEST.md; missing:$missing"
+    fi
+  done
+fi
+echo
+
 echo "=== 1. Exact workspace checkout ($SELECTION) ==="
 check_head retractordb "$ENGINE" "$EXPECTED_ENGINE"
 check_head rdb-experiment "$EXPERIMENT" "$EXPECTED_EXPERIMENT"
@@ -102,6 +207,13 @@ campaign/H10-K24d 34db1a291fff686d63402270722edf9c772bd4b6 campaign/H10-K24d 15e
 campaign/H10-K24e ef18105701158db9986d57fd74defdda72920871 campaign/H10-K24e a9d5e18e75ef7cf5dd8a63619f469517e13aa4af
 PINS_EOF
 )
+
+# PINS repeats what campaign_pair() already knows -- a fourth copy, and the one
+# closest at hand to edit without noticing the other three.
+while read -r engine_tag engine_sha _ experiment_sha; do
+  [[ "$(campaign_pair "$engine_tag" | tr '\t' ' ')" == "$engine_sha $experiment_sha" ]] \
+    || bad "$engine_tag: PINS table and campaign_pair() disagree inside verify_pins.sh"
+done <<<"$PINS"
 
 while read -r engine_tag engine_sha experiment_tag experiment_sha; do
   actual="$(git -C "$ENGINE" rev-parse -q --verify "${engine_tag}^{commit}" 2>/dev/null)"
