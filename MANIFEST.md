@@ -16,12 +16,25 @@ kampanii z §2.2: dawnych pomiarów nie przepisuje się na nowszy kod.
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b713e1df47a5f94357f708706b85f5603f261534` | kampanie i dane |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | dokumentacja PL (kanoniczna) |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | dokumentacja EN (pochodna) |
-| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `a9947abe9a16acab0455965f2e1c675dfb8ba81d` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) |
+| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) |
 
 Repozytorium `rdb-artifact` jest punktem wejścia, więc nie przypina własnego
 SHA w tym samym commicie. Jego URL to
 `https://github.com/michalwidera/rdb-artifact.git` i jest **publiczny od
 2026-08-23**.
+
+**Przypięcie `paper-arXiv` wskazuje tag adnotowany `artifact/K9b`, nie czubek
+gałęzi (decyzja 2026-08-23).** Cztery pozostałe repozytoria przypinają się przez
+SHA snapshotu, bo ich `HEAD` rusza się rzadko i z powodów, które pakietu
+dotyczą. Repozytorium artykułu zachowuje się inaczej: w czternaście dni przed
+tym tagiem dostało **57 commitów**, z czego 28 dotknęło `debs/`, 19 `usecases/`,
+a właściwego artykułu (`arxiv/`, `figures/`) — **dwa**. Przypięcie do `HEAD`
+odpowiadałoby więc na pytanie „jaki jest ostatni commit repozytorium", a ma
+odpowiadać na „do której rewizji artykułu należą te liczby".
+
+Przypięcie rusza się przy kamieniu milowym, nie przy poprawce redakcyjnej.
+Następny ruch: `artifact/submission` w K17. Jest to ten sam wzorzec, co tagi
+`campaign/*` w §2.2, i z tego samego powodu.
 
 **Cztery pierwsze repozytoria są publiczne i wymagane. Piąte nie jest ani jednym,
 ani drugim (decyzja D-6, 2026-08-23).** `paper-arXiv` niesie artykuł przed

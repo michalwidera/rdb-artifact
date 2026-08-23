@@ -18,7 +18,9 @@ ENGINE_SNAPSHOT="6dec187e6b0cc66d119d4d9a9dc384e93adf6839"
 EXPERIMENT_SNAPSHOT="b713e1df47a5f94357f708706b85f5603f261534"
 DOCS_PL_SNAPSHOT="ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1"
 DOCS_EN_SNAPSHOT="8d543c8cbf95ab7cdb41049be3b30163e225bf5b"
-PAPER_SNAPSHOT="a9947abe9a16acab0455965f2e1c675dfb8ba81d"
+PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
+# Milestone tag, not a branch head -- see MANIFEST.md section 1.
+PAPER_TAG="artifact/K9b"
 
 fail() { echo "ERROR: $*" >&2; exit 2; }
 

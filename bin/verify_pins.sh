@@ -21,7 +21,9 @@ ENGINE_SNAPSHOT="6dec187e6b0cc66d119d4d9a9dc384e93adf6839"
 EXPERIMENT_SNAPSHOT="b713e1df47a5f94357f708706b85f5603f261534"
 DOCS_PL_SNAPSHOT="ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1"
 DOCS_EN_SNAPSHOT="8d543c8cbf95ab7cdb41049be3b30163e225bf5b"
-PAPER_SNAPSHOT="a9947abe9a16acab0455965f2e1c675dfb8ba81d"
+PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
+# Milestone tag, not a branch head -- see MANIFEST.md section 1.
+PAPER_TAG="artifact/K9b"
 SRC_TREE_K24E="5ddad0fc7d56fb9b468d31905a6689e9896ddb39"
 
 ERRORS=0
@@ -145,6 +147,11 @@ else
   agree dokumentacja-rdb  "$DOCS_PL_SNAPSHOT"    "$(manifest_snapshot dokumentacja-rdb)"  "$(checkout_snapshot DOCS_PL_SNAPSHOT)"
   agree documentation-rdb "$DOCS_EN_SNAPSHOT"    "$(manifest_snapshot documentation-rdb)" "$(checkout_snapshot DOCS_EN_SNAPSHOT)"
   agree paper-arXiv       "$PAPER_SNAPSHOT"      "$(manifest_snapshot paper-arXiv)"       "$(checkout_snapshot PAPER_SNAPSHOT)"
+  # The tag name is a pin too: pointing three files at the same SHA under two
+  # different tag names would be the same drift wearing a disguise.
+  agree "paper-arXiv tag" "$PAPER_TAG" \
+    "$(grep -oE 'artifact/[A-Za-z0-9._-]+' "$MANIFEST_FILE" 2>/dev/null | head -n 1)" \
+    "$(grep -oE '^PAPER_TAG="[^\"]+"' "$CHECKOUT_FILE" 2>/dev/null | head -n 1 | cut -d'"' -f2)"
   # campaign/H10-K24e is the one row where MANIFEST.md's engine column is NOT the
   # tag target. It records the revision the campaign was actually measured on,
   # e2a61ff, which a squash-merge left outside master; the tag points at ef18105,
@@ -191,6 +198,18 @@ check_head dokumentacja-rdb "$DOCS_PL" "$DOCS_PL_SNAPSHOT"
 check_head documentation-rdb "$DOCS_EN" "$DOCS_EN_SNAPSHOT"
 if [[ "$PAPER_PRESENT" == yes ]]; then
   check_head paper-arXiv "$PAPER" "$PAPER_SNAPSHOT"
+  # The pin names a tag, so the tag has to be what it says it is. Without this,
+  # re-tagging artifact/K9b onto a later commit would leave the manifest quietly
+  # describing a revision nobody can reach by that name any more -- and because
+  # this repository is private, no stranger's run would ever notice.
+  paper_tag_target="$(git -C "$PAPER" rev-parse -q --verify "${PAPER_TAG}^{commit}" 2>/dev/null)"
+  if [[ -z "$paper_tag_target" ]]; then
+    bad "paper-arXiv tag $PAPER_TAG not found; the pin names a tag that does not exist"
+  elif [[ "$paper_tag_target" == "$PAPER_SNAPSHOT" ]]; then
+    ok "paper-arXiv tag $PAPER_TAG resolves to the pinned commit"
+  else
+    bad "paper-arXiv tag $PAPER_TAG resolves to $paper_tag_target, expected $PAPER_SNAPSHOT"
+  fi
 else
   echo "SKIP  paper-arXiv absent; optional, pinned at $PAPER_SNAPSHOT (private until submission)"
 fi
