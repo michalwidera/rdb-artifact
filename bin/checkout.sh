@@ -94,12 +94,29 @@ clone_or_fetch retractordb "$ENGINE_URL" "$ENGINE_REV"
 clone_or_fetch rdb-experiment "$EXPERIMENT_URL" "$EXPERIMENT_REV"
 clone_or_fetch dokumentacja-rdb "$DOCS_PL_URL" "$DOCS_PL_SNAPSHOT"
 clone_or_fetch documentation-rdb "$DOCS_EN_URL" "$DOCS_EN_SNAPSHOT"
-clone_or_fetch paper-arXiv "$PAPER_URL" "$PAPER_SNAPSHOT"
+
+# The paper repository is OPTIONAL and its absence is not a failure (decision
+# D-6, 2026-08-23). Neither reproduction mode reads it: reproduce_analytic.sh
+# and reproduce_measure.sh have no reference to it at all. It is pinned here for
+# provenance -- so that "which revision of the paper do these numbers belong to"
+# has an answer -- and it stays private until submission.
+#
+# Making it mandatory had one concrete effect and no benefit: a stranger holding
+# the artifact URL got four repositories, exit code 2 from the provenance gate,
+# and no way to regenerate anything.
+if clone_or_fetch paper-arXiv "$PAPER_URL" "$PAPER_SNAPSHOT" 2>/dev/null; then
+  PAPER_STATE="$(git -C "$TARGET/paper-arXiv" rev-parse HEAD)"
+else
+  rm -rf "$TARGET/paper-arXiv"
+  PAPER_STATE="not fetched (private until submission); pinned at $PAPER_SNAPSHOT"
+  echo "== skip paper-arXiv: not reachable; continuing (see MANIFEST.md section 1)"
+fi
 
 echo
 echo "== pinned workspace ($SELECTION)"
-for name in retractordb rdb-experiment dokumentacja-rdb documentation-rdb paper-arXiv; do
+for name in retractordb rdb-experiment dokumentacja-rdb documentation-rdb; do
   printf '%-20s %s\n' "$name" "$(git -C "$TARGET/$name" rev-parse HEAD)"
 done
+printf '%-20s %s\n' paper-arXiv "$PAPER_STATE"
 echo
 echo "Next: RDB_WORKSPACE=$TARGET $PWD/bin/verify_pins.sh $SELECTION"

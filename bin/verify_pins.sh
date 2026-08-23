@@ -5,7 +5,11 @@
 set -uo pipefail
 
 SELECTION="${1:-snapshot}"
-WORKSPACE="${RDB_WORKSPACE:-.}"
+# Default matched to checkout.sh and both reproduce_*.sh. It used to be ".",
+# so running this from the repository root -- the obvious thing to try -- said
+# "missing repository: ./retractordb" instead of checking the workspace that
+# checkout.sh had just built next door.
+WORKSPACE="${RDB_WORKSPACE:-./artifact-workspace}"
 ENGINE="${RDB_ENGINE:-$WORKSPACE/retractordb}"
 EXPERIMENT="${RDB_EXPERIMENT:-$WORKSPACE/rdb-experiment}"
 DOCS_PL="${RDB_DOCS_PL:-$WORKSPACE/dokumentacja-rdb}"
@@ -44,9 +48,15 @@ campaign_pair() {
   esac
 }
 
-for repo in "$ENGINE" "$EXPERIMENT" "$DOCS_PL" "$DOCS_EN" "$PAPER"; do
+for repo in "$ENGINE" "$EXPERIMENT" "$DOCS_PL" "$DOCS_EN"; do
   [[ -d "$repo/.git" ]] || { echo "ERROR missing repository: $repo"; exit 2; }
 done
+# The paper repository is optional (decision D-6). Neither reproduction mode
+# reads it; it is pinned for provenance and private until submission. Absent, it
+# is reported with its pinned SHA and skipped -- never a silent pass, never a
+# blocked reproduction.
+PAPER_PRESENT=no
+[[ -d "$PAPER/.git" ]] && PAPER_PRESENT=yes
 
 if [[ "$SELECTION" == snapshot ]]; then
   EXPECTED_ENGINE="$ENGINE_SNAPSHOT"
@@ -74,7 +84,11 @@ check_head retractordb "$ENGINE" "$EXPECTED_ENGINE"
 check_head rdb-experiment "$EXPERIMENT" "$EXPECTED_EXPERIMENT"
 check_head dokumentacja-rdb "$DOCS_PL" "$DOCS_PL_SNAPSHOT"
 check_head documentation-rdb "$DOCS_EN" "$DOCS_EN_SNAPSHOT"
-check_head paper-arXiv "$PAPER" "$PAPER_SNAPSHOT"
+if [[ "$PAPER_PRESENT" == yes ]]; then
+  check_head paper-arXiv "$PAPER" "$PAPER_SNAPSHOT"
+else
+  echo "SKIP  paper-arXiv absent; optional, pinned at $PAPER_SNAPSHOT (private until submission)"
+fi
 
 echo
 echo "=== 2. Campaign tags ==="

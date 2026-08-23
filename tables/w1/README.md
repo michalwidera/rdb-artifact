@@ -1,7 +1,7 @@
 # W-1 — dowody próby autonomii, 2026-08-23
 
 Produkty próby opisanej w [`../../bin/w1_trial/README.md`](../../bin/w1_trial/README.md).
-Wymaganie: `paper-arXiv/debs/plan-realizacji-K9b.md`, Krok 5 §W-1.
+Wymaganie: `paper-arXiv/debs/done/plan-realizacji-K9b.md`, Krok 5 §W-1.
 
 **Maszyna pomiarowa:** `pi400`, kernel `6.8.0-2049-raspi-realtime` (PREEMPT_RT),
 `isolcpus=3 nohz_full=3 rcu_nocbs=3`, `/dev/shm` tmpfs 1,8 G.

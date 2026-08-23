@@ -1,7 +1,7 @@
 # W-1 — próba zgodności autonomii przebiegu
 
 Ten katalog sprawdza **empirycznie** wymaganie W-1 z
-`paper-arXiv/debs/plan-realizacji-K9b.md`, Krok 5: *przebieg wielodniowy nie może
+`paper-arXiv/debs/done/plan-realizacji-K9b.md`, Krok 5: *przebieg wielodniowy nie może
 wymagać, żeby maszyna sterująca stała włączona przez cały ten czas*.
 
 Kryterium W-1 jest empiryczne, nie deklaratywne. Zapis „skrypt nie wymaga hosta"

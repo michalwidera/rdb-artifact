@@ -26,18 +26,35 @@ Manifest osobno zachowuje faktyczne rewizje, na których wykonano kampanie.
 Tryb historyczny służy do audytu provenance i nigdy nie przedstawia dawnego
 pomiaru jako wyniku wykonanego na HEAD.
 
+## Od zera, w trzech poleceniach
+
+```bash
+git clone https://github.com/michalwidera/rdb-artifact.git
+cd rdb-artifact
+./bin/checkout.sh                 # klonuje i przypina repozytoria po SHA
+./bin/reproduce_analytic.sh       # regeneruje tabele i liczby artykulu
+```
+
+Nie potrzebujesz konta, poświadczeń ani niczego poza tym adresem.
+
 ## Stan
 
-Repozytorium powstaje w ramach kroku **K9b** planu badawczego
-(`paper-arXiv/debs/plan-realizacji-K9b.md`). Stan na 2026-08-20:
+Repozytorium powstało w ramach kroku **K9b** planu badawczego
+(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Stan na 2026-08-23:
 
 * manifest, mapa kampanii, kontrola przypięć i kontrola binarium — **gotowe**;
 * tryb analityczny (`bin/reproduce_analytic.sh`) — **gotowy**: osiem grup na
   osiem regeneruje się z zachowanych danych i zgadza z zachowanymi produktami;
 * tryb pomiarowy (`bin/reproduce_measure.sh`) — kontrola wstępna platformy
   i proweniencji **gotowa**, wraz z odmową startu przy rozjeździe;
-* otwarte: empiryczna próba autonomii przebiegu na sprzęcie pomiarowym,
-  trzy nieobecne archiwa raw, DOI i upublicznienie repozytorium.
+* autonomia przebiegu pomiarowego (W-1) — **sprawdzona empirycznie** na maszynie
+  pomiarowej z odciętą maszyną sterującą; dowody w [`tables/w1/`](tables/w1/);
+* archiwa surowe — **18 z 18 w repozytorium eksperymentu**, jedno w częściach;
+* otwarte: DOI (decyzja D-2, po decyzji o zgłoszeniu artykułu).
+
+Repozytorium artykułu `paper-arXiv` jest przypięte, ale **prywatne do czasu
+recenzji** i **nie jest potrzebne do odtworzenia** (decyzja D-6) — patrz
+[`MANIFEST.md`](MANIFEST.md) §1.
 
 Granice pakietu są wypisane w [`MANIFEST.md`](MANIFEST.md) §5 — czytaj je,
 zanim uznasz brak za usterkę.

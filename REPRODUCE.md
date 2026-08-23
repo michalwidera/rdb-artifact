@@ -38,9 +38,13 @@ RDB_XRETRACTOR=./artifact-workspace/retractordb/build/Debug/src/retractor/xretra
 ./bin/verify_pins.sh snapshot
 ```
 
-Skrypt sprawdza faktyczne `HEAD` pięciu checkoutów, tagi i ich osiągalność,
-dowód równoważności drzewa `src/` K24e, 15 obecnych archiwów po SHA-256, trzy
-jawne braki oraz — gdy podano `RDB_XRETRACTOR` — rewizję osadzoną w binarium.
+Skrypt sprawdza faktyczne `HEAD` czterech wymaganych checkoutów, tagi i ich
+osiągalność, dowód równoważności drzewa `src/` K24e, siedemnaście archiwów po
+SHA-256, cztery części archiwum `study_06_W8` wraz z indeksem oraz — gdy podano
+`RDB_XRETRACTOR` — rewizję osadzoną w binarium. Piąty checkout, `paper-arXiv`,
+jest **opcjonalny** (decyzja D-6): przy jego braku skrypt wypisuje `SKIP`
+z przypiętym SHA, bo repozytorium artykułu pozostaje prywatne do recenzji
+i żaden tryb odtworzenia go nie czyta.
 Kod wyjścia różny od zera oznacza rozjazd — **nie kontynuuj**.
 
 Kontrola binarium porównuje siedmioznakowy prefiks SHA publikowany obecnie przez

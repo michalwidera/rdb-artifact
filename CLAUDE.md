@@ -2,7 +2,7 @@
 
 Pakiet artefaktów do artykułu o RetractorDB. Repozytorium **cienkie**: manifest,
 mapa kampanii, instrukcja odtworzenia i skrypty. Buduje je krok **K9b** planu
-badawczego (`paper-arXiv/debs/plan-realizacji-K9b.md`) — ten plan jest źródłem
+badawczego (`paper-arXiv/debs/done/plan-realizacji-K9b.md`) — ten plan jest źródłem
 normatywnym dla zakresu i kolejności prac.
 
 ## Uprawnienia asystenta — odstępstwo od reguły ogólnej

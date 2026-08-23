@@ -1,7 +1,7 @@
 # MANIFEST — przypięcia pakietu artefaktów
 
 Stan: **2026-08-20**. Budowany w ramach K9b
-(`paper-arXiv/debs/plan-realizacji-K9b.md`). Każde przypięcie repozytorium jest
+(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Każde przypięcie repozytorium jest
 pełnym, czterdziestoznakowym SHA. Nazwa gałęzi nie jest identyfikatorem wersji.
 
 ## 1. Repozytoria i przypięty układ domyślny
@@ -16,11 +16,24 @@ kampanii z §2.2: dawnych pomiarów nie przepisuje się na nowszy kod.
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b713e1df47a5f94357f708706b85f5603f261534` | kampanie i dane |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | dokumentacja PL (kanoniczna) |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | dokumentacja EN (pochodna) |
-| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `933a9ffbcdb80ebd489dd00d5d7b1eeb189b9082` | artykuł i plan badawczy |
+| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `8fce2a70148f1279d821077b146ab89cd440618e` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) |
 
 Repozytorium `rdb-artifact` jest punktem wejścia, więc nie przypina własnego
 SHA w tym samym commicie. Jego URL to
-`https://github.com/michalwidera/rdb-artifact.git`.
+`https://github.com/michalwidera/rdb-artifact.git` i jest **publiczny od
+2026-08-23**.
+
+**Cztery pierwsze repozytoria są publiczne i wymagane. Piąte nie jest ani jednym,
+ani drugim (decyzja D-6, 2026-08-23).** `paper-arXiv` niesie artykuł przed
+recenzją i pozostaje prywatne aż do publikacji; jest tu przypięte **wyłącznie
+jako proweniencja** — żeby pytanie „do której rewizji artykułu należą te liczby"
+miało odpowiedź. Żaden tryb odtworzenia go nie czyta: `bin/reproduce_analytic.sh`
+i `bin/reproduce_measure.sh` nie mają do niego ani jednego odwołania.
+
+`bin/checkout.sh` próbuje je sklonować i **idzie dalej**, jeżeli nie może;
+`bin/verify_pins.sh` wypisuje wtedy `SKIP` z przypiętym SHA. Wymaganie go
+blokowało cały pakiet: obcy z publicznym URL-em dostawał cztery repozytoria
+i kod 2 z bramki proweniencji, bez możliwości zregenerowania czegokolwiek.
 
 ## 2. Dwie osie przypięcia
 
@@ -224,6 +237,10 @@ dysku — bez niej wypisuje `SKIP` z przepisem, nigdy błąd.
    że łańcuch przeżywa restarty i brak hosta, a nie że konkretna kampania
    zmieści się w oknie termicznym.
 5. DOI nie jest jeszcze nadany — decyzja D-2: po decyzji o zgłoszeniu artykułu.
+6. `paper-arXiv` jest przypięte, ale **nieosiągalne dla obcego** i takie zostanie
+   do recenzji (D-6). Skutek praktyczny jest jeden: nie da się sprawdzić, czy
+   przypięta rewizja artykułu odpowiada tej, którą czytasz. Wszystko, co służy
+   odtworzeniu wyników, jest publiczne.
 6. Dwie kampanie niosą aparaturę związaną z miejscem i chwilą pomiaru, co
    `bin/reproduce_analytic.sh` obchodzi jawnie, nie po cichu:
    * K22v5 — `analyze.py` woła `freeze_check.sh`, bramkę **proweniencji
