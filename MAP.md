@@ -99,7 +99,7 @@ do tego pakietu nie wymagało zgadywania:
 | **H8** | koszt specyfikacji i modyfikacji niższy niż w rozwiązaniach proceduralnych | **podzielona**; wynik opisowy, nigdzie nie pada „H8 obalona” (K22v5) |
 | **H9** | dzielenie materializacji dopuszczone dopiero po dowodzie równoważności podplanów redukuje **bajty substratu na rekord publiczny** bez ceny czasowej | **wsparta w klasie `Q=8`**, 3/3 rodziny (K26v3, 2026-08-16) |
 | **H10a** | statyczny rachunek ogona jest dokładny | **wsparta**, dziewięć klas na dziewięć (K24e, 2026-08-18) |
-| **H10b** | rachunek jest lokalny dla węzłów `#` o obu składowych deklarowanych | **wsparta**, 2310/2310 (K24b, potwierdzenie K24d) |
+| **H10b** | rachunek jest **nielokalny** dla węzłów `#` o obu składowych deklarowanych: naturalna reguła lokalna niedomiarowuje, a niedomiar ma predeklarowaną postać zamkniętą `ceil((p+q-1)/p)` | **wsparta**, 2310/2310 rozjazdów o tej postaci (K24b, potwierdzenie K24d) |
 
 **Treść H9 nie jest twierdzeniem o rozmiarze planu** i wcześniejsze brzmienie
 tego wiersza („redukuje plan") było w tym miejscu mylące. Mierzoną wielkością
@@ -108,3 +108,13 @@ planu jako miara kosztu **odpadł** — pokazała to K6c (0/13 komórek, tokeny
 mniejsze o 8–28% bez poprawy kosztu slotu). Obie kampanie mówią więc razem,
 gdzie leży koszt: w utrzymywanym stanie, a nie w liczbie węzłów. Poprawione
 2026-08-25.
+
+**Treść H10b była zapisana odwrotnie do hipotezy** — wiersz orzekał lokalność
+rachunku, podczas gdy zmierzono jej **brak**. H10 nazywa się w planie „dokładna
+i **nielokalna** granica określoności planu wielotaktowego", a kryterium członu
+(b) brzmi: wsparta, gdy naturalna reguła lokalna **rozjeżdża się** z dokładną
+w co najmniej 5% korpusu i rozjazd ma postać `ceil((p+q-1)/p)` w 100%
+przypadków (`paper-arXiv/debs/research_plan.md`, kryterium H10b). Liczba
+2310/2310 to węzły, w których reguła lokalna **niedomiarowała**, a nie te,
+w których wystarczyła; artykuł niesie to samo w akapicie *„Why the interleave
+tail is not local"*. Werdykt bez zmian. Poprawione 2026-08-25.
