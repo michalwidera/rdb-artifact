@@ -21,7 +21,7 @@ są `paper-arXiv/debs/research_plan.md` §3.6 i §14 oraz `rdb-experiment/JOURNA
 | Katalog | Kryptonim | Pytanie, na które odpowiada | Status |
 |---|---|---|---|
 | `results_20260818_K24e` | K24e / H10 — *plan-derived startup boundaries* | Czy statyczny rachunek początku logicznego i ogona startowego jest dokładny w każdej klasie operatorów? | **obowiązujący** — dziewięć klas dokładnych na dziewięć, na obu ziarnach; źródło `tab:tail-exactness` |
-| `results_20260814_K26v3` | K26v3 / H9 — *equivalence-guarded materialization sharing* | Czy kompilator, dopuściwszy dzielenie dopiero po dowodzie równoważności podplanów, dochodzi sam do wspólnego materializowanego podplanu — i czy redukcja **utrzymywanego stanu** przychodzi bez ceny czasowej? | **obowiązujący w klasie `Q=8`**, 3/3 rodziny; miarą pierwotną są bajty substratu na rekord publiczny (50,0–58,3% wobec ablacji, 84,4–87,5% wobec naturalnego planu Flinka), cena czasowa poniżej progu 1,05; upoważnienie nie rozciąga się na ogólną przewagę wydajnościową; źródło `tab:h9-primary` |
+| `results_20260814_K26v3` | K26v3 / H9 — *equivalence-guarded materialization sharing* | Czy kompilator, dopuściwszy dzielenie dopiero po dowodzie równoważności podplanów, dochodzi sam do wspólnego materializowanego podplanu — i czy redukcja **logicznej objętości zapisów materializacji** przychodzi bez ceny czasowej? | **obowiązujący w klasie `Q=8`**, 3/3 rodziny; miarą pierwotną są logiczne bajty zapisów materializacji na rekord publiczny (50,0–58,3% wobec ablacji, 84,4–87,5% wobec naturalnego planu Flinka), cena czasowa poniżej progu 1,05; upoważnienie nie rozciąga się na maksymalny rezydentny rozmiar stanu ani ogólną przewagę wydajnościową; źródło `tab:h9-primary` |
 | `results_20260801_K22v5` | K22v5 / H8 | Jaki jest koszt specyfikacji i modyfikacji zapytania wobec rozwiązań proceduralnych? | **obowiązujący** — wynik opisowy `C1=C3=C4=0`; metryka ma podłogę jednostkową i tak jest opisana; źródło `tab:k22-constructs` |
 | `results_20260730_K6c` | K6c | Gdzie leży granica zasobowa planu wielozapytaniowego? | **obowiązujący** — granica zmierzona; model kosztu slotu nieudany (`MAE_test=258%`) i tak opisany; źródło `tab:k6-primary` |
 | `results_20260728_K18` | K18 | Czy powtórzenie nagrania daje bitowo identyczne artefakty i czy przeplot/rozplot jest tożsamością? | **obowiązujący** — 67 plików bez różnicy poza 8-bajtowym znacznikiem czasu; 13 sprawdzeń tożsamości |
@@ -97,17 +97,19 @@ do tego pakietu nie wymagało zgadywania:
 | Hipoteza | Treść | Werdykt |
 |---|---|---|
 | **H8** | koszt specyfikacji i modyfikacji niższy niż w rozwiązaniach proceduralnych | **podzielona**; wynik opisowy, nigdzie nie pada „H8 obalona” (K22v5) |
-| **H9** | dzielenie materializacji dopuszczone dopiero po dowodzie równoważności podplanów redukuje **bajty substratu na rekord publiczny** bez ceny czasowej | **wsparta w klasie `Q=8`**, 3/3 rodziny (K26v3, 2026-08-16) |
+| **H9** | dzielenie materializacji dopuszczone dopiero po dowodzie równoważności podplanów redukuje **logiczne bajty zapisów materializacji na rekord publiczny** bez ceny czasowej | **wsparta w klasie `Q=8`**, 3/3 rodziny (K26v3, 2026-08-16) |
 | **H10a** | statyczny rachunek ogona jest dokładny | **wsparta**, dziewięć klas na dziewięć (K24e, 2026-08-18) |
 | **H10b** | rachunek jest **nielokalny** dla węzłów `#` o obu składowych deklarowanych: naturalna reguła lokalna niedomiarowuje, a niedomiar ma predeklarowaną postać zamkniętą `ceil((p+q-1)/p)` | **wsparta**, 2310/2310 rozjazdów o tej postaci (K24b, potwierdzenie K24d) |
 
 **Treść H9 nie jest twierdzeniem o rozmiarze planu** i wcześniejsze brzmienie
 tego wiersza („redukuje plan") było w tym miejscu mylące. Mierzoną wielkością
-pierwotną są bajty utrzymywanego substratu na rekord publiczny; sam rozmiar
-planu jako miara kosztu **odpadł** — pokazała to K6c (0/13 komórek, tokeny
-mniejsze o 8–28% bez poprawy kosztu slotu). Obie kampanie mówią więc razem,
-gdzie leży koszt: w utrzymywanym stanie, a nie w liczbie węzłów. Poprawione
-2026-08-25.
+pierwotną jest skumulowana kanoniczna szerokość rekordów dopisywanych lub
+nadpisywanych w materializowanych substratach, podzielona przez liczbę rekordów
+publicznych. Jest to logiczna objętość zapisów, nie maksymalny rezydentny
+rozmiar stanu. Sam rozmiar planu jako miara kosztu **odpadł** — pokazała to
+K6c (0/13 komórek, tokeny mniejsze o 8–28% bez poprawy kosztu slotu). Obie
+kampanie mówią więc razem, że liczba węzłów nie wystarcza, a mierzyć należy
+ruch materializacji lub wykonywaną pracę. Poprawione 2026-08-26.
 
 **Treść H10b była zapisana odwrotnie do hipotezy** — wiersz orzekał lokalność
 rachunku, podczas gdy zmierzono jej **brak**. H10 nazywa się w planie „dokładna

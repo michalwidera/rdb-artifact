@@ -11,6 +11,9 @@ Jeśli trafiłeś tu z artykułu i nie wiesz, od czego zacząć, czytaj w tej ko
    i rewizji pomiarowych, po jednej na kampanię, plus sumy kontrolne archiwów.
 3. [`REPRODUCE.md`](REPRODUCE.md) — **jak je powtórzyć**: tryb analityczny
    (regeneracja tabel i figur z zachowanych danych) i tryb pomiarowy.
+4. [`REVIEW_MIRROR.md`](REVIEW_MIRROR.md) — **jak przygotować wersję
+   double-anonymous**: pięć źródeł z pełnymi rewizjami, wspólna konfiguracja
+   redakcji i próba odbiorcza bez poświadczeń.
 
 ## Czym jest RetractorDB
 
@@ -50,7 +53,9 @@ Repozytorium powstało w ramach kroku **K9b** planu badawczego
 * autonomia przebiegu pomiarowego (W-1) — **sprawdzona empirycznie** na maszynie
   pomiarowej z odciętą maszyną sterującą; dowody w [`tables/w1/`](tables/w1/);
 * archiwa surowe — **18 z 18 w repozytorium eksperymentu**, jedno w częściach;
-* otwarte: DOI (decyzja D-2, po decyzji o zgłoszeniu artykułu).
+* otwarte: DOI (decyzja D-2) oraz uwierzytelnione utworzenie luster
+  recenzenckich według [`REVIEW_MIRROR.md`](REVIEW_MIRROR.md), oba przed
+  zgłoszeniem artykułu.
 
 Repozytorium artykułu `paper-arXiv` jest przypięte, ale **prywatne do czasu
 recenzji** i **nie jest potrzebne do odtworzenia** (decyzja D-6) — patrz
