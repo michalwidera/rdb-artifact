@@ -14,6 +14,8 @@ Jeśli trafiłeś tu z artykułu i nie wiesz, od czego zacząć, czytaj w tej ko
 4. [`REVIEW_MIRROR.md`](REVIEW_MIRROR.md) — **jak przygotować wersję
    double-anonymous**: pięć źródeł z pełnymi rewizjami, wspólna konfiguracja
    redakcji i próba odbiorcza bez poświadczeń.
+5. [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md) — **zapis próby odbiorczej**: co
+   przeszło, co pominięto i gdzie zostało sprawdzone zamiast tego.
 
 ## Czym jest RetractorDB
 

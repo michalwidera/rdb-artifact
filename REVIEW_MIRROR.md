@@ -115,7 +115,8 @@ session:
 
 6. Record the mirror IDs, pinned revisions, UTC time, command transcript, and
    generated checksums in the submission handoff, together with the six skipped
-   checks from step 4 and where they were verified instead.
+   checks from step 4 and where they were verified instead. The record lives in
+   [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md); the 2026-08-26 run is already in it.
 
 Only after all six steps pass may the paper say that the artifact is available
 to reviewers through an anonymized mirror. The claim that step 4 supports is
