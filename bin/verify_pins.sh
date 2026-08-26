@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Verify the exact five-repository checkout, campaign tags, raw archives and,
 # when RDB_XRETRACTOR is set, the source identity embedded in the binary.
+# RDB_MIRROR=1 runs the subset that holds on an anonymized snapshot without
+# .git -- pin declarations and archive checksums -- and reports the rest as
+# SKIP. See REVIEW_MIRROR.md, step 4 of the acceptance trial.
 
 set -uo pipefail
 
@@ -26,9 +29,25 @@ PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
 PAPER_TAG="artifact/K9b"
 SRC_TREE_K24E="5ddad0fc7d56fb9b468d31905a6689e9896ddb39"
 
+# An anonymized reviewer mirror is served as a snapshot without .git, so every
+# check that asks git what revision this is becomes impossible there. Before
+# 2026-08-26 the script simply exited 2 on the first such directory, which made
+# the unauthenticated acceptance trial in REVIEW_MIRROR.md unrunnable: it asked
+# for exactly this script over exactly those extracted archives. Mirror mode is
+# opt-in and never inferred from a missing .git -- a genuinely broken workspace
+# must keep failing loudly instead of quietly downgrading to SKIP.
+MIRROR="${RDB_MIRROR:-0}"
+if [[ "$MIRROR" == 1 && "$SELECTION" != snapshot ]]; then
+  echo "ERROR mirror mode verifies the snapshot only; a campaign selection needs .git"
+  exit 2
+fi
+
 ERRORS=0
+SKIPPED=0
 bad() { echo "ERROR $*"; ERRORS=$((ERRORS + 1)); }
 ok() { echo "OK    $*"; }
+# Skipped is not passed. Every skip is counted and restated before RESULT.
+skipped() { echo "SKIP  $*"; SKIPPED=$((SKIPPED + 1)); }
 
 campaign_pair() {
   case "$1" in
@@ -51,14 +70,19 @@ campaign_pair() {
 }
 
 for repo in "$ENGINE" "$EXPERIMENT" "$DOCS_PL" "$DOCS_EN"; do
-  [[ -d "$repo/.git" ]] || { echo "ERROR missing repository: $repo"; exit 2; }
+  if [[ "$MIRROR" == 1 ]]; then
+    [[ -d "$repo" ]] || { echo "ERROR missing directory: $repo"; exit 2; }
+  else
+    [[ -d "$repo/.git" ]] \
+      || { echo "ERROR missing repository: $repo (anonymized snapshot without .git? set RDB_MIRROR=1)"; exit 2; }
+  fi
 done
 # The paper repository is optional (decision D-6). Neither reproduction mode
 # reads it; it is pinned for provenance and private until submission. Absent, it
 # is reported with its pinned SHA and skipped -- never a silent pass, never a
 # blocked reproduction.
 PAPER_PRESENT=no
-[[ -d "$PAPER/.git" ]] && PAPER_PRESENT=yes
+[[ "$MIRROR" == 1 ]] || { [[ -d "$PAPER/.git" ]] && PAPER_PRESENT=yes; }
 
 if [[ "$SELECTION" == snapshot ]]; then
   EXPECTED_ENGINE="$ENGINE_SNAPSHOT"
@@ -191,6 +215,20 @@ else
 fi
 echo
 
+if [[ "$MIRROR" == 1 ]]; then
+echo "=== 1-3. Revision identity, campaign tags, reachability ==="
+# What these three sections prove is that a directory IS a given commit. A
+# redacted snapshot cannot answer that even in principle: the redaction rewrites
+# file contents, so no tree hash of it can equal the pinned one. The pins are
+# restated here so the transcript of a mirror run still carries them, and the
+# note before RESULT says where they can be verified instead.
+skipped "retractordb HEAD, campaign tags and reachability; pinned at $EXPECTED_ENGINE"
+skipped "rdb-experiment HEAD, campaign tags and reachability; pinned at $EXPECTED_EXPERIMENT"
+skipped "dokumentacja-rdb HEAD; pinned at $DOCS_PL_SNAPSHOT"
+skipped "documentation-rdb HEAD; pinned at $DOCS_EN_SNAPSHOT"
+skipped "paper-arXiv HEAD and tag $PAPER_TAG; pinned at $PAPER_SNAPSHOT (not mirrored)"
+skipped "campaign/H10-K24e src tree; pinned at $SRC_TREE_K24E"
+else
 echo "=== 1. Exact workspace checkout ($SELECTION) ==="
 check_head retractordb "$ENGINE" "$EXPECTED_ENGINE"
 check_head rdb-experiment "$EXPERIMENT" "$EXPECTED_EXPERIMENT"
@@ -261,6 +299,7 @@ done <<<"$PINS"
 actual="$(git -C "$ENGINE" rev-parse -q --verify 'campaign/H10-K24e^{}:src' 2>/dev/null)"
 [[ "$actual" == "$SRC_TREE_K24E" ]] && ok "K24e src tree = $actual" \
   || bad "K24e src tree = ${actual:-missing}, expected $SRC_TREE_K24E"
+fi
 
 echo
 echo "=== 4. Raw archive inventory ==="
@@ -272,7 +311,13 @@ echo "=== 4. Raw archive inventory ==="
 if [[ "$SELECTION" != snapshot ]]; then
   echo "SKIP  snapshot-level invariant; run 'verify_pins.sh snapshot' to check it"
 else
+# A mirror has no index of tracked files, but it also has no untracked ones,
+# so walking the tree counts the same sixteen entries.
+if [[ "$MIRROR" == 1 ]]; then
+index_count="$(find "$EXPERIMENT" -type f -iname '*raw.index.tsv' | wc -l)"
+else
 index_count="$(git -C "$EXPERIMENT" ls-files | grep -Ei 'raw\.index\.tsv$' | wc -l)"
+fi
 [[ "$index_count" -eq 16 ]] && ok "index files = 16" \
   || bad "index files = $index_count, expected 16"
 
@@ -366,9 +411,19 @@ if [[ -n "${RDB_XRETRACTOR:-}" ]]; then
 fi
 
 echo
-if [[ "$ERRORS" -eq 0 ]]; then
-  echo "RESULT: all declared pins and artifacts match"
-else
+if [[ "$MIRROR" == 1 ]]; then
+  echo "NOTE: mirror mode -- $SKIPPED check(s) not run. Revision identity is not"
+  echo "      established by this run. It is established by cloning each source"
+  echo "      from its origin at the SHA printed above and running this script"
+  echo "      without RDB_MIRROR. What a mirror run does establish: the three pin"
+  echo "      declarations agree, and the raw archives are byte-identical to the"
+  echo "      manifest."
+fi
+if [[ "$ERRORS" -ne 0 ]]; then
   echo "RESULT: $ERRORS mismatch(es)"
+elif [[ "$MIRROR" == 1 ]]; then
+  echo "RESULT: declarations and archives match; revision identity NOT verified"
+else
+  echo "RESULT: all declared pins and artifacts match"
 fi
 exit "$ERRORS"
