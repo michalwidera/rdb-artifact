@@ -10,18 +10,21 @@ Domyślne odtworzenie i wszystkie **nowe** uruchomienia używają przypiętego
 snapshotu aktualnego HEAD. Jest to odrębna oś od historycznego provenance
 kampanii z §2.2: dawnych pomiarów nie przepisuje się na nowszy kod.
 
-| Repozytorium | URL | SHA domyślnego snapshotu | Rola |
-|---|---|---|---|
-| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | silnik i poprawione narzędzia |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b713e1df47a5f94357f708706b85f5603f261534` | kampanie i dane |
-| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | dokumentacja PL (kanoniczna) |
-| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | dokumentacja EN (pochodna) |
-| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) |
+| Repozytorium | URL | SHA domyślnego snapshotu | Rola | Lustro recenzenckie |
+|---|---|---|---|---|
+| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | silnik i poprawione narzędzia | `retractordb-engine` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b713e1df47a5f94357f708706b85f5603f261534` | kampanie i dane | `retractordb-experiment` |
+| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | dokumentacja PL (kanoniczna) | `dokumentacja-rdb` |
+| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | dokumentacja EN (pochodna) | `documentation-rdb` |
+| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) | — nie lustrzone |
 
 Repozytorium `rdb-artifact` jest punktem wejścia, więc nie przypina własnego
 SHA w tym samym commicie. Jego URL to
 `https://github.com/michalwidera/rdb-artifact.git` i jest **publiczny od
-2026-08-23**.
+2026-08-23**. Jego lustro recenzenckie dostanie identyfikator
+`retractordb-artifact` i powstanie po zamknięciu przypięcia; cztery pozostałe
+istnieją od 2026-08-26. Identyfikatory luster nie są losowane — wybiera je
+autor, więc adresy mogą trafić do bibliografii przed utworzeniem luster.
 
 **Przypięcie `paper-arXiv` wskazuje tag adnotowany `artifact/K9b`, nie czubek
 gałęzi (decyzja 2026-08-23).** Cztery pozostałe repozytoria przypinają się przez

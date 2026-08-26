@@ -14,13 +14,18 @@ Create five read-only mirrors, each pinned to the revision below. The artifact
 entry point is pinned only after its pending documentation correction has been
 reviewed and committed; record that full SHA here before creating its mirror.
 
-| Role | Source repository | Revision to mirror |
-|---|---|---|
-| Artifact entry point | `rdb-artifact` | `TBA_AFTER_REVIEW` |
-| Engine snapshot | `retractordb` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` |
-| Experiments and data | `rdb-experiment` | `b713e1df47a5f94357f708706b85f5603f261534` |
-| Canonical documentation | `dokumentacja-rdb` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` |
-| English documentation | `documentation-rdb` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` |
+| Role | Source repository | Revision to mirror | Mirror ID |
+|---|---|---|---|
+| Artifact entry point | `rdb-artifact` | `TBA_AFTER_REVIEW` | `retractordb-artifact` |
+| Engine snapshot | `retractordb` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | `retractordb-engine` |
+| Experiments and data | `rdb-experiment` | `b713e1df47a5f94357f708706b85f5603f261534` | `retractordb-experiment` |
+| Canonical documentation | `dokumentacja-rdb` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | `dokumentacja-rdb` |
+| English documentation | `documentation-rdb` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | `documentation-rdb` |
+
+The four source mirrors were created on 2026-08-26 and expire on 2027-08-25.
+The mirror ID is chosen, not generated: it is the repository name, unless that
+name does not say what the repository is, in which case it takes a
+`retractordb-` prefix.
 
 The historical H9 measurement revisions remain the pair already recorded in
 `MANIFEST.md`: engine
@@ -37,8 +42,15 @@ escape the dots in addresses and identifiers. Leave all four display options
 off, leave automatic branch updates off, pin a commit rather than a moving
 branch and set expiry beyond the review period.
 
+Turning off image display removes image files from the downloadable archive as
+well as from the rendered view -- measured on the English documentation mirror:
+153 tracked files against 85 in the archive, the difference being exactly its 68
+images. Binary archives are untouched: a `raw.tar.gz` pulled from the experiment
+mirror matches its manifest SHA-256 byte for byte, so section 4 of
+`verify_pins.sh` has something to check.
+
 The form has no file-exclusion field, so a mirror carries the whole pinned tree
-and differs from it only by redaction. Anything that must not be published has
+and differs from it only by redaction and by that image removal. Anything that must not be published has
 to be handled by a term, or by a commit -- and a commit changes the pin.
 Full operational detail, including the term list this artifact was redacted
 with, is in `paper-arXiv/debs/procedura_anonimizacji.md`.
