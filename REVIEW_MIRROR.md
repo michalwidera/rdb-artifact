@@ -10,13 +10,13 @@ acceptance trial below.
 
 ## Sources and revisions
 
-Create five read-only mirrors, each pinned to the revision below. The artifact
-entry point is pinned only after its pending documentation correction has been
-reviewed and committed; record that full SHA here before creating its mirror.
+Create five read-only mirrors, each pinned to the revision below. The
+documentation correction that held the entry point landed on 2026-08-26, so
+nothing blocks its mirror any more.
 
 | Role | Source repository | Revision to mirror | Mirror ID |
 |---|---|---|---|
-| Artifact entry point | `rdb-artifact` | `TBA_AFTER_REVIEW` | `retractordb-artifact` |
+| Artifact entry point | `rdb-artifact` | HEAD at mirror creation -- see below | `retractordb-artifact` |
 | Engine snapshot | `retractordb` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | `retractordb-engine` |
 | Experiments and data | `rdb-experiment` | `b713e1df47a5f94357f708706b85f5603f261534` | `retractordb-experiment` |
 | Canonical documentation | `dokumentacja-rdb` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | `dokumentacja-rdb` |
@@ -26,6 +26,22 @@ The four source mirrors were created on 2026-08-26 and expire on 2027-08-25.
 The mirror ID is chosen, not generated: it is the repository name, unless that
 name does not say what the repository is, in which case it takes a
 `retractordb-` prefix.
+
+The entry point cannot name its own revision in the commit that names it, so it
+is pinned to whatever this repository's HEAD is when its mirror is created, and
+that SHA is written into `MIRROR_TRIAL.md` afterwards. The record is one commit
+behind the mirror by construction. Nothing is lost: `verify_pins.sh` checks the
+four source repositories and never asks which revision `rdb-artifact` itself is,
+because that is where the script lives. The entry point's pin is a record, not a
+check.
+
+**Automatic updates stay off on every mirror, and not only for pinning.** A
+mirror that follows a branch re-anonymizes each new commit against the term list
+as it stood yesterday, and publishes the result before anyone has looked at it.
+The redaction is only as good as that list: the 2026-08-26 run found a preprint
+title prefix and a shell prompt split across SVG elements, both only because
+someone read the affected files. A following mirror would ship the next such
+case straight to reviewers.
 
 The historical H9 measurement revisions remain the pair already recorded in
 `MANIFEST.md`: engine
