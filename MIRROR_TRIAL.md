@@ -4,7 +4,8 @@ This is the step 6 record that `REVIEW_MIRROR.md` asks for: mirror IDs, pinned
 revisions, UTC time, what was run, what it established, and which checks were
 skipped and where they are verified instead.
 
-Run on **2026-08-26**, finishing `2026-08-26T13:03:54Z`. Performed from a shell
+Run on **2026-08-26**; the four source mirrors finished at
+`2026-08-26T13:03:54Z` and the entry point was added later the same day. Performed from a shell
 with no GitHub session and no Anonymous GitHub session, using `curl` against the
 public endpoints only.
 
@@ -16,20 +17,20 @@ public endpoints only.
 | Experiments and data | `rdb-experiment` | `b713e1df47a5f94357f708706b85f5603f261534` | `retractordb-experiment` |
 | Canonical documentation | `dokumentacja-rdb` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | `dokumentacja-rdb` |
 | Derived documentation | `documentation-rdb` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | `documentation-rdb` |
-| Artifact entry point | `rdb-artifact` | `TBA_AFTER_REVIEW` | `retractordb-artifact` -- **not built** |
+| Artifact entry point | `rdb-artifact` | `609d64de7d3e9e640a4243dd752802913cfd869a` | `retractordb-artifact` |
 
-Addresses are `https://anonymous.4open.science/r/<mirror ID>`. All four existing
-mirrors were created 2026-08-26 and expire 2027-08-25. Automatic branch updates
+Addresses are `https://anonymous.4open.science/r/<mirror ID>`. All five mirrors
+were created 2026-08-26 and expire 2027-08-25. Automatic branch updates
 are off, so each mirror stays on the revision above.
 
 ## What the trial established
 
 | Step | Verdict |
 |---|---|
-| 1. Open every URL as printed in the paper | **not applicable yet** -- the addresses entered `references.bib` on 2026-08-26, and the entry-point mirror does not exist |
-| 2. Download all archives, no `401` | **pass** for four of five: HTTP 200 unauthenticated from `/api/repo/<id>/zip` |
-| 3. Search paths and text for every configured term | **pass**: zero hits across all four extracted trees |
-| 4. `verify_pins.sh` in mirror mode | **pass**, exit status 0 |
+| 1. Open every URL as printed in the paper | **pass**: all four addresses printed in `references.bib` answer HTTP 200 `text/html` unauthenticated |
+| 2. Download all archives, no `401` | **pass** for all five: HTTP 200 unauthenticated from `/api/repo/<id>/zip` |
+| 3. Search paths and text for every configured term | **pass**: zero hits across all five extracted trees |
+| 4. `verify_pins.sh` in mirror mode | **pass**, exit status 0, running the checker taken from the entry-point mirror |
 | 5. Analytic reproduction | **out of scope for a mirror** -- runs on a clone, see `REVIEW_MIRROR.md` |
 | 6. Record the run | this file |
 
@@ -108,9 +109,17 @@ each pin by a pattern that included the URL column, and link redaction had
 replaced that whole column with `XXXX` -- the address, not merely the account
 name in it. All five pins therefore read as undeclared. The pattern now anchors
 on the repository name alone, matching what the campaign lookup beside it always
-did, and the fixed script returns exit 0 against the redacted manifest. The
-artifact mirror has to be rebuilt at the commit carrying the fix; the four source
-mirrors are unaffected, because the defect was in the checker, not in them.
+did. The entry-point mirror was rebuilt at the commit carrying the fix and the
+trial re-run from it: `bin/verify_pins.sh` in the mirror is byte-identical to its
+source, and running it against the four mirrored sources returns exit 0 with no
+error line. The four source mirrors were never affected -- the defect was in the
+checker, not in them.
+
+**A naive `curl` on a printed address reports `401` and means nothing.** The
+`/r/<id>` route content-negotiates: asked for `*/*` it answers as an API and
+refuses, asked for `text/html` with navigation headers it serves the page.
+Reviewers use browsers and are unaffected. Check step 1 with browser headers or
+an actual browser, never with a bare `curl`.
 
 `bin/checkout.sh` in the mirror differs from its source, as it must: it carries
 clone URLs and they are redacted. Reviewers work from the mirrors, not from
@@ -124,6 +133,7 @@ clones made by that script.
 | `dokumentacja-rdb.zip` | 359638 | `ae3862e2b5b15812b5e0d293a39d47c47b76f4341404f2c90f7822a918ba413d` |
 | `retractordb-engine.zip` | 3850388 | `7d5abd7fe270bc17b918977699ddc4a5da609ab3262bb91b6c4575811c227a38` |
 | `retractordb-experiment.zip` | 505021168 | `5fa2dd35e680a414c3f9f7bf9d2a8fb41c4175006a635f20f77509e41bbcfb85` |
+| `retractordb-artifact.zip` | 86128 | `486793e1e2e19c3f20cf423cca168b7734406927d8eb30ed773f1799141519ec` |
 
 These identify this download, not the mirror. The service builds each archive on
 request and stamps fresh timestamps into it, so a later download of an unchanged
@@ -132,11 +142,8 @@ actually checks, is the checksum of each file inside.
 
 ## Open items
 
-* `retractordb-artifact` does not exist. It is the entry point the paper cites,
-  so until it is built that citation resolves to nothing. It waits on this
-  repository's own pin closing.
-* Steps 1 and 5 remain, and step 2 has to be repeated once the fifth mirror
-  exists.
-* The paper may not claim availability until all six steps pass. As of this
-  record it does not: `paper-debs2027.tex` states what the trial established and
-  nothing beyond it.
+* Step 5, the analytic reproduction, is verified on a clone rather than on a
+  mirror and has not been run for this record.
+* The Zenodo DOI (item D-2) is unrelated to the mirrors and still open.
+* `paper-debs2027.tex` states what the trial established and nothing beyond it.
+  Five of six steps pass; the sixth is this file.
