@@ -79,8 +79,13 @@ Keep the five repository names off the term list. Section 0 of
 `bin/verify_pins.sh` finds each pin by grepping `MANIFEST.md` for a table row
 that begins with the repository name and `checkout.sh` for a variable named
 after it; redacting those names leaves the pins undeclared and step 4 below
-fails on a mirror that is otherwise correct. The account name in the URL column
-is redacted without affecting either grep.
+fails on a mirror that is otherwise correct.
+
+The URL column is a different matter and was misjudged once. Link redaction
+replaces the whole address with `XXXX`, not just the account name inside it, so
+a section 0 pattern anchored on `\`https` found nothing when the checker ran
+from the artifact mirror -- which is how a reviewer runs it. Fixed 2026-08-26 by
+anchoring on the repository name alone; verified against the redacted manifest.
 
 ## Paper integration
 

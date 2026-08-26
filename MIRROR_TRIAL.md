@@ -100,6 +100,22 @@ preprint title but not its prefix, which resolves to the preprint just as well.
 The term was extended to the whole title and the file now reads
 `title: "RetractorDB: XXXX-16"`.
 
+**Running the checker from the mirror found a second defect.** The artifact
+mirror was built on 2026-08-26 at `e3a7819af89143e046062913e37202f6557388de`;
+its `bin/verify_pins.sh` is byte-identical to the source, but running it against
+the four mirrored sources reported `RESULT: 5 mismatch(es)`. Section 0 located
+each pin by a pattern that included the URL column, and link redaction had
+replaced that whole column with `XXXX` -- the address, not merely the account
+name in it. All five pins therefore read as undeclared. The pattern now anchors
+on the repository name alone, matching what the campaign lookup beside it always
+did, and the fixed script returns exit 0 against the redacted manifest. The
+artifact mirror has to be rebuilt at the commit carrying the fix; the four source
+mirrors are unaffected, because the defect was in the checker, not in them.
+
+`bin/checkout.sh` in the mirror differs from its source, as it must: it carries
+clone URLs and they are redacted. Reviewers work from the mirrors, not from
+clones made by that script.
+
 ## Downloaded archives
 
 | Archive | Bytes | SHA-256 |

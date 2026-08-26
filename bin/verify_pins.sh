@@ -122,8 +122,14 @@ MANIFEST_FILE="$HERE/../MANIFEST.md"
 CHECKOUT_FILE="$HERE/checkout.sh"
 
 # Third column of a section 1 table row, which is the only 40-hex field there.
+# The pattern deliberately does NOT look at the URL column. On an anonymized
+# mirror that column reads `XXXX`: link redaction replaces the whole address,
+# not just the account name in it. Requiring `https there made section 0 report
+# all five pins as undeclared when the checker ran from the mirror -- which is
+# exactly how a reviewer runs it. Anchoring on the repository name alone is also
+# what manifest_campaign() below already did.
 manifest_snapshot() {
-  grep -E "^\| \`$1\` \| \`https" "$MANIFEST_FILE" 2>/dev/null \
+  grep -E "^\| \`$1\` \|" "$MANIFEST_FILE" 2>/dev/null \
     | head -n 1 | grep -oE '[0-9a-f]{40}' | head -n 1
 }
 # Section 2.2 row: engine SHA first, experiment SHA second.
