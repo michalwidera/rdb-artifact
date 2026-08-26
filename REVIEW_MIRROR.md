@@ -2,8 +2,11 @@
 
 This file is the pre-submission recipe for the double-anonymous artifact.
 Creating the public mirrors is deliberately a separate, authenticated action:
-Anonymous GitHub requires a GitHub sign-in and returns randomized mirror IDs.
-Do not put a guessed ID in the paper.
+Anonymous GitHub requires a GitHub sign-in. The mirror ID is chosen by the
+author rather than randomized -- what is typed into the form is what appears in
+the URL -- so the paper can carry the addresses before the mirrors exist. What
+must not precede the mirrors is the availability claim, which waits for the
+acceptance trial below.
 
 ## Sources and revisions
 
@@ -28,9 +31,17 @@ The historical H9 measurement revisions remain the pair already recorded in
 
 Use the same replacement rules for all five mirrors. At minimum, redact the
 author's name in accented and ASCII forms, GitHub account, email addresses,
-ORCID, personal domains, affiliation, and local absolute paths. Disable links,
-images, PDFs, notebooks, usernames, dates, and automatic branch updates. Pin a
-commit rather than a moving branch and set expiry beyond the review period.
+ORCID, personal domains, affiliation, local absolute paths, and any preprint
+title that resolves to the author. The term field takes regular expressions, so
+escape the dots in addresses and identifiers. Leave all four display options
+off, leave automatic branch updates off, pin a commit rather than a moving
+branch and set expiry beyond the review period.
+
+The form has no file-exclusion field, so a mirror carries the whole pinned tree
+and differs from it only by redaction. Anything that must not be published has
+to be handled by a term, or by a commit -- and a commit changes the pin.
+Full operational detail, including the term list this artifact was redacted
+with, is in `paper-arXiv/debs/procedura_anonimizacji.md`.
 
 Inspect the rendered mirror and its downloadable archive for every configured
 term. Automatic owner redaction is not enough: manifests and shell scripts
