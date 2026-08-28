@@ -45,7 +45,7 @@ Nie potrzebujesz konta, poświadczeń ani niczego poza tym adresem.
 ## Stan
 
 Repozytorium powstało w ramach kroku **K9b** planu badawczego
-(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Stan na 2026-08-23:
+(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Stan na 2026-08-28:
 
 * manifest, mapa kampanii, kontrola przypięć i kontrola binarium — **gotowe**;
 * tryb analityczny (`bin/reproduce_analytic.sh`) — **gotowy**: osiem grup na
@@ -55,9 +55,10 @@ Repozytorium powstało w ramach kroku **K9b** planu badawczego
 * autonomia przebiegu pomiarowego (W-1) — **sprawdzona empirycznie** na maszynie
   pomiarowej z odciętą maszyną sterującą; dowody w [`tables/w1/`](tables/w1/);
 * archiwa surowe — **18 z 18 w repozytorium eksperymentu**, jedno w częściach;
-* otwarte: DOI (decyzja D-2) oraz uwierzytelnione utworzenie luster
-  recenzenckich według [`REVIEW_MIRROR.md`](REVIEW_MIRROR.md), oba przed
-  zgłoszeniem artykułu.
+* pięć zamrożonych luster recenzenckich — **gotowe**: utworzone 2026-08-26,
+  sprawdzone bez poświadczeń i ważne do 2027-08-25; pełny werdykt, pominięcia
+  i sumy kontrolne zapisuje [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
+* otwarte: DOI (decyzja D-2), przed zgłoszeniem artykułu.
 
 Repozytorium artykułu `paper-arXiv` jest przypięte, ale **prywatne do czasu
 recenzji** i **nie jest potrzebne do odtworzenia** (decyzja D-6) — patrz

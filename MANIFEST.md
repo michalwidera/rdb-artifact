@@ -1,6 +1,6 @@
 # MANIFEST — przypięcia pakietu artefaktów
 
-Stan: **2026-08-20**. Budowany w ramach K9b
+Stan: **2026-08-28**. Budowany w ramach K9b
 (`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Każde przypięcie repozytorium jest
 pełnym, czterdziestoznakowym SHA. Nazwa gałęzi nie jest identyfikatorem wersji.
 
@@ -21,10 +21,13 @@ kampanii z §2.2: dawnych pomiarów nie przepisuje się na nowszy kod.
 Repozytorium `rdb-artifact` jest punktem wejścia, więc nie przypina własnego
 SHA w tym samym commicie. Jego URL to
 `https://github.com/michalwidera/rdb-artifact.git` i jest **publiczny od
-2026-08-23**. Jego lustro recenzenckie dostanie identyfikator
-`retractordb-artifact` i powstanie po zamknięciu przypięcia; cztery pozostałe
-istnieją od 2026-08-26. Identyfikatory luster nie są losowane — wybiera je
-autor, więc adresy mogą trafić do bibliografii przed utworzeniem luster.
+2026-08-23**. Jego lustro recenzenckie `retractordb-artifact` istnieje od
+2026-08-26 i jest zamrożone na rewizji
+`609d64de7d3e9e640a4243dd752802913cfd869a`; cztery pozostałe lustra z tabeli
+powstały tego samego dnia. Wszystkie pięć jest ważnych do 2027-08-25, a
+automatyczne aktualizacje są wyłączone. Identyfikatory luster nie są losowane —
+wybiera je autor. Adresy, przypięcia i wynik próby bez poświadczeń zapisuje
+[`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
 
 **Przypięcie `paper-arXiv` wskazuje tag adnotowany `artifact/K9b`, nie czubek
 gałęzi (decyzja 2026-08-23).** Cztery pozostałe repozytoria przypinają się przez
