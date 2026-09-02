@@ -22,10 +22,9 @@ The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
 in the same commit. Its URL is
 `https://github.com/michalwidera/rdb-artifact.git` and it has been **public
 since 2026-08-23**. Its reviewer mirror `retractordb-artifact` has existed since
-2026-08-26 and is frozen at revision
-`fc7836a25c2f6f239d660ae507be27301e7d435a`; the other four mirrors in the table
-were created the same day. All five are valid until 2027-08-25, and automatic
-updates are disabled. Mirror identifiers are not randomized — the author chooses
+2026-08-26 and was re-pointed on 2026-09-02 to revision
+`3214adb52b708077c0ad99b812792584edec5233`; the other four mirrors in the table
+were re-pointed the same day to the pins above. Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
 

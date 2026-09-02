@@ -9,15 +9,11 @@ Run on **2026-08-26**; the four source mirrors finished at
 with no GitHub session and no Anonymous GitHub session, using `curl` against the
 public endpoints only.
 
-> **This record is superseded and is kept as a record, not as a status.** On
-> 2026-09-02 every pin in `MANIFEST.md` §1 moved: the engine to `8aa4ee2f`, the
-> experiment to `4ca09c56`, the two documentation repositories to `07c89acd` and
-> `5b57ebd8`, and the entry point to the commit carrying those pins. The
-> revisions in the table below are the ones this trial actually ran against, so
-> they are left as they were — what a trial checked is not editable after the
-> fact. **The live mirrors therefore have no acceptance trial covering their
-> current revisions**, and the availability claim of `REVIEW_MIRROR.md` is not
-> supported until step 6 is repeated and recorded here.
+> **This record covers the 2026-08-26 revisions only.** On 2026-09-02 every pin
+> in `MANIFEST.md` §1 moved. The revisions in the table below are the ones this
+> trial actually ran against, so they are left as they were — what a trial
+> checked is not editable after the fact. The trial for the current revisions is
+> recorded separately, in *Second trial* at the end of this file.
 
 ## Mirrors
 
@@ -191,3 +187,53 @@ actually checks, is the checksum of each file inside.
   figure can be regenerated from pinned code.
 * `paper-debs2027.tex` states what the trial established and nothing beyond it.
   All six steps are accounted for: five pass and the sixth is this file.
+
+
+## Second trial -- 2026-09-02 revisions
+
+The pins moved on 2026-09-02 and all five mirrors were re-pointed, so step 6 was
+repeated. This section records that repeat; the sections above stay as the
+record of the first trial and are not edited.
+
+| Role | Source | Pinned revision | Mirror ID |
+|---|---|---|---|
+| Engine snapshot | `retractordb` | `8aa4ee2f18a003fcf55db8a4f810c720094e1b1a` | `retractordb-engine` |
+| Experiments and data | `rdb-experiment` | `4ca09c56713757b480eb6fda4d6718506a9153fd` | `retractordb-experiment` |
+| Canonical documentation | `dokumentacja-rdb` | `07c89acd493500be248836fbadbabbdf4cc0eadd` | `dokumentacja-rdb` |
+| Derived documentation | `documentation-rdb` | `5b57ebd82093ecfd71954aa3896faab791f42886` | `documentation-rdb` |
+| Artifact entry point | `rdb-artifact` | `3214adb52b708077c0ad99b812792584edec5233` | `retractordb-artifact` |
+
+| Step | Verdict |
+|---|---|
+| 1. Open every URL as printed in the paper | **pass**: all five addresses answer HTTP 200 `text/html` unauthenticated |
+| 2. Download all archives, no `401` | **pass** for all five: HTTP 200 unauthenticated from `/api/repo/<id>/zip`; 88K, 3.9M, 482M, 384K, 324K |
+| 3. Search paths and text for every configured term | **pass**: zero hits across all five extracted trees, in contents and in path names |
+| 4. `verify_pins.sh` in mirror mode | **pass**, exit status 0: 38 checks OK, 7 skipped by design, zero `ERROR`; section 0 reported all fourteen pin declarations agreeing and section 4 reported twenty-four archive checks |
+| 5. Analytic reproduction | **pass** on a clone: **eight groups out of eight**, `ecg` included |
+| 6. Record the run | this section |
+
+The checker used in step 4 was the one **taken from the entry-point mirror**, and
+it is byte-identical to the source copy. Step 5 improves on the first trial,
+where `ecg` was skipped for want of a pinned engine binary: this time the engine
+was built from the pinned revision `8aa4ee2f`, `bin/verify_binary.sh` accepted
+it, and the ECG frame came out with 400 samples and QRS complexes at `x=128` and
+`x=371`.
+
+Two things found by this trial rather than assumed, both already fixed in the
+revisions above:
+
+* `bin/verify_binary.sh` rejected a binary built from this package's own pinned
+  checkout. `bin/checkout.sh` checks out by SHA, so the engine embeds an **empty**
+  branch name -- `Branch: :8aa4ee2,` -- and the pattern required at least one
+  character there. A reviewer following `REPRODUCE.md` §3 would have been unable
+  to reproduce `fig:qrs`. The same class as K9b-F5: a gate never run from
+  someone else's directory.
+* The `orcid:` key in `CITATION.cff` matches a naive search for identifying
+  terms while its value is redacted to `XXXX`. A term search that reports the
+  key as a hit is reporting the schema, not a leak; the redaction of that file
+  is complete.
+
+The skipped checks are the same six as in the first trial, for the same reason
+-- they ask git which commit a directory is, and a mirror is a snapshot without
+history -- plus the assembled W8 archive, which lives outside git by design and
+is rebuilt with `lib/raw_parts.sh join`.
