@@ -1,73 +1,78 @@
-# rdb-artifact — pakiet artefaktów RetractorDB
+# rdb-artifact — the RetractorDB artifact package
 
-To repozytorium jest **wejściem do wyników**. Nie zawiera ani silnika, ani danych
-badawczych — zawiera przypięcia do nich, mapę kampanii i instrukcję odtworzenia.
-Jeśli trafiłeś tu z artykułu i nie wiesz, od czego zacząć, czytaj w tej kolejności:
+This repository is the **entry point to the results**. It contains neither the
+engine nor the research data — it contains the pins to them, a map of the
+campaigns and the reproduction guide. If you arrived here from the paper and do
+not know where to start, read in this order:
 
-1. [`MAP.md`](MAP.md) — **czym są te wyniki**: która kampania odpowiada na jakie
-   pytanie, który werdykt obowiązuje, a który został zastąpiony. Bez tego
-   czterdzieści katalogów `results_*` w repozytorium eksperymentu jest nieczytelne.
-2. [`MANIFEST.md`](MANIFEST.md) — **na czym je zmierzono**: pełne SHA repozytoriów
-   i rewizji pomiarowych, po jednej na kampanię, plus sumy kontrolne archiwów.
-3. [`REPRODUCE.md`](REPRODUCE.md) — **jak je powtórzyć**: tryb analityczny
-   (regeneracja tabel i figur z zachowanych danych) i tryb pomiarowy.
-4. [`REVIEW_MIRROR.md`](REVIEW_MIRROR.md) — **jak przygotować wersję
-   double-anonymous**: pięć źródeł z pełnymi rewizjami, wspólna konfiguracja
-   redakcji i próba odbiorcza bez poświadczeń.
-5. [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md) — **zapis próby odbiorczej**: co
-   przeszło, co pominięto i gdzie zostało sprawdzone zamiast tego.
+1. [`MAP.md`](MAP.md) — **what these results are**: which campaign answers which
+   question, which verdict holds and which has been superseded. Without it the
+   forty `results_*` directories in the experiment repository are unreadable.
+2. [`MANIFEST.md`](MANIFEST.md) — **what they were measured on**: the full SHAs
+   of the repositories and measurement revisions, one per campaign, plus archive
+   checksums.
+3. [`REPRODUCE.md`](REPRODUCE.md) — **how to repeat them**: analytic mode
+   (regenerating the tables and figures from stored data) and measurement mode.
+4. [`REVIEW_MIRROR.md`](REVIEW_MIRROR.md) — **how to prepare the
+   double-anonymous version**: five sources with full revisions, a shared
+   redaction configuration and an acceptance trial without credentials.
+5. [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md) — **the record of the acceptance
+   trial**: what passed, what was skipped and where it was verified instead.
 
-## Czym jest RetractorDB
+## What RetractorDB is
 
-Silnik ciągłych zapytań nad strumieniami o deklarowanym takcie, z językiem RQL
-i kompilatorem planów. Repozytorium silnika: `retractordb`. Repozytorium
-eksperymentów: `rdb-experiment`. Oba są przypięte w [`MANIFEST.md`](MANIFEST.md).
+A continuous-query engine over streams with a declared rate, with the RQL
+language and a plan compiler. Engine repository: `retractordb`. Experiment
+repository: `rdb-experiment`. Both are pinned in [`MANIFEST.md`](MANIFEST.md).
 
-## Zasada przypięcia
+## The pinning principle
 
-**Pakiet nie ma jednego historycznego SHA silnika.** Domyślne odtworzenie i nowe
-pomiary używają przypiętego snapshotu aktualnego HEAD z poprawkami narzędzi.
-Manifest osobno zachowuje faktyczne rewizje, na których wykonano kampanie.
-Tryb historyczny służy do audytu provenance i nigdy nie przedstawia dawnego
-pomiaru jako wyniku wykonanego na HEAD.
+**The package has no single historical engine SHA.** The default reproduction
+and new measurements use a pinned snapshot of the current HEAD with tooling
+fixes. The manifest separately preserves the actual revisions on which the
+campaigns were run. Historical mode serves provenance auditing and never
+presents a past measurement as a result obtained on HEAD.
 
-## Od zera, w trzech poleceniach
+## From zero, in three commands
 
 ```bash
 git clone https://github.com/michalwidera/rdb-artifact.git
 cd rdb-artifact
-./bin/checkout.sh                 # klonuje i przypina repozytoria po SHA
-./bin/reproduce_analytic.sh       # regeneruje tabele i liczby artykulu
+./bin/checkout.sh                 # clones and pins the repositories by SHA
+./bin/reproduce_analytic.sh       # regenerates the paper's tables and numbers
 ```
 
-Nie potrzebujesz konta, poświadczeń ani niczego poza tym adresem.
+You need no account, no credentials and nothing beyond this address.
 
-## Stan
+## State
 
-Repozytorium powstało w ramach kroku **K9b** planu badawczego
-(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Stan na 2026-08-28:
+The repository was created as step **K9b** of the research plan
+(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). State as of 2026-08-28:
 
-* manifest, mapa kampanii, kontrola przypięć i kontrola binarium — **gotowe**;
-* tryb analityczny (`bin/reproduce_analytic.sh`) — **gotowy**: osiem grup na
-  osiem regeneruje się z zachowanych danych i zgadza z zachowanymi produktami;
-* tryb pomiarowy (`bin/reproduce_measure.sh`) — kontrola wstępna platformy
-  i proweniencji **gotowa**, wraz z odmową startu przy rozjeździe;
-* autonomia przebiegu pomiarowego (W-1) — **sprawdzona empirycznie** na maszynie
-  pomiarowej z odciętą maszyną sterującą; dowody w [`tables/w1/`](tables/w1/);
-* archiwa surowe — **18 z 18 w repozytorium eksperymentu**, jedno w częściach;
-* pięć zamrożonych luster recenzenckich — **gotowe**: utworzone 2026-08-26,
-  sprawdzone bez poświadczeń i ważne do 2027-08-25; pełny werdykt, pominięcia
-  i sumy kontrolne zapisuje [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
-* otwarte: DOI (decyzja D-2), przed zgłoszeniem artykułu.
+* the manifest, the campaign map, pin verification and binary verification —
+  **done**;
+* analytic mode (`bin/reproduce_analytic.sh`) — **done**: eight groups out of
+  eight regenerate from the stored data and agree with the stored products;
+* measurement mode (`bin/reproduce_measure.sh`) — the platform and provenance
+  preflight is **done**, including its refusal to start on a divergence;
+* autonomy of the measurement run (W-1) — **verified empirically** on the
+  measurement machine with the control host cut off; evidence in
+  [`tables/w1/`](tables/w1/);
+* raw archives — **18 of 18 in the experiment repository**, one of them in parts;
+* five frozen reviewer mirrors — **done**: created on 2026-08-26, checked
+  without credentials and valid until 2027-08-25; the full verdict, the
+  omissions and the checksums are recorded in
+  [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
+* open: the DOI (decision D-2), before the paper is submitted.
 
-Repozytorium artykułu `paper-arXiv` jest przypięte, ale **prywatne do czasu
-recenzji** i **nie jest potrzebne do odtworzenia** (decyzja D-6) — patrz
+The paper repository `paper-arXiv` is pinned but **private until review** and is
+**not needed for reproduction** (decision D-6) — see
 [`MANIFEST.md`](MANIFEST.md) §1.
 
-Granice pakietu są wypisane w [`MANIFEST.md`](MANIFEST.md) §5 — czytaj je,
-zanim uznasz brak za usterkę.
+The package's limits are listed in [`MANIFEST.md`](MANIFEST.md) §5 — read them
+before treating an absence as a fault.
 
-## Licencja i cytowanie
+## License and citation
 
-Patrz [`CITATION.cff`](CITATION.cff). DOI zostanie nadany przed zgłoszeniem
-artykułu (decyzja D-2 planu K9b).
+See [`CITATION.cff`](CITATION.cff). A DOI will be assigned before the paper is
+submitted (decision D-2 of the K9b plan).

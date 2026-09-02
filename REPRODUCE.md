@@ -1,15 +1,15 @@
-# Instrukcja odtworzenia
+# Reproduction guide
 
-Wejściem jest **wyłącznie to repozytorium**. Nie potrzebujesz niczego, czego nie
-ma w tym pliku; każde miejsce, w którym trzeba było „wiedzieć", jest defektem
-instrukcji i prosimy o zgłoszenie go jako issue.
+**This repository is the only entry point.** You do not need anything that is
+not in this file; every place where you had to already "know" something is a
+defect in these instructions, and we ask you to report it as an issue.
 
-## 0. Czego potrzebujesz
+## 0. What you need
 
-`git`, `bash`. Do trybu pomiarowego dodatkowo toolchain silnika (Conan 2, CMake,
-Ninja, kompilator C++23) — opisany w `retractordb/CLAUDE.md`.
+`git`, `bash`. The measurement mode additionally needs the engine toolchain
+(Conan 2, CMake, Ninja, a C++23 compiler) — described in `retractordb/CLAUDE.md`.
 
-## 1. Pobranie przypiętego układu repozytoriów
+## 1. Fetching the pinned set of repositories
 
 ```bash
 git clone https://github.com/michalwidera/rdb-artifact.git
@@ -17,20 +17,21 @@ cd rdb-artifact
 ./bin/checkout.sh ./artifact-workspace
 ```
 
-Skrypt klonuje pięć repozytoriów **osobno**, do jawnego układu, i przełącza je
-na pełne SHA domyślnego snapshotu z manifestu. Nie ma tu submodułów. Snapshot
-używa aktualnego HEAD silnika, ponieważ zawiera krytyczne poprawki narzędzi.
+The script clones the five repositories **separately**, into an explicit layout,
+and checks them out at the full SHAs of the manifest's default snapshot. There
+are no submodules here. The snapshot uses the engine's current HEAD because it
+carries critical tooling fixes.
 
-Audyt historycznego układu kampanii jest osobnym trybem:
+Auditing a campaign's historical layout is a separate mode:
 
 ```bash
 ./bin/checkout.sh ./historical-workspace campaign/H10-K24e
 ```
 
-Nie używaj tego trybu jako domyślnego środowiska nowego pomiaru. Zachowuje on
-rzeczywiste provenance kampanii, nie bieżące narzędzia.
+Do not use that mode as the default environment for a new measurement. It
+preserves the campaign's actual provenance, not the current tooling.
 
-## 2. Kontrola przypięć — wykonać przed czymkolwiek innym
+## 2. Pin verification — run this before anything else
 
 ```bash
 RDB_WORKSPACE=./artifact-workspace \
@@ -38,75 +39,79 @@ RDB_XRETRACTOR=./artifact-workspace/retractordb/build/Debug/src/retractor/xretra
 ./bin/verify_pins.sh snapshot
 ```
 
-Skrypt zaczyna od sekcji 0: **czy trzy deklaracje tego samego przypięcia są
-zgodne** — `MANIFEST.md`, `verify_pins.sh` i `checkout.sh` trzymają każdą z nich
-osobno, więc podbicie, które dotarło tylko do części z nich, zatrzymuje bramkę
-zamiast podróżować razem z nią. Dalej sprawdza faktyczne `HEAD` czterech
-wymaganych checkoutów, tagi i ich
-osiągalność, dowód równoważności drzewa `src/` K24e, siedemnaście archiwów po
-SHA-256, cztery części archiwum `study_06_W8` wraz z indeksem oraz — gdy podano
-`RDB_XRETRACTOR` — rewizję osadzoną w binarium. Piąty checkout, `paper-arXiv`,
-jest **opcjonalny** (decyzja D-6): przy jego braku skrypt wypisuje `SKIP`
-z przypiętym SHA, bo repozytorium artykułu pozostaje prywatne do recenzji
-i żaden tryb odtworzenia go nie czyta.
-Kod wyjścia różny od zera oznacza rozjazd — **nie kontynuuj**.
+The script starts with section 0: **whether the three declarations of the same
+pin agree** — `MANIFEST.md`, `verify_pins.sh` and `checkout.sh` each hold them
+separately, so a bump that reached only some of them stops the gate instead of
+travelling along with it. It then checks the actual `HEAD` of the four required
+checkouts, the tags and their reachability, the K24e `src/` tree equivalence
+proof, seventeen archives by SHA-256, the four parts of the `study_06_W8`
+archive together with its index, and — when `RDB_XRETRACTOR` is given — the
+revision embedded in the binary. The fifth checkout, `paper-arXiv`, is
+**optional** (decision D-6): when it is absent the script prints `SKIP` with the
+pinned SHA, because the paper repository stays private until review and no
+reproduction mode reads it.
+A non-zero exit code means a divergence — **do not continue**.
 
-Kontrola binarium porównuje siedmioznakowy prefiks SHA publikowany obecnie przez
-`xretractor --help` z pełnym SHA oczekiwanym przez manifest. Jest to granica
-metadanych istniejącej binarki; skrypt nie udaje kontroli pełnych 40 znaków.
+The binary check compares the seven-character SHA prefix that `xretractor --help`
+currently publishes against the full SHA the manifest expects. That is the limit
+of the existing binary's metadata; the script does not pretend to check all 40
+characters.
 
-Inwentarz archiwów raw jest niezmiennikiem **snapshotu** i sprawdza się go tylko
-w trybie `snapshot`. W trybie kampanii checkout stoi na starszej rewizji, na
-której późniejsze archiwa jeszcze nie istnieją, więc sprawdzanie ich tam
-raportowałoby nieobecność jako uszkodzenie — skrypt wypisuje wtedy `SKIP`
-z odesłaniem do trybu `snapshot` (znalezisko K9b-F5).
+The raw-archive inventory is an invariant of the **snapshot** and is checked only
+in `snapshot` mode. In campaign mode the checkout sits on an older revision on
+which the later archives do not yet exist, so checking them there would report
+absence as corruption — the script prints `SKIP` with a pointer to `snapshot`
+mode (finding K9b-F5).
 
-## 3. Tryb analityczny — regeneracja tabel i figur
+## 3. Analytic mode — regenerating the tables and figures
 
 ```bash
 ./bin/reproduce_analytic.sh --workspace ./artifact-workspace
 ```
 
-Jedno polecenie, osiem grup, żadnego silnika i żadnego sprzętu pomiarowego.
-Skrypt najpierw wywołuje `verify_pins.sh` i **odmawia regeneracji czegokolwiek**,
-gdy workspace nie zgadza się z manifestem. Potem, grupa po grupie, uruchamia
-własny zamrożony kod analityczny kampanii na danych leżących w przypiętym
-checkoucie, zapisuje produkty do `tables/<grupa>/` i wypisuje **liczności**,
-nie słowo „OK" — kontrola, która nie umie powiedzieć, ile porównała, nie jest
-kontrolą. Każdy produkt jest dodatkowo porównywany z wersją zachowaną w git.
+One command, eight groups, no engine and no measurement hardware. The script
+first calls `verify_pins.sh` and **refuses to regenerate anything** if the
+workspace does not match the manifest. Then, group by group, it runs each
+campaign's own frozen analysis code over the data sitting in the pinned
+checkout, writes the products under `tables/<group>/` and prints **counts**
+rather than the word "OK" — a check that cannot say how much it compared is not
+a check. Every product is additionally compared against the version stored in
+git.
 
-| Grupa | Artefakt | Liczności raportowane przez skrypt |
+| Group | Artifact | Counts reported by the script |
 |---|---|---|
-| `k6c` | `tab:k6-primary` | 780 przebiegów, 13 komórek, klasy A/B/C = 0/12/1 |
-| `k22v5` | `tab:k22-constructs` | 45 konstruktów, 1764 przejrzane trafienia, 36 wierszy modyfikacji |
-| `k24e` | `tab:tail-exactness` | 10 010 planów, 35 835 / 35 703 obserwacji, 9/9 klas dokładnych ogona i początku |
-| `k26v3` | `tab:h9-primary` | 3/3 rodziny wspierające, 22 wiersze bramek |
-| `g3` | 75 548 / 143 065 922 | 0 niezgodności, 10 mutacji, 13 sprawdzeń tożsamości silnika |
-| `k19` | 468 220 / 2 239 488 | 4 mutacje, werdykt OK |
-| `k18` | deterministyczne artefakty | 67 porównanych plików, 16 `.meta` po pominięciu znacznika, 51 bajtowo identycznych, 6 sprawdzeń round-trip |
-| `ecg` | `fig:qrs` | 400 próbek w klatce, 2 zespoły QRS, piki na x=128 i x=371 |
+| `k6c` | `tab:k6-primary` | 780 runs, 13 cells, classes A/B/C = 0/12/1 |
+| `k22v5` | `tab:k22-constructs` | 45 constructs, 1764 reviewed hits, 36 modification rows |
+| `k24e` | `tab:tail-exactness` | 10,010 plans, 35,835 / 35,703 observations, 9/9 exact classes for tail and origin |
+| `k26v3` | `tab:h9-primary` | 3/3 supporting families, 22 gate rows |
+| `g3` | 75,548 / 143,065,922 | 0 mismatches, 10 mutations, 13 engine identity checks |
+| `k19` | 468,220 / 2,239,488 | 4 mutations, verdict OK |
+| `k18` | deterministic artifacts | 67 files compared, 16 `.meta` after skipping the header field, 51 byte-identical, 6 round-trip checks |
+| `ecg` | `fig:qrs` | 400 samples in the frame, 2 QRS complexes, peaks at x=128 and x=371 |
 
-Przebieg z 2026-08-20 na przypiętym snapshocie: **osiem grup na osiem**,
-wszystkie porównania z zachowanymi plikami zgodne — bajtowo, z jednym wyjątkiem
-raportu G3, który różni się wyłącznie wierszem `- wygenerowano:`.
+The 2026-08-20 run on the pinned snapshot: **eight groups out of eight**, all
+comparisons against the stored files in agreement — byte for byte, with the
+single exception of the G3 report, which differs only in its `- wygenerowano:`
+line.
 
-Siedem grup nie potrzebuje silnika. Ósma, `ecg`, potrzebuje: przekaż jej
-`--xretractor` i `--xqry`, a bez nich zgłosi `SKIP` i wypisze przepis. Binarium
-jest przy tym bramkowane tak samo jak w trybie pomiarowym — rysunek ma pochodzić
-z przypiętego silnika, nie z tego, co akurat leży na `PATH`.
+Seven groups need no engine. The eighth, `ecg`, does: pass it `--xretractor` and
+`--xqry`; without them it reports `SKIP` and prints the recipe. The binary is
+gated there exactly as in measurement mode — the figure is meant to come from
+the pinned engine, not from whatever happens to sit on `PATH`.
 
-Workspace jest **jednorazowy** i część zamrożonych skryptów pisze obok swoich
-wejść; skrypt raportuje, ile plików każda grupa w nim ruszyła, i nigdy nie pisze
-poza workspace.
+The workspace is **single-use** and some of the frozen scripts write next to
+their inputs; the script reports how many files each group touched in it, and
+never writes outside the workspace.
 
-### Okno `fig:qrs`
+### The `fig:qrs` window
 
-Przepis `xqry -s qrs_out -p 400,400` ustala **rozmiar** okna (400 próbek), ale
-nie jego **położenie**: wykres przesuwa się i pokazuje to, co akurat przelatywało,
-gdy przestano patrzeć. Rysunek z 2026-07-14 powstał w nieodnotowanej chwili,
-więc nie dawał się odtworzyć — to było znalezisko K9b-F2.
+The recipe `xqry -s qrs_out -p 400,400` fixes the window's **size** (400 samples)
+but not its **position**: the plot scrolls and shows whatever happened to be
+passing when you stopped looking. The 2026-07-14 figure was produced at an
+unrecorded moment and therefore could not be reproduced — that was finding
+K9b-F2.
 
-Położenie ustala limit elementów. Reguła przyjęta 2026-08-20:
+The position is fixed by the element limit. The rule adopted on 2026-08-20:
 
 ```bash
 cd retractordb/examples/ecg/rec205
@@ -114,92 +119,105 @@ xretractor rec205-qrs.rql -r -k -x -m 1671
 xqry -w -s qrs_out -p 400,400 -m 1671 | gnuplot
 ```
 
-Klatka końcowa to zawsze próbki `[1271,1670]` strumienia `qrs_out`, z zespołami
-QRS na `x=128` i `x=371`. Oś `x` biegnie wstecz w czasie: `x=0` to próbka
-najnowsza. Skrypt sprawdza tę własność liczbowo — 400 próbek w klatce, dwa
-zespoły, piki na przypiętych pozycjach z tolerancją 3 próbek — więc podmiana
-danych albo silnika zatrzyma grupę, zamiast po cichu narysować co innego.
+The final frame is always samples `[1271,1670]` of the `qrs_out` stream, with
+QRS complexes at `x=128` and `x=371`. The `x` axis runs backwards in time:
+`x=0` is the most recent sample. The script checks this property numerically —
+400 samples in the frame, two complexes, peaks at the pinned positions within a
+tolerance of 3 samples — so swapping the data or the engine stops the group
+instead of quietly drawing something else.
 
-**Porównanie z rysunkiem z lipca:** morfologia bez zmian. Ten sam kształt
-sygnału, ta sama obwiednia, te same impulsy detekcji w tych samych miejscach,
-ta sama skala amplitud. Różniło się wyłącznie położenie okna. Nie jest to więc
-znalezisko zmieniające jakąkolwiek liczbę artykułu w rozumieniu reguły
-zamrożenia zakresu.
+**Comparison with the July figure:** the morphology is unchanged. The same
+signal shape, the same envelope, the same detection pulses in the same places,
+the same amplitude scale. Only the window position differed. This is therefore
+not a finding that changes any number in the paper under the scope-freeze rule.
 
-## 4. Tryb pomiarowy — powtórzenie pomiarów
+## 4. Measurement mode — repeating the measurements
 
 ```bash
 ./bin/reproduce_measure.sh --campaign campaign/H9-K26v3 \
-  --workspace ./artifact-workspace --xretractor /sciezka/do/xretractor
+  --workspace ./artifact-workspace --xretractor /path/to/xretractor
 ```
 
-Powtórzenie kampanii na własnym sprzęcie. Kolejność jest wiążąca: skrypt
-najpierw zapisuje środowisko maszyny sterującej do `tables/measure/environment-*.tsv`
-(kernel, PREEMPT_RT, model i liczba CPU, governory, SMT, `cmdline`, typ `/dev/shm`,
-wersje toolchainu, SHA-256 binarium), potem sprawdza proweniencję — `verify_pins.sh`
-dla wybranej kampanii i `verify_binary.sh` dla binarium — i dopiero wtedy podaje
-przepis startowy. **Niezgodność zatrzymuje skrypt kodem 2 i nic nie zostaje
-uruchomione.** Środowisko zapisuje się nawet wtedy, bo odmowa też jest informacją
-o maszynie.
+Repeating a campaign on your own hardware. The order is binding: the script
+first records the control host's environment into
+`tables/measure/environment-*.tsv` (kernel, PREEMPT_RT, CPU model and count,
+governors, SMT, `cmdline`, `/dev/shm` type, toolchain versions, SHA-256 of the
+binary), then checks provenance — `verify_pins.sh` for the selected campaign and
+`verify_binary.sh` for the binary — and only then prints the start recipe.
+**A mismatch stops the script with exit code 2 and nothing is started.** The
+environment is recorded even then, because a refusal is also information about
+the machine.
 
-Skrypt **niczego nie startuje**. Przebieg trwa dobami i nie może ruszyć jako
-skutek uboczny kontroli wstępnej; start jest osobnym poleceniem wydanym maszynie
-pomiarowej. Czasy **nie są obiecane**: odtwarza się procedura werdyktu zastosowana
-do liczb zmierzonych w zapisanych warunkach, nie same liczby.
+The script **starts nothing**. A run takes days and must not begin as a side
+effect of a preflight check; starting it is a separate command issued to the
+measurement machine. Timings are **not promised**: what is reproduced is the
+verdict procedure applied to numbers measured under recorded conditions, not the
+numbers themselves.
 
-### Autonomia przebiegu — wymaganie, nie udogodnienie
+### Run autonomy — a requirement, not a convenience
 
-Kampanie tego projektu trwają **dobami** (K26v3 P8: trzy). Odtworzenie nie może
-wymagać, żeby maszyna sterująca stała włączona przez cały ten czas — to jest
-warunek wykonalności, nie wygody. Tryb pomiarowy realizuje wzorzec sprawdzony
-w K26v3 P8 (`rdb-experiment/results_20260814_K26v3/`):
+This project's campaigns take **days** (K26v3 P8: three). Reproduction must not
+require the control host to stay powered on for that whole time — this is a
+feasibility condition, not a comfort. Measurement mode implements the pattern
+proven in K26v3 P8 (`rdb-experiment/results_20260814_K26v3/`):
 
-* maszyna sterująca **startuje i odbiera**; między jednym a drugim może być
-  wyłączona i przebieg na tym nie ucierpi;
-* przebieg prowadzi **usługa `systemd` na maszynie pomiarowej**, wstająca po
-  boocie, więc przeżywa restart i zanik zasilania;
-* długi przebieg jest **łańcuchem odcinków**, nie jednym procesem; między
-  odcinkami maszyna pomiarowa restartuje się sama;
-* **postęp widać w plikach**, nie w pamięci procesu: dopisywany log, znacznik
-  ukończenia odcinka, status odcinka, znacznik zatrzymania;
-* **skrypt odbiorczy jest bezstanowy i idempotentny** — wolno go uruchomić
-  kiedykolwiek i dowolną liczbę razy, także dopiero po całym pomiarze;
-* zakończenie ma **jednoznaczny sygnał**, odróżnialny od „jeszcze liczy"
-  i od „przerwane z błędem";
-* przebieg można **zatrzymać zdalnie jednym poleceniem**.
+* the control host **starts and collects**; between those two it may be switched
+  off and the run does not suffer;
+* the run is driven by a **`systemd` service on the measurement machine** that
+  comes up after boot, so it survives a restart and a power loss;
+* a long run is a **chain of segments**, not a single process; between segments
+  the measurement machine reboots itself;
+* **progress is visible in files**, not in process memory: an appended log, a
+  segment-completion marker, a segment status, a stop marker;
+* the **collection script is stateless and idempotent** — it may be run at any
+  time and any number of times, including only after the whole measurement;
+* completion has an **unambiguous signal**, distinguishable from "still
+  computing" and from "aborted with an error";
+* the run can be **stopped remotely with one command**.
 
-W praktyce oznacza to, że nadzór sprowadza się do okresowego, ręcznego odczytu
-stanu — raz na kilka godzin albo raz na dobę, jak wygodnie.
+In practice this means supervision comes down to reading the state periodically
+by hand — every few hours or once a day, whichever suits.
 
-**Sprawdzone empirycznie 2026-08-23, nie tylko zapisane.** `bin/w1_trial/`
-przenosi ten wzorzec na skrócony przebieg i wykonuje go na maszynie pomiarowej
-`pi400` z **faktycznie odciętym kanałem sterującym**: trzy odcinki, dwa
-samodzielne restarty workera, `W1_COMPLETE` po 5 min 57 s, zero sesji z maszyny
-sterującej w oknie przebiegu. Przebieg negatywny (`W1_FAIL_SEGMENT`) potwierdził
-trzeci stan — `HALT` i zatrzymanie zamiast pętli. Dowody: `tables/w1/`,
-opis i mapa ośmiu własności: [`bin/w1_trial/README.md`](bin/w1_trial/README.md).
+**Verified empirically on 2026-08-23, not merely written down.** `bin/w1_trial/`
+carries this pattern over to a shortened run and executes it on the `pi400`
+measurement machine with the control channel **actually cut**: three segments,
+two unattended worker reboots, `W1_COMPLETE` after 5 min 57 s, zero sessions from
+the control host within the run window. A negative run (`W1_FAIL_SEGMENT`)
+confirmed the third state — `HALT` and a stop instead of a loop. Evidence:
+`tables/w1/`; the description and the map of the eight properties:
+[`bin/w1_trial/README.md`](bin/w1_trial/README.md).
 
-## 5. Co jest celowo niedeterministyczne
+## 5. What is deliberately non-deterministic
 
-Jedynym celowo niedeterministycznym polem trwałych artefaktów jest zakres
-**offset 0–7** każdego głównego pliku `*.meta`: `int64_t` zawierający liczbę
-nanosekund czasu utworzenia od epoki zegara systemowego, zapisany w natywnym
-porządku bajtów platformy. Implementuje to `MetaIndexStore::writeHeader()`.
+The only deliberately non-deterministic field of the persistent artifacts is the
+range **offset 0–7** of every main `*.meta` file: an `int64_t` holding the number
+of nanoseconds since the system clock's epoch at creation time, written in the
+platform's native byte order. `MetaIndexStore::writeHeader()` implements it.
 
-Porównanie wyłącza dokładnie te osiem bajtów (`tail -c +9`). Cała pozostała
-część `.meta` — flaga luki, `recordCount`, liczba bitów i spakowany wzorzec
-`NULL` — musi być identyczna. Plik `*.meta.shadow` **nie ma tego nagłówka** i
-jest porównywany w całości. Dane, `.desc`, `.shadow` i pozostałe artefakty też
-są porównywane w całości.
+The comparison excludes exactly those eight bytes (`tail -c +9`). All the rest of
+the `.meta` file — the gap flag, `recordCount`, the bit count and the packed
+`NULL` pattern — must be identical. The `*.meta.shadow` file **has no such
+header** and is compared in full. The data, `.desc`, `.shadow` and the remaining
+artifacts are compared in full as well.
 
-Kontrola nie może przejść na pustym zbiorze: wypisuje liczbę porównanych plików,
-wymaga identycznego zbioru nazw i niezerowej liczności wskazanych strumieni.
-Regresja silnika `it_replay_stability-run` wymaga co najmniej 36 plików i
-niepustych danych dziewięciu nazwanych strumieni; K18 porównał 67 plików.
+> **Note on a format change (post-campaign).** The description above applies to
+> the engine on which the campaign was run and remains a record of its
+> conditions. In the engine after 2026-09-02 the field at offset 0–7 is
+> **reserved and written as zero**: the timestamp was withdrawn because no
+> execution path read it. Reproducing with the current engine therefore yields
+> `.meta` files that are bit-for-bit repeatable over their whole length, and
+> `tail -c +9` remains a legacy step — still correct, but no longer necessary.
+> The header size (8 bytes) and the entry offsets did not change, so artifacts
+> from both engines stay comparable by the same procedure.
 
-## 6. Granice
+The check cannot pass on an empty set: it prints the number of files compared,
+and requires an identical set of names and a non-zero count for the named
+streams. The engine regression `it_replay_stability-run` requires at least 36
+files and non-empty data for nine named streams; K18 compared 67 files.
 
-Patrz [`MANIFEST.md`](MANIFEST.md) sekcja 5. W skrócie: `fig:qrs` wymaga podania
-zbudowanego silnika, a tryb pomiarowy nie odtwarza czasów. Wszystkie 18 archiwów
-raw jest obecnych, zweryfikowanych i w repozytorium (2026-08-23); `study_06_W8`
-przychodzi w częściach i wymaga jednego polecenia składającego.
+## 6. Limits
+
+See [`MANIFEST.md`](MANIFEST.md) section 5. In short: `fig:qrs` requires you to
+supply a built engine, and measurement mode does not reproduce timings. All 18
+raw archives are present, verified and in the repository (2026-08-23);
+`study_06_W8` arrives in parts and needs one assembling command.

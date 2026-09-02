@@ -1,122 +1,124 @@
-# MAPA KAMPANII — co która odpowiada i czy nadal obowiązuje
+# CAMPAIGN MAP — what each one answers and whether it still holds
 
-Ten plik istnieje po to, żeby czterdzieści dwa katalogi `results_*`
-w `rdb-experiment` dały się przeczytać przez osobę, która ich nie tworzyła.
-Manifest mówi, **na czym** mierzono; mapa mówi, **co** mierzono i **czy odczyt
-nadal obowiązuje**.
+This file exists so that the forty-two `results_*` directories in
+`rdb-experiment` can be read by someone who did not create them. The manifest
+says **on what** the measurements were taken; the map says **what** was measured
+and **whether the reading still holds**.
 
-Status ma trzy wartości:
+Status has three values:
 
-* **obowiązujący** — wynik niesiony przez artykuł albo aktualny zapis projektu;
-* **zastąpiony przez X** — wynik poprawny w swoim czasie albo diagnostyczny,
-  którego rolę przejął późniejszy przebieg;
-* **kontrola** — badanie higieniczne albo diagnostyka aparatury, nigdy nie było
-  samodzielnym wynikiem artykułu.
+* **current** — a result carried by the paper, or the project's present record;
+* **superseded by X** — a result that was correct at its time, or diagnostic,
+  whose role was taken over by a later run;
+* **control** — a hygiene study or apparatus diagnostic; never a standalone
+  result of the paper.
 
-Każdy z 42 katalogów `results_*` ma niżej osobny wiersz. Źródłem klasyfikacji
-są `paper-arXiv/debs/research_plan.md` §3.6 i §14 oraz `rdb-experiment/JOURNAL.md`.
+Each of the 42 `results_*` directories has its own row below. The classification
+comes from `paper-arXiv/debs/research_plan.md` §3.6 and §14, and from
+`rdb-experiment/JOURNAL.md`.
 
-## Kampanie niosące bieżącą treść artykułu
+## Campaigns carrying the paper's present content
 
-| Katalog | Kryptonim | Pytanie, na które odpowiada | Status |
+| Directory | Code name | The question it answers | Status |
 |---|---|---|---|
-| `results_20260818_K24e` | K24e / H10 — *plan-derived startup boundaries* | Czy statyczny rachunek początku logicznego i ogona startowego jest dokładny w każdej klasie operatorów? | **obowiązujący** — dziewięć klas dokładnych na dziewięć, na obu ziarnach; źródło `tab:tail-exactness` |
-| `results_20260814_K26v3` | K26v3 / H9 — *equivalence-guarded materialization sharing* | Czy kompilator, dopuściwszy dzielenie dopiero po dowodzie równoważności podplanów, dochodzi sam do wspólnego materializowanego podplanu — i czy redukcja **logicznej objętości zapisów materializacji** przychodzi bez ceny czasowej? | **obowiązujący w klasie `Q=8`**, 3/3 rodziny; miarą pierwotną są logiczne bajty zapisów materializacji na rekord publiczny (50,0–58,3% wobec ablacji, 84,4–87,5% wobec naturalnego planu Flinka), cena czasowa poniżej progu 1,05; upoważnienie nie rozciąga się na maksymalny rezydentny rozmiar stanu ani ogólną przewagę wydajnościową; źródło `tab:h9-primary` |
-| `results_20260801_K22v5` | K22v5 / H8 | Jaki jest koszt specyfikacji i modyfikacji zapytania wobec rozwiązań proceduralnych? | **obowiązujący** — wynik opisowy `C1=C3=C4=0`; metryka ma podłogę jednostkową i tak jest opisana; źródło `tab:k22-constructs` |
-| `results_20260730_K6c` | K6c | Gdzie leży granica zasobowa planu wielozapytaniowego? | **obowiązujący** — granica zmierzona; model kosztu slotu nieudany (`MAE_test=258%`) i tak opisany; źródło `tab:k6-primary` |
-| `results_20260728_K18` | K18 | Czy powtórzenie nagrania daje bitowo identyczne artefakty i czy przeplot/rozplot jest tożsamością? | **obowiązujący** — 67 plików bez różnicy poza 8-bajtowym znacznikiem czasu; 13 sprawdzeń tożsamości |
-| `results_20260728_K19` | K19 | Czy wzory fazowe `SUBTRACT` i AGSE oraz ich granice zgadzają się z silnikiem? | **obowiązujący** — 468 220 + 2 239 488 faz; luka pokrycia pojemności została później zmierzona w `results_20260728_extend` |
-| `results_20260728_K4` | K4 | Która reguła R1/R2 odpala się w istniejącym korpusie i ile razy? | **obowiązujący** — pięć profili, 400 wyników; ograniczenie nieodtwarzalnej ścieżki jest jawne |
-| `results_20260728_extend` | extend | Czy defekt pojemności AGSE unieważnił K18/K19/K4 i czy poprawiona rewizja zachowuje determinizm? | **obowiązujący jako audyt** — wyników nie unieważniono; etap czasowy 360 Hz powtórzono, exactness potwierdzono bajtowo |
-| `results_20260726_G3` | K2 / G3 | Czy oracle R1 i most do silnika zgadzają się na pełnym korpusie? | **obowiązujący** — 75 548 przypadków / 143 065 922 pozycji oraz most 13/13 |
-| `results_20260725` | oś SDF/CSDF | Czy cztery reprezentacje przeplotu mają ten sam ślad i jaki jest ich koszt strukturalny? | **obowiązujący** — podstawa `tab:repr`; późniejszy K2/G3 rozszerza most do bieżącej semantyki, ale nie zastępuje porównania reprezentacji |
+| `results_20260818_K24e` | K24e / H10 — *plan-derived startup boundaries* | Is the static calculus of the logical origin and the startup tail exact in every operator class? | **current** — nine exact classes out of nine, on both seeds; source of `tab:tail-exactness` |
+| `results_20260814_K26v3` | K26v3 / H9 — *equivalence-guarded materialization sharing* | Having allowed sharing only after a proof of subplan equivalence, does the compiler arrive at a common materialized subplan on its own — and does the reduction in **logical materialization write volume** come without a time penalty? | **current in the `Q=8` class**, 3/3 families; the primary measure is logical bytes of materialization writes per public record (50.0–58.3% against ablation, 84.4–87.5% against Flink's natural plan), with a time penalty below the 1.05 threshold; the warrant does not extend to peak resident state size or to general performance advantage; source of `tab:h9-primary` |
+| `results_20260801_K22v5` | K22v5 / H8 | What is the cost of specifying and modifying a query relative to procedural solutions? | **current** — descriptive result `C1=C3=C4=0`; the metric has a unit floor and is described as such; source of `tab:k22-constructs` |
+| `results_20260730_K6c` | K6c | Where does the resource boundary of a multi-query plan lie? | **current** — boundary measured; the slot cost model failed (`MAE_test=258%`) and is described as such; source of `tab:k6-primary` |
+| `results_20260728_K18` | K18 | Does repeating a recording produce bit-identical artifacts, and is interleave/de-interleave an identity? | **current** — 67 files with no difference beyond the 8-byte header field; 13 identity checks |
+| `results_20260728_K19` | K19 | Do the `SUBTRACT` and AGSE phase formulas and their boundaries agree with the engine? | **current** — 468,220 + 2,239,488 phases; the capacity coverage gap was later measured in `results_20260728_extend` |
+| `results_20260728_K4` | K4 | Which R1/R2 rule fires in the existing corpus, and how often? | **current** — five profiles, 400 results; the limitation of the non-reproducible path is stated explicitly |
+| `results_20260728_extend` | extend | Did the AGSE capacity defect invalidate K18/K19/K4, and does the corrected revision preserve determinism? | **current as an audit** — no result was invalidated; the 360 Hz timing stage was repeated and exactness confirmed byte for byte |
+| `results_20260726_G3` | K2 / G3 | Do the R1 oracle and the bridge to the engine agree over the full corpus? | **current** — 75,548 cases / 143,065,922 positions, plus a 13/13 bridge |
+| `results_20260725` | SDF/CSDF axis | Do the four interleave representations share one trace, and what is their structural cost? | **current** — the basis of `tab:repr`; the later K2/G3 extends the bridge to the present semantics but does not replace the comparison of representations |
 
-## Historyczny kontekst nadal przywoływany w artykule
+## Historical context still cited in the paper
 
-Te kampanie poprzedzają G1. Artykuł używa ich wyłącznie jako jawnie
-historycznego kontekstu, nie jako dowodu bieżącej granicy wydajności.
+These campaigns predate G1. The paper uses them solely as explicitly historical
+context, never as evidence of the present performance boundary.
 
-| Katalog | Pytanie | Status |
+| Directory | Question | Status |
 |---|---|---|
-| `results_20260716` | Pierwsza kampania rate/clients/FIR: gdzie leżą koszty wykonania i emisji? | **obowiązujący wyłącznie jako kontekst historyczny** — zastąpiony dla twierdzeń bieżącej rewizji przez K6c i K18 |
-| `results_20260717` | Jak wypadają historyczne baseline'y NumPy i jedna konfiguracja Flink? | **obowiązujący wyłącznie jako kontekst historyczny** — nie ustanawia rankingu między systemami |
-| `results_20260718` | Czy artefakty są deterministyczne i zgodne między architekturami? | **obowiązujący wyłącznie jako historyczny wynik cross-architecture**; bieżący replay sprawdza K18 |
-| `results_20260719` | Czy izolacja kosztu 40 ms i kolejne pomiary rate/clients lokalizują źródło ogona? | **zastąpiony dla bieżących twierdzeń przez `results_20260721_bufferfix` i K18** |
-| `results_20260721` | Jaki jest próg rate oraz wpływ klientów i głębokości FIR przed naprawą bufora? | **zastąpiony przez `results_20260721_bufferfix`**, zachowany jako punkt odniesienia |
-| `results_20260722_thick_mesh` | Gdzie w gęstym sweepie leży historyczny próg między 480 a 510 Hz? | **obowiązujący wyłącznie jako kontekst historyczny** — nie jest bieżącym sufitem |
+| `results_20260716` | The first rate/clients/FIR campaign: where do the execution and emission costs lie? | **current only as historical context** — superseded, for claims about the present revision, by K6c and K18 |
+| `results_20260717` | How do the historical NumPy baselines and one Flink configuration compare? | **current only as historical context** — it establishes no ranking between systems |
+| `results_20260718` | Are the artifacts deterministic and consistent across architectures? | **current only as a historical cross-architecture result**; present replay is checked by K18 |
+| `results_20260719` | Do the 40 ms cost isolation and the subsequent rate/clients measurements localize the source of the tail? | **superseded, for present claims, by `results_20260721_bufferfix` and K18** |
+| `results_20260721` | What is the rate threshold, and the influence of clients and FIR depth, before the buffer fix? | **superseded by `results_20260721_bufferfix`**, kept as a reference point |
+| `results_20260722_thick_mesh` | Where, in a dense sweep, does the historical threshold between 480 and 510 Hz lie? | **current only as historical context** — it is not the present ceiling |
 
-## Kampanie zastąpione — zapis historyczny
+## Superseded campaigns — the historical record
 
-| Katalog | Kryptonim | Czym był | Status |
+| Directory | Code name | What it was | Status |
 |---|---|---|---|
-| `results_20260807_K24d` | K24d | Pomiar H10 na silniku `34db1a2`: sześć klas dokładnych z dziewięciu | **zastąpiony przez K24e** |
-| `results_20260807_K24p` | K24p | Powtórzenie po zmianie silnika, opisuje `db4a360` | **zastąpiony przez K24d** |
-| `results_20260804_K24r` | K24r | Potwierdzenie poza próbą członu (a) | **zastąpiony przez K24d** |
-| `results_20260804_K24b` | K24b | Domknięcie członu (b), ziarno `20260805` | **zastąpiony przez K24d** |
-| `results_20260803_K24` | K24 | Pierwsza kampania łuku; ujawniła pięć defektów silnika | **zastąpiony przez K24p** |
-| `results_20260810_K26v2` | K26v2 | Iteracja H9 bez werdyktu | **zastąpiony przez K26v3** |
-| `results_20260809_K26` | K26 | Iteracja H9 zamknięta jako `apparatus` | **zastąpiony przez K26v3** |
-| `results_20260808_K23v2` | K23 iter. 2 | Iteracja H9; dwie rodziny odpadły na bramce poprawności | **zastąpiony przez K26v3** |
-| `results_20260808_K23` | K23 iter. 1 | Pierwsza iteracja łuku H9 | **zastąpiony przez K23v2** |
-| `results_20260801_K22v4` | K22 v4 | Zatrzymana iteracja kosztu specyfikacji | **zastąpiony przez K22v5** |
-| `results_20260801_K22v3` | K22 v3 | Zatrzymana iteracja kosztu specyfikacji | **zastąpiony przez K22v4** |
-| `results_20260801_K22v2` | K22 v2 | Zatrzymana iteracja kosztu specyfikacji | **zastąpiony przez K22v3** |
-| `results_20260801_K22` | K22 v1 | Pilot i zapis rozwoju aparatury bez werdyktu H8 | **zastąpiony przez K22v2** |
-| `results_20260730_K6b` | K6 v2 | Kampania kosztowa zatrzymana na defekcie klienta i błędnej definicji slotu | **zastąpiony przez K6c** |
-| `results_20260730_K6` | K6 v1 | Pierwsza predeklaracja kampanii kosztowej | **zastąpiony przez K6b** |
-| `results_20260729_K5_rerun` | K5 | Powtórzony punkt go/no-go po naprawie interwałów | **zastąpiony jako wynik strukturalny przez K6c**, zachowuje werdykt GO |
-| `results_20260729_K5` | K5 iter. 1 | Kampania semantyczna zatrzymana po wykryciu defektu F9 | **zastąpiony przez `results_20260729_K5_rerun`** |
-| `results_20260726_G1` | G1 / K1 | Sonda obserwowalności, która ujawniła zależność semantyki od planu i otworzyła naprawy G1 | **zastąpiony dla bieżącej semantyki przez K2/G3 i K18** |
+| `results_20260807_K24d` | K24d | H10 measurement on engine `34db1a2`: six exact classes out of nine | **superseded by K24e** |
+| `results_20260807_K24p` | K24p | A repeat after an engine change, describing `db4a360` | **superseded by K24d** |
+| `results_20260804_K24r` | K24r | Out-of-sample confirmation of part (a) | **superseded by K24d** |
+| `results_20260804_K24b` | K24b | Closing of part (b), seed `20260805` | **superseded by K24d** |
+| `results_20260803_K24` | K24 | The arc's first campaign; it exposed five engine defects | **superseded by K24p** |
+| `results_20260810_K26v2` | K26v2 | An H9 iteration with no verdict | **superseded by K26v3** |
+| `results_20260809_K26` | K26 | An H9 iteration closed as `apparatus` | **superseded by K26v3** |
+| `results_20260808_K23v2` | K23 iter. 2 | An H9 iteration; two families fell at the correctness gate | **superseded by K26v3** |
+| `results_20260808_K23` | K23 iter. 1 | The first iteration of the H9 arc | **superseded by K23v2** |
+| `results_20260801_K22v4` | K22 v4 | A halted iteration of the specification cost study | **superseded by K22v5** |
+| `results_20260801_K22v3` | K22 v3 | A halted iteration of the specification cost study | **superseded by K22v4** |
+| `results_20260801_K22v2` | K22 v2 | A halted iteration of the specification cost study | **superseded by K22v3** |
+| `results_20260801_K22` | K22 v1 | A pilot and a record of apparatus development, with no H8 verdict | **superseded by K22v2** |
+| `results_20260730_K6b` | K6 v2 | A cost campaign halted on a client defect and a wrong slot definition | **superseded by K6c** |
+| `results_20260730_K6` | K6 v1 | The first pre-declaration of the cost campaign | **superseded by K6b** |
+| `results_20260729_K5_rerun` | K5 | The repeated go/no-go point after the interval fix | **superseded as a structural result by K6c**, retains the GO verdict |
+| `results_20260729_K5` | K5 iter. 1 | A semantic campaign halted after defect F9 was found | **superseded by `results_20260729_K5_rerun`** |
+| `results_20260726_G1` | G1 / K1 | The observability probe that exposed the dependence of semantics on the plan and opened the G1 repairs | **superseded, for the present semantics, by K2/G3 and K18** |
 
-## Kontrole i diagnostyka aparatury
+## Controls and apparatus diagnostics
 
-| Katalog | Czym jest | Status |
+| Directory | What it is | Status |
 |---|---|---|
-| `results_20260731_instrument` | sonda pracy na slot, 43 komórko-skale | **kontrola** — K20 etap 1b, układ osobliwy, bez werdyktu |
-| `results_20260731_hygiene220` | higiena sondy E4 na `abe075e` | **kontrola** — brak wpływu, warunek etapów 1b/1c |
-| `results_20260731_hygiene217` | higiena naprawy klienta na `1bb2d2c` | **kontrola** — brak wpływu, ujawnia bias ilorazu |
-| `results_20260731_hygiene` | higiena poprawki klienta na `e1e5181` | **kontrola** — brak wpływu |
-| `results_20260731_costmodel3` | trzecia próba modelu kosztu slotu | **kontrola** — cecha rodziny okiennej nic nie wnosi |
-| `results_20260730_hygiene` | higiena sondy pomiarowej | **kontrola** — brak wpływu |
-| `results_20260729_hygiene` | higiena poprawki interwałów i deterministyczności aparatury | **kontrola** — brak wpływu; wykryła puste porównania jako fałszywy sukces |
-| `results_20260721_bufferfix` | powtórka rate/clients/FIR po przywróceniu buforowania `facctxtsrc` | **kontrola naprawy aparatury** — źródło historycznego kontekstu, nie bieżący sufit |
+| `results_20260731_instrument` | per-slot work probe, 43 cell-scales | **control** — K20 stage 1b, a singular layout, no verdict |
+| `results_20260731_hygiene220` | hygiene of the E4 probe on `abe075e` | **control** — no effect; a precondition of stages 1b/1c |
+| `results_20260731_hygiene217` | hygiene of the client fix on `1bb2d2c` | **control** — no effect; exposes a ratio bias |
+| `results_20260731_hygiene` | hygiene of the client patch on `e1e5181` | **control** — no effect |
+| `results_20260731_costmodel3` | third attempt at a slot cost model | **control** — the window-family feature adds nothing |
+| `results_20260730_hygiene` | hygiene of the measurement probe | **control** — no effect |
+| `results_20260729_hygiene` | hygiene of the interval fix and of apparatus determinism | **control** — no effect; it caught empty comparisons posing as success |
+| `results_20260721_bufferfix` | a rate/clients/FIR repeat after `facctxtsrc` buffering was restored | **apparatus-repair control** — the source of the historical context, not the present ceiling |
 
-## Hipotezy — stan
+## Hypotheses — state
 
-Numery `H*` są identyfikatorami hipotez w planie badawczym i w nazwach
-katalogów kampanii. **Tekst artykułu widoczny dla recenzenta ich nie używa** —
-od 2026-08-25 obie hipotezy niosące bieżącą treść występują tam pod nazwami
-opisującymi wynik. Tabela niżej podaje oba brzmienia, żeby przejście z artykułu
-do tego pakietu nie wymagało zgadywania:
+The `H*` numbers are hypothesis identifiers in the research plan and in campaign
+directory names. **The paper text the reviewer sees does not use them** — since
+2026-08-25 both hypotheses carrying present content appear there under names
+describing the result. The table below gives both wordings, so that moving from
+the paper to this package requires no guessing:
 
-| Numer | Nazwa w artykule (EN) | Nazwa w artykule (PL) | Kotwica w składzie |
+| Number | Name in the paper (EN) | Name in the paper (PL) | Anchor in the typeset text |
 |---|---|---|---|
-| **H9** | `equivalence-guarded materialization sharing` | współdzielenie materializacji warunkowane równoważnością | `tab:h9-primary`, sekcja `sec:eval-sharing` |
-| **H10** | `plan-derived startup boundaries` | granice startowe wyprowadzane z planu | `tab:tail-exactness`, sekcja `sec:foundations` |
+| **H9** | `equivalence-guarded materialization sharing` | współdzielenie materializacji warunkowane równoważnością | `tab:h9-primary`, section `sec:eval-sharing` |
+| **H10** | `plan-derived startup boundaries` | granice startowe wyprowadzane z planu | `tab:tail-exactness`, section `sec:foundations` |
 
-| Hipoteza | Treść | Werdykt |
+| Hypothesis | Statement | Verdict |
 |---|---|---|
-| **H8** | koszt specyfikacji i modyfikacji niższy niż w rozwiązaniach proceduralnych | **podzielona**; wynik opisowy, nigdzie nie pada „H8 obalona” (K22v5) |
-| **H9** | dzielenie materializacji dopuszczone dopiero po dowodzie równoważności podplanów redukuje **logiczne bajty zapisów materializacji na rekord publiczny** bez ceny czasowej | **wsparta w klasie `Q=8`**, 3/3 rodziny (K26v3, 2026-08-16) |
-| **H10a** | statyczny rachunek ogona jest dokładny | **wsparta**, dziewięć klas na dziewięć (K24e, 2026-08-18) |
-| **H10b** | rachunek jest **nielokalny** dla węzłów `#` o obu składowych deklarowanych: naturalna reguła lokalna niedomiarowuje, a niedomiar ma predeklarowaną postać zamkniętą `ceil((p+q-1)/p)` | **wsparta**, 2310/2310 rozjazdów o tej postaci (K24b, potwierdzenie K24d) |
+| **H8** | the cost of specification and modification is lower than in procedural solutions | **split**; a descriptive result — nowhere is "H8 refuted" stated (K22v5) |
+| **H9** | materialization sharing, admitted only after a proof of subplan equivalence, reduces the **logical bytes of materialization writes per public record** without a time penalty | **supported in the `Q=8` class**, 3/3 families (K26v3, 2026-08-16) |
+| **H10a** | the static tail calculus is exact | **supported**, nine classes out of nine (K24e, 2026-08-18) |
+| **H10b** | the calculus is **non-local** for `#` nodes with both components declared: the natural local rule underestimates, and the shortfall has the pre-declared closed form `ceil((p+q-1)/p)` | **supported**, 2310/2310 divergences of that form (K24b, confirmed by K24d) |
 
-**Treść H9 nie jest twierdzeniem o rozmiarze planu** i wcześniejsze brzmienie
-tego wiersza („redukuje plan") było w tym miejscu mylące. Mierzoną wielkością
-pierwotną jest skumulowana kanoniczna szerokość rekordów dopisywanych lub
-nadpisywanych w materializowanych substratach, podzielona przez liczbę rekordów
-publicznych. Jest to logiczna objętość zapisów, nie maksymalny rezydentny
-rozmiar stanu. Sam rozmiar planu jako miara kosztu **odpadł** — pokazała to
-K6c (0/13 komórek, tokeny mniejsze o 8–28% bez poprawy kosztu slotu). Obie
-kampanie mówią więc razem, że liczba węzłów nie wystarcza, a mierzyć należy
-ruch materializacji lub wykonywaną pracę. Poprawione 2026-08-26.
+**H9 is not a claim about plan size**, and this row's earlier wording ("reduces
+the plan") was misleading here. The primary measured quantity is the cumulative
+canonical width of records appended to or overwritten in materialized substrates,
+divided by the number of public records. That is a logical write volume, not a
+peak resident state size. Plan size as a cost measure **failed** on its own — K6c
+showed it (0/13 cells, tokens smaller by 8–28% with no improvement in slot cost).
+Taken together the two campaigns therefore say that a node count does not
+suffice, and that what must be measured is materialization traffic or work
+performed. Corrected 2026-08-26.
 
-**Treść H10b była zapisana odwrotnie do hipotezy** — wiersz orzekał lokalność
-rachunku, podczas gdy zmierzono jej **brak**. H10 nazywa się w planie „dokładna
-i **nielokalna** granica określoności planu wielotaktowego", a kryterium członu
-(b) brzmi: wsparta, gdy naturalna reguła lokalna **rozjeżdża się** z dokładną
-w co najmniej 5% korpusu i rozjazd ma postać `ceil((p+q-1)/p)` w 100%
-przypadków (`paper-arXiv/debs/research_plan.md`, kryterium H10b). Liczba
-2310/2310 to węzły, w których reguła lokalna **niedomiarowała**, a nie te,
-w których wystarczyła; artykuł niesie to samo w akapicie *„Why the interleave
-tail is not local"*. Werdykt bez zmian. Poprawione 2026-08-25.
+**H10b was written the wrong way round relative to the hypothesis** — the row
+asserted that the calculus was local, whereas what was measured was its
+**absence**. In the plan H10 is named "the exact and **non-local** determinacy
+boundary of a multi-rate plan", and the criterion for part (b) reads: supported
+when the natural local rule **diverges** from the exact one in at least 5% of the
+corpus and the divergence has the form `ceil((p+q-1)/p)` in 100% of cases
+(`paper-arXiv/debs/research_plan.md`, criterion H10b). The figure 2310/2310
+counts the nodes at which the local rule **underestimated**, not those at which
+it sufficed; the paper carries the same point in the paragraph *"Why the
+interleave tail is not local"*. The verdict is unchanged. Corrected 2026-08-25.

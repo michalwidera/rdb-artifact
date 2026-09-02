@@ -1,71 +1,72 @@
-# MANIFEST — przypięcia pakietu artefaktów
+# MANIFEST — the artifact package's pins
 
-Stan: **2026-08-28**. Budowany w ramach K9b
-(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Każde przypięcie repozytorium jest
-pełnym, czterdziestoznakowym SHA. Nazwa gałęzi nie jest identyfikatorem wersji.
+State: **2026-08-28**. Built as part of K9b
+(`paper-arXiv/debs/done/plan-realizacji-K9b.md`). Every repository pin is a full,
+forty-character SHA. A branch name is not a version identifier.
 
-## 1. Repozytoria i przypięty układ domyślny
+## 1. Repositories and the pinned default layout
 
-Domyślne odtworzenie i wszystkie **nowe** uruchomienia używają przypiętego
-snapshotu aktualnego HEAD. Jest to odrębna oś od historycznego provenance
-kampanii z §2.2: dawnych pomiarów nie przepisuje się na nowszy kod.
+The default reproduction and all **new** runs use a pinned snapshot of the
+current HEAD. This is a separate axis from the historical campaign provenance of
+§2.2: past measurements are not rewritten onto newer code.
 
-| Repozytorium | URL | SHA domyślnego snapshotu | Rola | Lustro recenzenckie |
+| Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
-| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | silnik i poprawione narzędzia | `retractordb-engine` |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b713e1df47a5f94357f708706b85f5603f261534` | kampanie i dane | `retractordb-experiment` |
-| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | dokumentacja PL (kanoniczna) | `dokumentacja-rdb` |
-| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | dokumentacja EN (pochodna) | `documentation-rdb` |
-| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | artykuł i plan badawczy — **opcjonalne, prywatne do recenzji** (D-6) | — nie lustrzone |
+| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | engine and fixed tooling | `retractordb-engine` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b713e1df47a5f94357f708706b85f5603f261534` | campaigns and data | `retractordb-experiment` |
+| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | PL documentation (canonical) | `dokumentacja-rdb` |
+| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | EN documentation (derived) | `documentation-rdb` |
+| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
-Repozytorium `rdb-artifact` jest punktem wejścia, więc nie przypina własnego
-SHA w tym samym commicie. Jego URL to
-`https://github.com/michalwidera/rdb-artifact.git` i jest **publiczny od
-2026-08-23**. Jego lustro recenzenckie `retractordb-artifact` istnieje od
-2026-08-26 i jest zamrożone na rewizji
-`609d64de7d3e9e640a4243dd752802913cfd869a`; cztery pozostałe lustra z tabeli
-powstały tego samego dnia. Wszystkie pięć jest ważnych do 2027-08-25, a
-automatyczne aktualizacje są wyłączone. Identyfikatory luster nie są losowane —
-wybiera je autor. Adresy, przypięcia i wynik próby bez poświadczeń zapisuje
-[`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
+The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
+in the same commit. Its URL is
+`https://github.com/michalwidera/rdb-artifact.git` and it has been **public
+since 2026-08-23**. Its reviewer mirror `retractordb-artifact` has existed since
+2026-08-26 and is frozen at revision
+`609d64de7d3e9e640a4243dd752802913cfd869a`; the other four mirrors in the table
+were created the same day. All five are valid until 2027-08-25, and automatic
+updates are disabled. Mirror identifiers are not randomized — the author chooses
+them. The addresses, the pins and the result of the credential-free trial are
+recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
 
-**Przypięcie `paper-arXiv` wskazuje tag adnotowany `artifact/K9b`, nie czubek
-gałęzi (decyzja 2026-08-23).** Cztery pozostałe repozytoria przypinają się przez
-SHA snapshotu, bo ich `HEAD` rusza się rzadko i z powodów, które pakietu
-dotyczą. Repozytorium artykułu zachowuje się inaczej: w czternaście dni przed
-tym tagiem dostało **57 commitów**, z czego 28 dotknęło `debs/`, 19 `usecases/`,
-a właściwego artykułu (`arxiv/`, `figures/`) — **dwa**. Przypięcie do `HEAD`
-odpowiadałoby więc na pytanie „jaki jest ostatni commit repozytorium", a ma
-odpowiadać na „do której rewizji artykułu należą te liczby".
+**The `paper-arXiv` pin points at the annotated tag `artifact/K9b`, not at a
+branch head (decision of 2026-08-23).** The other four repositories pin by
+snapshot SHA, because their `HEAD` moves rarely and for reasons that concern the
+package. The paper repository behaves differently: in the fourteen days before
+that tag it received **57 commits**, of which 28 touched `debs/`, 19 touched
+`usecases/`, and the paper proper (`arxiv/`, `figures/`) — **two**. Pinning to
+`HEAD` would therefore answer the question "what is the repository's latest
+commit", whereas it must answer "which revision of the paper do these numbers
+belong to".
 
-Przypięcie rusza się przy kamieniu milowym, nie przy poprawce redakcyjnej.
-Następny ruch: `artifact/submission` w K17. Jest to ten sam wzorzec, co tagi
-`campaign/*` w §2.2, i z tego samego powodu.
+The pin moves at a milestone, not at an editorial fix. Next move:
+`artifact/submission` in K17. This is the same pattern as the `campaign/*` tags
+in §2.2, and for the same reason.
 
-**Cztery pierwsze repozytoria są publiczne i wymagane. Piąte nie jest ani jednym,
-ani drugim (decyzja D-6, 2026-08-23).** `paper-arXiv` niesie artykuł przed
-recenzją i pozostaje prywatne aż do publikacji; jest tu przypięte **wyłącznie
-jako proweniencja** — żeby pytanie „do której rewizji artykułu należą te liczby"
-miało odpowiedź. Żaden tryb odtworzenia go nie czyta: `bin/reproduce_analytic.sh`
-i `bin/reproduce_measure.sh` nie mają do niego ani jednego odwołania.
+**The first four repositories are public and required. The fifth is neither
+(decision D-6, 2026-08-23).** `paper-arXiv` carries the paper before review and
+stays private until publication; it is pinned here **as provenance only** — so
+that the question "which revision of the paper do these numbers belong to" has
+an answer. No reproduction mode reads it: `bin/reproduce_analytic.sh` and
+`bin/reproduce_measure.sh` contain not a single reference to it.
 
-`bin/checkout.sh` próbuje je sklonować i **idzie dalej**, jeżeli nie może;
-`bin/verify_pins.sh` wypisuje wtedy `SKIP` z przypiętym SHA. Wymaganie go
-blokowało cały pakiet: obcy z publicznym URL-em dostawał cztery repozytoria
-i kod 2 z bramki proweniencji, bez możliwości zregenerowania czegokolwiek.
+`bin/checkout.sh` attempts to clone it and **carries on** if it cannot;
+`bin/verify_pins.sh` then prints `SKIP` with the pinned SHA. Requiring it blocked
+the whole package: an outsider with the public URL got four repositories and
+exit code 2 from the provenance gate, with no way to regenerate anything.
 
-## 2. Dwie osie przypięcia
+## 2. Two pinning axes
 
-### 2.1. Kod do odtworzenia i nowych pomiarów
+### 2.1. Code for reproduction and new measurements
 
-Kod silnika i narzędzia pochodzą z pełnego SHA `6dec187e6b0cc66d119d4d9a9dc384e93adf6839`.
-Ten snapshot zawiera krytyczne poprawki narzędzi wprowadzone po rewizjach
-pomiarowych. Wynik uzyskany na nim jest **nowym odtworzeniem**, nie historycznym
-pomiarem z tabel artykułu.
+The engine code and the tooling come from the full SHA
+`6dec187e6b0cc66d119d4d9a9dc384e93adf6839`. This snapshot contains critical
+tooling fixes introduced after the measurement revisions. A result obtained on it
+is a **new reproduction**, not a historical measurement from the paper's tables.
 
-Przypięcie podbito 2026-08-23 z `661635072872b2a3dbd432f3d4a2654f0fc1b32e`.
-Podbicie nie rusza silnika: drzewo `src/` obu rewizji jest identyczne co do
-obiektu.
+The pin was bumped on 2026-08-23 from
+`661635072872b2a3dbd432f3d4a2654f0fc1b32e`. The bump does not move the engine:
+the `src/` tree of both revisions is object-identical.
 
 ```text
 661635072872b2a3dbd432f3d4a2654f0fc1b32e:src
@@ -73,45 +74,47 @@ obiektu.
   == 661259115d5c9301e53d0b163796148e7812ea7b
 ```
 
-Sześć commitów między nimi dotyczy `scripts/`, `.agents/`, `README.md`
-i konfiguracji CI. Dlatego produkty trybu analitycznego — w tym `fig:qrs`,
-zregenerowany na starszej z tych dwóch rewizji — pozostają ważne bez powtórzenia.
+The six commits between them concern `scripts/`, `.agents/`, `README.md` and CI
+configuration. The products of analytic mode — including `fig:qrs`, regenerated
+on the older of those two revisions — therefore remain valid without a repeat.
 
-### 2.2. Rewizje, na których wykonano historyczne kampanie
+### 2.2. The revisions on which the historical campaigns were run
 
-| Tag silnika | Silnik zmierzony | Tag eksperymentu | Eksperyment | Artefakt w artykule |
+| Engine tag | Engine measured | Experiment tag | Experiment | Artifact in the paper |
 |---|---|---|---|---|
 | `campaign/K6c-W2-W7` | `e1e5181141f96965da4a092f7e7191f8cb0b2748` | `campaign/K6c` | `f4483ef20c3bb3b6936f96709a593d1922943ada` | `tab:k6-primary`, W2–W7 |
 | `campaign/K6c-W8-W9` | `1bb2d2ce8bec35cd0ab46d168249b706ccbaf303` | `campaign/K6c` | `f4483ef20c3bb3b6936f96709a593d1922943ada` | `tab:k6-primary`, W8–W9 |
-| `campaign/K18` | `bc37186ac87cb944d76cf74c7be92706a4a3a87f` | `campaign/K18` | `e1e38ebe650d4c2752b98e78b463f93fe81b3d0e` | przepustowość, opóźnienie, stabilność powtórzenia |
+| `campaign/K18` | `bc37186ac87cb944d76cf74c7be92706a4a3a87f` | `campaign/K18` | `e1e38ebe650d4c2752b98e78b463f93fe81b3d0e` | throughput, latency, replay stability |
 | `campaign/K22v5` | `dd733e3792fbcd5727db244b802610a6d710b8dc` | `campaign/K22v5` | `0390a8910d72ecaa80772f3fd31a5f18a05369aa` | `tab:k22-constructs` |
 | `campaign/H9-K26v3` | `856ee54b0f4ab450a6b61e3c08e045f404a79488` | `campaign/H9-K26v3` | `81bf4bea00efb922678862c90462fb3c0dfe5fda` | `tab:h9-primary` |
-| `campaign/H10-K24d` | `34db1a291fff686d63402270722edf9c772bd4b6` | `campaign/H10-K24d` | `15ee150a779e5374248f8172d197b976d604416d` | zastąpiony przez K24e |
+| `campaign/H10-K24d` | `34db1a291fff686d63402270722edf9c772bd4b6` | `campaign/H10-K24d` | `15ee150a779e5374248f8172d197b976d604416d` | superseded by K24e |
 | `campaign/H10-K24e` | `e2a61ffff77f0ec393aded2c220379db1564af44` | `campaign/H10-K24e` | `a9d5e18e75ef7cf5dd8a63619f469517e13aa4af` | `tab:tail-exactness` |
 
-Tag silnika K24e wskazuje osiągalny commit `ef18105701158db9986d57fd74defdda72920871`,
-którego drzewo `src/` jest obiektowo identyczne ze zmierzonym
-`e2a61ffff77f0ec393aded2c220379db1564af44` — patrz
-§2.4. W tabeli pole „Silnik zmierzony” zachowuje faktyczne provenance.
+The K24e engine tag points at the reachable commit
+`ef18105701158db9986d57fd74defdda72920871`, whose `src/` tree is object-identical
+to the measured `e2a61ffff77f0ec393aded2c220379db1564af44` — see §2.4. In the
+table the "Engine measured" field preserves the actual provenance.
 
-### 2.3. Trzy role rewizji K22v5
+### 2.3. The three roles of the K22v5 revisions
 
-Rewizje K22 nie są konkurencyjnymi kandydatami do jednego pola:
+The K22 revisions are not competing candidates for one field:
 
-| Rola | SHA `rdb-experiment` | Dowód |
+| Role | `rdb-experiment` SHA | Evidence |
 |---|---|---|
-| zamrożenie aparatury i korpusu | `3366f1379803f1d46db25c515b9964621372d52f` | `results_20260801_K22v5/manifest.md` |
-| werdykt kampanii | `a9af1320c5679faf7f3746c82c3b500d65eb1541` | commit dodający raport, wyniki i pakiet dowodowy |
-| komplet z analizą post hoc i tag kampanii | `0390a8910d72ecaa80772f3fd31a5f18a05369aa` | `campaign/K22v5` |
+| apparatus and corpus freeze | `3366f1379803f1d46db25c515b9964621372d52f` | `results_20260801_K22v5/manifest.md` |
+| campaign verdict | `a9af1320c5679faf7f3746c82c3b500d65eb1541` | the commit adding the report, the results and the evidence package |
+| the complete set with post-hoc analysis, and the campaign tag | `0390a8910d72ecaa80772f3fd31a5f18a05369aa` | `campaign/K22v5` |
 
-Do checkoutu historycznej kampanii służy ostatnia rewizja, bo zawiera
-zamrożenie, werdykt i analizę post hoc. Manifest zachowuje wszystkie trzy role.
+Checking out the historical campaign uses the last revision, because it contains
+the freeze, the verdict and the post-hoc analysis. The manifest preserves all
+three roles.
 
-### 2.4. Wyjątek K24e — osiągalny tag i faktyczna rewizja pomiarowa
+### 2.4. The K24e exception — reachable tag versus actual measurement revision
 
-Kampanię K24e wykonano na `e2a61ffff77f0ec393aded2c220379db1564af44`.
-Po squash-merge osiągalny tag przeniesiono na `ef18105701158db9986d57fd74defdda72920871`.
-Drzewo kodu silnika jest identyczne co do obiektu:
+The K24e campaign was run on `e2a61ffff77f0ec393aded2c220379db1564af44`. After a
+squash merge the reachable tag was moved to
+`ef18105701158db9986d57fd74defdda72920871`. The engine code tree is
+object-identical:
 
 ```text
 e2a61ffff77f0ec393aded2c220379db1564af44:src
@@ -119,157 +122,161 @@ e2a61ffff77f0ec393aded2c220379db1564af44:src
   == 5ddad0fc7d56fb9b468d31905a6689e9896ddb39
 ```
 
-Metadane skasowanej rewizji zachowuje
-`paper-arXiv/debs/k9b/e2a61ff-provenance.txt`. Różnice wobec squasha dotyczą
-testów, nie drzewa `src/`.
+The metadata of the deleted revision is preserved in
+`paper-arXiv/debs/k9b/e2a61ff-provenance.txt`. The differences against the squash
+concern tests, not the `src/` tree.
 
-## 3. Provenance tabel i figur artykułu
+## 3. Provenance of the paper's tables and figures
 
-| Artefakt | Kampania | Katalog w `rdb-experiment` | Rewizja pomiarowa |
+| Artifact | Campaign | Directory in `rdb-experiment` | Measurement revision |
 |---|---|---|---|
-| `tab:operators` | definicyjna | — | nie dotyczy |
-| `tab:repr` | strukturalna | `results_20260725/` | historyczny oracle, bez pomiaru czasu |
-| `tab:gap` | przegląd K8 | `paper-arXiv/debs/related_work_k8.md` | nie dotyczy |
+| `tab:operators` | definitional | — | not applicable |
+| `tab:repr` | structural | `results_20260725/` | historical oracle, no timing measurement |
+| `tab:gap` | K8 survey | `paper-arXiv/debs/related_work_k8.md` | not applicable |
 | `tab:tail-exactness` | K24e | `results_20260818_K24e/` | `e2a61ffff77f0ec393aded2c220379db1564af44` |
-| `tab:k22-constructs` | K22v5 | `results_20260801_K22v5/` | `campaign/K22v5` i role z §2.3 |
+| `tab:k22-constructs` | K22v5 | `results_20260801_K22v5/` | `campaign/K22v5` and the roles in §2.3 |
 | `tab:k6-primary` | K6c | `results_20260730_K6c/` | `campaign/K6c-W2-W7`, `campaign/K6c-W8-W9` |
 | `tab:h9-primary` | K26v3 | `results_20260814_K26v3/` | `campaign/H9-K26v3` |
-| `fig:arch` | diagram | — | nie dotyczy |
-| `fig:qrs` | potok ECG | `retractordb/examples/ecg/rec205` | zregenerowany 2026-08-20 na `6616350…`; okno przypięte przez `-m 1671` |
+| `fig:arch` | diagram | — | not applicable |
+| `fig:qrs` | ECG pipeline | `retractordb/examples/ecg/rec205` | regenerated 2026-08-20 on `6616350…`; window pinned by `-m 1671` |
 
-Liczby wniesione do tekstu poza tabelami: 75 548 przypadków / 143 065 922
-pozycji (K2/G3, `results_20260726_G3/`, `results/equivalence.json`, klucz
-`totals`), 468 220 faz różnicy + 2 239 488 faz AGSE (K19,
-`results_20260728_K19/`), **13 silnikowych sprawdzeń tożsamości** (K2/G3, most
-oracle — silnik, `results/engine.json`, klucz `cases`) oraz liczby planów
-i obserwacji z K24e (10 010 planów, 35 835 obserwacji węzłowych w próbie,
-35 703 poza próbą).
+Numbers carried into the text outside the tables: 75,548 cases / 143,065,922
+positions (K2/G3, `results_20260726_G3/`, `results/equivalence.json`, key
+`totals`), 468,220 difference phases + 2,239,488 AGSE phases (K19,
+`results_20260728_K19/`), **13 engine identity checks** (K2/G3, the oracle-to-
+engine bridge, `results/engine.json`, key `cases`), and the plan and observation
+counts from K24e (10,010 plans, 35,835 node observations in sample, 35,703 out
+of sample).
 
-Do 2026-08-20 te 13 sprawdzeń było w planie i w tym manifeście przypisane do
-K18. Przypisanie było błędne: K18 wnosi do tego zdania artykułu **deterministyczne
-artefakty** (67 porównanych plików z dwóch przebiegów replay plus sześć
-sprawdzeń round-trip, `results_20260728_K18/exactness/`), a nie sprawdzenia
-tożsamości. Sama liczba 13 jest poprawna i nie zmienia się — zmienia się jej
-źródło (znalezisko K9b-F4).
+Until 2026-08-20 those 13 checks were attributed, in the plan and in this
+manifest, to K18. The attribution was wrong: what K18 contributes to that
+sentence of the paper is **deterministic artifacts** (67 files compared across
+two replay runs, plus six round-trip checks,
+`results_20260728_K18/exactness/`), not identity checks. The number 13 itself is
+correct and does not change — what changes is its source (finding K9b-F4).
 
-## 4. Surowe archiwa
+## 4. Raw archives
 
-Istnieje 16 plików indeksów. Opisują one 18 archiwów, ponieważ indeks K26v3 P8
-obejmuje trzy osobne rodziny. **Klon niesie wszystkie 18** — siedemnaście jako
-pliki, osiemnaste (`study_06_W8`) w czterech częściach.
+There are 16 index files. They describe 18 archives, because the K26v3 P8 index
+covers three separate families. **A clone carries all 18** — seventeen as files,
+the eighteenth (`study_06_W8`) in four parts.
 
-Kolumna „bajty treści” jest sumą rozmiarów wpisów indeksu, „bajty archiwum”
-rzeczywistym rozmiarem skompresowanego pliku, a „w git” mówi, czy `git clone`
-przynosi tę pozycję — bo to jest jedyne pytanie, które obchodzi obcego.
+The "content bytes" column is the sum of the index entries' sizes, "archive
+bytes" is the actual size of the compressed file, and "in git" says whether
+`git clone` brings that item — because that is the only question an outsider
+cares about.
 
-| Archiwum | Wpisów | Bajty treści | Bajty archiwum | w git | SHA-256 archiwum |
+| Archive | Entries | Content bytes | Archive bytes | in git | Archive SHA-256 |
 |---|---:|---:|---:|:---:|---|
-| `results_20260728_K4/results/raw.tar.gz` | 820 | 405526 | 65666 | tak | `407cb32400c57fdc7c9f969821de134062120bce57399ac051c6162618d79968` |
-| `results_20260729_K5/results/raw.tar.gz` | 2701 | 1233361 | 85273 | tak | `975af64bc94cef2949fdfbc442866c8486deadc9acfee7bde840e35ecea99460` |
-| `results_20260729_K5_rerun/results/raw.tar.gz` | 4213 | 3555141 | 194945 | tak | `cd20f8d38984ac4164a9b45a4aee601441271215ff223785b0790d2df59503dd` |
-| `results_20260729_hygiene/results/raw.tar.gz` | 813 | 518514 | 139161 | tak | `340872b0f338bd92bb2ae204456eefd308b85b3047002353fc48f96ba9aeec9b` |
-| `results_20260730_K6b/ablation/study_01_W2/raw.tar.gz` | 1440 | 17596571 | 8062371 | tak | `8bc8b52bda07c3e29b5e341b163587069002139fa3751c3dd81dc30d60e6e0e7` |
-| `results_20260730_K6c/ablation/study_01_W2/raw.tar.gz` | 1440 | 20778051 | 9537281 | tak | `3380390d2af43c768387f0da7e8d0f0f5dfceaaa7563201c382339b04baf92ee` |
-| `results_20260730_K6c/ablation/study_02_W3/raw.tar.gz` | 960 | 16516075 | 7593722 | tak | `105c211b951f06a429591a95273c2e85f08c2dc305bedf49459bc5392cd63618` |
-| `results_20260730_K6c/ablation/study_03_W4/raw.tar.gz` | 960 | 11321161 | 5066701 | tak | `841a882a3dec0a83dde685ae19dd3d7996e81673b08de5cd16de012766c2d401` |
-| `results_20260730_K6c/ablation/study_04_W5/raw.tar.gz` | 480 | 7323997 | 3259508 | tak | `ce46589c8c850d9eb0a538e63c93bd6bf1f27ed7453b1c6d2394b95ce99023ed` |
-| `results_20260730_K6c/ablation/study_05_W7/raw.tar.gz` | 480 | 5977472 | 2712636 | tak | `3d6bf640c7a0ddbe4bb32f87dcb084cabebbf5efa119352473ba5621d684dec4` |
-| `results_20260730_K6c/ablation/study_06_W8/results_20260730_K6c_study_06_W8_raw.tar.gz` | 1080 | 642032935 | 162167985 | części | `03f503fee2504ef46d8d5f367807442be28593f8081a487911475726609d4e51` |
-| `results_20260730_K6c/ablation/study_07_W9/results_20260730_K6c_study_07_W9_raw.tar.gz` | 960 | 154719433 | 8945852 | tak | `0f0b504a0dd3f50f12ae4ef5bd60e90c2e2702215388fd84d6dc54ee06055280` |
-| `results_20260730_hygiene/results/raw.tar.gz` | 813 | 533667 | 140821 | tak | `b582f33356f73bf0a4e2f200733d5cc0c8a5bd2cac2c5367f61c61db290695b5` |
-| `results_20260731_hygiene/results/raw.tar.gz` | 1370 | 607518 | 163996 | tak | `42bc80319943ad697dede45e1cab78b4b9fb9ff94c0671ed66217872ca54b50f` |
-| `results_20260731_hygiene220/results/raw.tar.gz` | 1371 | 623740 | 167437 | tak | `6993a2877741d65e480167a7068370b06416dee278c00f4f156c4232a205963c` |
-| `artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R1.tar.gz` | 27432 | — | 37667672 | tak | `8c4ac248eb8e5f91f35ca90ce61f1f3ff10eef7db58042ab62238cd349b256a3` |
-| `artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R2.tar.gz` | 26788 | — | 20536480 | tak | `62b065a89e82126c08f2a973195e10688bd1adfcbdb2840d5f57ea22248c0db7` |
-| `artifacts/K26v3/k26v3_archives/K26v3-P8-F9-X.tar.gz` | 34298 | — | 38023659 | tak | `3deb300733f3662dd042ca0109eb73aa696c4eb5da7d8b3b62745735c94c2e04` |
+| `results_20260728_K4/results/raw.tar.gz` | 820 | 405526 | 65666 | yes | `407cb32400c57fdc7c9f969821de134062120bce57399ac051c6162618d79968` |
+| `results_20260729_K5/results/raw.tar.gz` | 2701 | 1233361 | 85273 | yes | `975af64bc94cef2949fdfbc442866c8486deadc9acfee7bde840e35ecea99460` |
+| `results_20260729_K5_rerun/results/raw.tar.gz` | 4213 | 3555141 | 194945 | yes | `cd20f8d38984ac4164a9b45a4aee601441271215ff223785b0790d2df59503dd` |
+| `results_20260729_hygiene/results/raw.tar.gz` | 813 | 518514 | 139161 | yes | `340872b0f338bd92bb2ae204456eefd308b85b3047002353fc48f96ba9aeec9b` |
+| `results_20260730_K6b/ablation/study_01_W2/raw.tar.gz` | 1440 | 17596571 | 8062371 | yes | `8bc8b52bda07c3e29b5e341b163587069002139fa3751c3dd81dc30d60e6e0e7` |
+| `results_20260730_K6c/ablation/study_01_W2/raw.tar.gz` | 1440 | 20778051 | 9537281 | yes | `3380390d2af43c768387f0da7e8d0f0f5dfceaaa7563201c382339b04baf92ee` |
+| `results_20260730_K6c/ablation/study_02_W3/raw.tar.gz` | 960 | 16516075 | 7593722 | yes | `105c211b951f06a429591a95273c2e85f08c2dc305bedf49459bc5392cd63618` |
+| `results_20260730_K6c/ablation/study_03_W4/raw.tar.gz` | 960 | 11321161 | 5066701 | yes | `841a882a3dec0a83dde685ae19dd3d7996e81673b08de5cd16de012766c2d401` |
+| `results_20260730_K6c/ablation/study_04_W5/raw.tar.gz` | 480 | 7323997 | 3259508 | yes | `ce46589c8c850d9eb0a538e63c93bd6bf1f27ed7453b1c6d2394b95ce99023ed` |
+| `results_20260730_K6c/ablation/study_05_W7/raw.tar.gz` | 480 | 5977472 | 2712636 | yes | `3d6bf640c7a0ddbe4bb32f87dcb084cabebbf5efa119352473ba5621d684dec4` |
+| `results_20260730_K6c/ablation/study_06_W8/results_20260730_K6c_study_06_W8_raw.tar.gz` | 1080 | 642032935 | 162167985 | in parts | `03f503fee2504ef46d8d5f367807442be28593f8081a487911475726609d4e51` |
+| `results_20260730_K6c/ablation/study_07_W9/results_20260730_K6c_study_07_W9_raw.tar.gz` | 960 | 154719433 | 8945852 | yes | `0f0b504a0dd3f50f12ae4ef5bd60e90c2e2702215388fd84d6dc54ee06055280` |
+| `results_20260730_hygiene/results/raw.tar.gz` | 813 | 533667 | 140821 | yes | `b582f33356f73bf0a4e2f200733d5cc0c8a5bd2cac2c5367f61c61db290695b5` |
+| `results_20260731_hygiene/results/raw.tar.gz` | 1370 | 607518 | 163996 | yes | `42bc80319943ad697dede45e1cab78b4b9fb9ff94c0671ed66217872ca54b50f` |
+| `results_20260731_hygiene220/results/raw.tar.gz` | 1371 | 623740 | 167437 | yes | `6993a2877741d65e480167a7068370b06416dee278c00f4f156c4232a205963c` |
+| `artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R1.tar.gz` | 27432 | — | 37667672 | yes | `8c4ac248eb8e5f91f35ca90ce61f1f3ff10eef7db58042ab62238cd349b256a3` |
+| `artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R2.tar.gz` | 26788 | — | 20536480 | yes | `62b065a89e82126c08f2a973195e10688bd1adfcbdb2840d5f57ea22248c0db7` |
+| `artifacts/K26v3/k26v3_archives/K26v3-P8-F9-X.tar.gz` | 34298 | — | 38023659 | yes | `3deb300733f3662dd042ca0109eb73aa696c4eb5da7d8b3b62745735c94c2e04` |
 
-URL/DOI zewnętrznego depozytu pozostaje `TBA` zgodnie z decyzją D-2 — ale nie
-jest już warunkiem dostępu do danych, bo dane są w repozytorium.
+The external deposit's URL/DOI remains `TBA` under decision D-2 — but it is no
+longer a condition of access to the data, because the data are in the repository.
 
-### 4.1. Co się zmieniło 2026-08-23
+### 4.1. What changed on 2026-08-23
 
-**Trzy archiwa uznane wcześniej za nieobecne odnalazły się** na komputerze
-stacjonarnym, zgodnie z przypuszczeniem zapisanym 2026-08-19: `study_06_W8`,
-`study_07_W9` i `hygiene220`. Nie przyjęto samej obecności za dowód. Dla
-każdego porównano **każdy wpis** indeksu `raw.index.tsv` — ścieżkę, rozmiar
-i SHA-256 — ze strumieniem odczytanym z archiwum:
+**Three archives previously considered absent were found** on the desktop
+machine, as conjectured in the note of 2026-08-19: `study_06_W8`, `study_07_W9`
+and `hygiene220`. Their mere presence was not taken as proof. For each one,
+**every entry** of the `raw.index.tsv` index — path, size and SHA-256 — was
+compared against the stream read out of the archive:
 
-| Archiwum | Wpisów indeksu | Plików w archiwum | Niezgodnych | Spoza indeksu |
+| Archive | Index entries | Files in archive | Mismatched | Not in index |
 |---|---:|---:|---:|---:|
 | `study_06_W8` | 1080 | 1080 | 0 | 0 |
 | `study_07_W9` | 960 | 960 | 0 | 0 |
 | `hygiene220` | 1371 | 1371 | 0 | 0 |
 
-### 4.2. Dlaczego trafiły do repozytorium, a nie do przypisu
+### 4.2. Why they went into the repository rather than into a footnote
 
-Odzyskanie ujawniło, że stan zastany był **mieszany, nie spójny**. Polityka
-z 2026-07-31 kierowała każde `*raw.tar.gz` poza git, ale `.gitignore` nie
-przestaje śledzić tego, co już było śledzone — piętnaście archiwów sprzed tej
-daty nigdy z repozytorium nie wyszło. Klon niósł więc 15 z 18 pozycji i o trzech
-pozostałych mówił jedynie, że istnieją gdzieś na jednej maszynie.
+The recovery revealed that the state found was **mixed, not consistent**. The
+policy of 2026-07-31 directed every `*raw.tar.gz` outside git, but `.gitignore`
+does not stop tracking what was already tracked — fifteen archives predating
+that date never left the repository. A clone therefore carried 15 of the 18
+items, and about the other three said only that they existed somewhere on one
+machine.
 
-Wersja manifestu sprzed tej korekty zapisywała je jako „obecne", co przechodziło
-na dysku autora i **oblewało na każdym świeżym klonie** — dokładnie klasa błędu
-z K9b-F5: bramka, której nikt nie uruchomił z cudzego katalogu.
+The version of the manifest before this correction recorded them as "present",
+which passed on the author's disk and **failed on every fresh clone** — exactly
+the class of error of K9b-F5: a gate nobody ran from someone else's directory.
 
-Decyzja z 2026-08-23 wyrównuje stan w drugą stronę: trzy pozycje wchodzą do
-repozytorium (`rdb-experiment` commit `b713e1d`). `study_07_W9` (8,5 MiB)
-i `hygiene220` (0,1 MiB) mieszczą się w limitach GitHuba i wchodzą wprost.
-`study_06_W8` (154,6 MiB) przekracza twardy limit 100 MB na plik, więc wchodzi
-w **czterech częściach po 45 MiB** obok indeksu `.parts.tsv` z SHA-256 całości
-i każdej części.
+The decision of 2026-08-23 levels the state the other way: the three items enter
+the repository (`rdb-experiment` commit `b713e1d`). `study_07_W9` (8.5 MiB) and
+`hygiene220` (0.1 MiB) fit within GitHub's limits and enter directly.
+`study_06_W8` (154.6 MiB) exceeds the hard 100 MB per-file limit, so it enters in
+**four 45 MiB parts** alongside a `.parts.tsv` index carrying the SHA-256 of the
+whole and of each part.
 
 ```bash
-# odtworzenie calosci ze sledzonych czesci, z weryfikacja
+# reassemble the whole from the tracked parts, with verification
 rdb-experiment/lib/raw_parts.sh join \
   results_20260730_K6c/ablation/study_06_W8/results_20260730_K6c_study_06_W8_raw.tar.gz
 ```
 
-Sama całość W8 pozostaje poza git świadomie: składalna, nie przechowywana dwa
-razy. Koszt decyzji jest trwały i przyjęty — `.git` rośnie o ~171 MB, których
-gzip nie delta-kompresuje, i każdy klon je ciągnie.
+The assembled W8 whole deliberately stays outside git: assemblable, not stored
+twice. The cost of that decision is permanent and accepted — `.git` grows by
+~171 MB that gzip does not delta-compress, and every clone pulls it.
 
-Milczenie nadal nie jest traktowane jako dostępność. `bin/verify_pins.sh
-snapshot` sprawdza siedemnaście archiwów po sumie, cztery części W8 po sumie
-i rozmiarze, obecność indeksu części, a złożoną całość tylko wtedy, gdy leży na
-dysku — bez niej wypisuje `SKIP` z przepisem, nigdy błąd.
+Silence is still not treated as availability. `bin/verify_pins.sh snapshot`
+checks seventeen archives by checksum, the four W8 parts by checksum and size,
+the presence of the parts index, and the assembled whole only if it is on disk —
+without it the script prints `SKIP` with the recipe, never an error.
 
-## 5. Znane granice tego pakietu
+## 5. Known limits of this package
 
-1. `fig:qrs` jest jedyną pozycją §3 wymagającą działającego silnika, więc
-   `bin/reproduce_analytic.sh` odtwarza ją tylko wtedy, gdy poda mu się
-   `--xretractor` i `--xqry`; bez nich zgłasza `SKIP` wraz z przepisem.
-   Okno jest przypięte limitem `-m 1671` (próbki `[1271,1670]`, piki na
-   `x=128` i `x=371`) — patrz `REPRODUCE.md` §3.
-2. Wszystkie 18 archiwów raw jest obecnych, zweryfikowanych wpis po wpisie
-   i **w repozytorium** (2026-08-23) — patrz §4. Klon niesie siedemnaście jako
-   pliki i osiemnaste w czterech częściach; `lib/raw_parts.sh join` odtwarza je
-   bajtowo. Zewnętrzny depozyt (D-2) przestał być warunkiem dostępu do danych.
-3. Tryb pomiarowy nie obiecuje identycznych czasów. Sprawdza platformę
-   i provenance przed startem i **niczego nie uruchamia**: start wielodniowego
-   przebiegu jest osobnym, świadomym poleceniem wydanym maszynie pomiarowej.
-4. Autonomia przebiegu (W-1) jest **sprawdzona empirycznie 2026-08-23** na
-   maszynie pomiarowej `pi400` (`6.8.0-2049-raspi-realtime`), z faktycznie
-   odciętym kanałem sterującym — patrz `bin/w1_trial/README.md` i dowody
-   w `tables/w1/`. Granica, która zostaje: sprawdzono **osprzęt autonomii**,
-   nie trzydobowy przebieg K26v3. Odcinek próby liczy ~76 s, więc próba mówi,
-   że łańcuch przeżywa restarty i brak hosta, a nie że konkretna kampania
-   zmieści się w oknie termicznym.
-5. DOI nie jest jeszcze nadany — decyzja D-2: po decyzji o zgłoszeniu artykułu.
-6. `paper-arXiv` jest przypięte, ale **nieosiągalne dla obcego** i takie zostanie
-   do recenzji (D-6). Skutek praktyczny jest jeden: nie da się sprawdzić, czy
-   przypięta rewizja artykułu odpowiada tej, którą czytasz. Wszystko, co służy
-   odtworzeniu wyników, jest publiczne.
-6. Dwie kampanie niosą aparaturę związaną z miejscem i chwilą pomiaru, co
-   `bin/reproduce_analytic.sh` obchodzi jawnie, nie po cichu:
-   * K22v5 — `analyze.py` woła `freeze_check.sh`, bramkę **proweniencji
-     pomiaru** (gałąź `experiment/20260801_K22`, `retractordb` na `dd733e3`,
-     dwa binaria po SHA-256). Po scaleniu gałęzi bramka nie może już przejść
-     i nie jest potrzebna do ponownego wyprowadzenia tabeli z danych.
-     Proweniencję trybu analitycznego poświadcza `bin/verify_pins.sh`.
-   * K22v5 — `manual_hits_review.csv` przechowuje **ścieżki bezwzględne**
-     z chwili przeglądu, więc `verify_hits()` przechodzi wyłącznie pod
-     `/home/michal/github/rdb-experiment`. `bin/analytic_k22v5.py` powtarza tę
-     bramkę na ścieżkach względnych wobec korzenia repozytorium: sprawdza to
-     samo (każde trafienie przejrzane i potwierdzone), bez zależności od
-     jednego układu katalogów (znalezisko K9b-F3).
+1. `fig:qrs` is the only item in §3 that requires a working engine, so
+   `bin/reproduce_analytic.sh` reproduces it only when given `--xretractor` and
+   `--xqry`; without them it reports `SKIP` together with the recipe. The window
+   is pinned by the limit `-m 1671` (samples `[1271,1670]`, peaks at `x=128` and
+   `x=371`) — see `REPRODUCE.md` §3.
+2. All 18 raw archives are present, verified entry by entry and **in the
+   repository** (2026-08-23) — see §4. A clone carries seventeen as files and the
+   eighteenth in four parts; `lib/raw_parts.sh join` restores it byte for byte.
+   The external deposit (D-2) has ceased to be a condition of access to the data.
+3. Measurement mode does not promise identical timings. It checks the platform
+   and the provenance before starting and **runs nothing**: starting a multi-day
+   run is a separate, deliberate command issued to the measurement machine.
+4. Run autonomy (W-1) is **verified empirically, 2026-08-23**, on the `pi400`
+   measurement machine (`6.8.0-2049-raspi-realtime`), with the control channel
+   actually cut — see `bin/w1_trial/README.md` and the evidence in `tables/w1/`.
+   The limit that remains: what was checked is the **autonomy apparatus**, not a
+   three-day K26v3 run. A trial segment lasts ~76 s, so the trial says that the
+   chain survives reboots and an absent host, not that a particular campaign will
+   fit inside the thermal window.
+5. The DOI is not yet assigned — decision D-2: after the decision to submit the
+   paper.
+6. `paper-arXiv` is pinned but **unreachable for an outsider** and will stay so
+   until review (D-6). There is one practical consequence: you cannot check
+   whether the pinned revision of the paper corresponds to the one you are
+   reading. Everything that serves the reproduction of results is public.
+7. Two campaigns carry apparatus tied to the place and moment of measurement,
+   which `bin/reproduce_analytic.sh` works around explicitly rather than
+   silently:
+   * K22v5 — `analyze.py` calls `freeze_check.sh`, a **measurement provenance**
+     gate (branch `experiment/20260801_K22`, `retractordb` at `dd733e3`, two
+     binaries by SHA-256). After the branch was merged the gate can no longer
+     pass, and it is not needed to re-derive the table from the data. The
+     provenance of analytic mode is attested by `bin/verify_pins.sh`.
+   * K22v5 — `manual_hits_review.csv` stores **absolute paths** from the moment
+     of the review, so `verify_hits()` passes only under
+     `/home/michal/github/rdb-experiment`. `bin/analytic_k22v5.py` repeats that
+     gate on paths relative to the repository root: it checks the same thing
+     (every hit reviewed and confirmed) without depending on one directory
+     layout (finding K9b-F3).
