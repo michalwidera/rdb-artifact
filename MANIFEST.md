@@ -75,9 +75,12 @@ runtime messages.
 
 The consequence is stated rather than hidden: **the analytic products were
 re-derived on the new pin, not carried over.** The full run of 2026-09-02
-regenerated eight groups out of eight against the stored copies, `fig:qrs`
-included; the ECG frame still holds 400 samples with QRS complexes at `x=128`
-and `x=371`. Where a product depends on the engine, it was recomputed; where it
+regenerated eight groups out of eight; seven of them were compared against the
+copies stored in git and matched. The eighth, `ecg`, has no stored copy to
+compare against — it renders a figure, and what is checked instead is the pinned
+window: the frame still holds 400 samples with QRS complexes at `x=128` and
+`x=371`. That run is recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md), *Second
+trial*. Where a product depends on the engine, it was recomputed; where it
 depends only on frozen campaign data, the data did not move.
 
 One thing the bump does change for a reader of §5 in `REPRODUCE.md`: from this
@@ -146,7 +149,7 @@ concern tests, not the `src/` tree.
 | `tab:k6-primary` | K6c | `results_20260730_K6c/` | `campaign/K6c-W2-W7`, `campaign/K6c-W8-W9` |
 | `tab:h9-primary` | K26v3 | `results_20260814_K26v3/` | `campaign/H9-K26v3` |
 | `fig:arch` | diagram | — | not applicable |
-| `fig:qrs` | ECG pipeline | `retractordb/examples/ecg/rec205` | regenerated 2026-08-20 on `6616350…`; window pinned by `-m 1671` |
+| `fig:qrs` | ECG pipeline | `retractordb/examples/ecg/rec205` | regenerated 2026-09-02 on the pinned `8aa4ee2f…`; window pinned by `-m 1671` |
 
 Numbers carried into the text outside the tables: 75,548 cases / 143,065,922
 positions (K2/G3, `results_20260726_G3/`, `results/equivalence.json`, key

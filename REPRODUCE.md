@@ -198,8 +198,10 @@ confirmed the third state — `HALT` and a stop instead of a loop. Evidence:
 
 **On the pinned engine: nothing.** The `.meta` header — the range **offset 0–7**
 of every main `*.meta` file — is a reserved `int64_t` written as zero by
-`MetaIndexStore::writeHeader()`. Every persistent artifact a reproduction
-produces is therefore bit-for-bit repeatable over its whole length.
+the file-local `writeHeader()` in `src/rdb/lib/metaIndexStore.cc`, reached
+through `MetaIndexStore::saveHeader()` and `MetaIndexStore::rewrite()`. Every
+persistent artifact a reproduction produces is therefore bit-for-bit repeatable
+over its whole length.
 
 The comparison still excludes exactly those eight bytes (`tail -c +9`). That is
 now a legacy step rather than a necessity, and it is kept for one reason: it is

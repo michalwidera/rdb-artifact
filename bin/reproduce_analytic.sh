@@ -263,7 +263,10 @@ group_k18() {
 # that can be skipped without failing the run. The window rule is what makes it
 # deterministic: -p 400,400 fixes the window SIZE, -m 1671 fixes its POSITION.
 QRS_SAMPLES=1671
-QRS_PEAKS="128 372"
+# Measured on the pinned engine. This said 372 until 2026-09-02 and passed only
+# because the check allows +-3 samples; a tolerance is there to absorb sampling
+# jitter, not to cover a wrong reference.
+QRS_PEAKS="128 371"
 
 group_ecg() {
   local out="$OUT/ecg"
