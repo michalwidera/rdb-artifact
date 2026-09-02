@@ -146,7 +146,7 @@ SECTIONS = (("tail", r"^## 1\. ", r"^## 1b\. "), ("origin", r"^## 1b\. ", r"^## 
 
 for label, path in (("in_sample", sys.argv[1]), ("out_of_sample", sys.argv[2])):
     text = open(path, encoding="utf-8").read()
-    nums = re.findall(r"\*\*(\d[\d ]*) plan[^*]*\*\*, \*\*(\d[\d ]*) obserwacji", text)
+    nums = re.findall(r"\*\*(\d[\d ]*) plans\*\*, \*\*(\d[\d ]*) node observations", text)
     if nums:
         plans, obs = (x.replace(" ", "") for x in nums[0])
         print(f"COUNT {label}_plans={plans} {label}_node_observations={obs}")
@@ -154,7 +154,7 @@ for label, path in (("in_sample", sys.argv[1]), ("out_of_sample", sys.argv[2])):
         head = re.search(start, text, re.M)
         tail = re.search(end, text, re.M)
         block = text[head.end():tail.start()] if head and tail else ""
-        rows = re.findall(r"^\| `([A-Z]+)` \|.*\| dokładna \|", block, re.M)
+        rows = re.findall(r"^\| `([A-Z]+)` \|.*\| exact \|", block, re.M)
         print(f"COUNT {label}_{name}_exact_classes={len(set(rows))}")
 PY
   compare_stored "results_20260818_K24e/VERDICT.md" "$out/VERDICT.md"
@@ -168,9 +168,9 @@ group_k26v3() {
   python3 - "$out/verdict.txt" <<'PY'
 import re, sys
 text = open(sys.argv[1], encoding="utf-8").read()
-print(f"COUNT families_supporting={len(re.findall(r'RODZINA: SUPPORT', text))}")
+print(f"COUNT families_supporting={len(re.findall(r'FAMILY: SUPPORT', text))}")
 print(f"COUNT families_total={len(re.findall(r'^--- F9-', text, re.M))}")
-m = re.search(r"Rodzin wspierajacych H9: (\d+)/(\d+)", text)
+m = re.search(r"Families supporting H9: (\d+)/(\d+)", text)
 if m:
     print(f"COUNT verdict_rule={m.group(1)}_of_{m.group(2)}")
 print("COUNT verdict_supported=" + ("1" if "H9 WSPARTA" in text else "0"))
@@ -195,7 +195,7 @@ print(f"COUNT mutations={len(eq['mutations'])}")
 print(f"COUNT engine_identity_checks={len(en['cases'])}")
 print(f"COUNT oracle_verdict={eq['verdict']} engine_verdict={en['verdict']}")
 PY
-  compare_stored "results_20260726_G3/results/summary.md" "$out/summary.md" '/^- wygenerowano:/d'
+  compare_stored "results_20260726_G3/results/summary.md" "$out/summary.md" '/^- generated:/d'
 }
 
 group_k19() {
@@ -213,11 +213,37 @@ PY
   compare_stored "results_20260728_K19/results/oracle.json" "$out/oracle.json"
 }
 
+# K18 differs from every other group: its products are FROZEN measurement output
+# from engine bc37186, not something this script recomputes. They are therefore
+# copied verbatim -- and their markers are Polish. Rewriting a measurement record
+# to translate it is not an option, so the originals are kept as the evidence and
+# an English rendering is written beside them for the reviewer. The counts below
+# are parsed from the ORIGINAL, so the rendering can never become the evidence.
+render_k18_english() {
+  local src="$1" dst="$2"
+  sed -e 's/^IDENTYCZNY /IDENTICAL  /' \
+      -e 's/^IDENT-PO-TIMESTAMP/IDENTICAL-AFTER-HEADER/' \
+      -e 's/^ROZNY /DIFFERENT /' \
+      -e 's/^a2 == a (bez rekordu zastepczego)/a2 == a (without the substitute record)/' \
+      -e 's/^wystarczajacy prefiks/sufficient prefix/' \
+      -e 's/^# K18 exactness\/replay — wynik/# K18 exactness\/replay -- result/' \
+      -e 's/^- kod:/- code:/' \
+      -e 's/^- branch wynikow:/- results branch:/' \
+      -e 's/- 2 przebiegi, /- 2 runs, /' \
+      -e 's/ strumieni, / streams, /' \
+      -e 's/ plikow artefaktow/ artifact files/' \
+      -e 's/ bez rekordu zastepczego/ without the substitute record/' \
+      "$src" >"$dst"
+}
+
 group_k18() {
   local dir="$EXP/results_20260728_K18/exactness" out="$OUT/k18"
   mkdir -p "$out"
   [ -f "$dir/replay_compare.txt" ] || fail "K18: stored replay comparison missing"
   cp "$dir/replay_compare.txt" "$dir/roundtrip_compare.txt" "$dir/results.md" "$out/"
+  render_k18_english "$dir/replay_compare.txt"    "$out/replay_compare.en.txt"
+  render_k18_english "$dir/roundtrip_compare.txt" "$out/roundtrip_compare.en.txt"
+  render_k18_english "$dir/results.md"            "$out/results.en.md"
   local artifacts meta identical checks
   artifacts=$(wc -l <"$out/replay_compare.txt")
   meta=$(grep -c '^IDENT-PO-TIMESTAMP' "$out/replay_compare.txt" || true)

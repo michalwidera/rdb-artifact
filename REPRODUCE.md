@@ -91,13 +91,20 @@ git.
 
 The 2026-08-20 run on the pinned snapshot: **eight groups out of eight**, all
 comparisons against the stored files in agreement — byte for byte, with the
-single exception of the G3 report, which differs only in its `- wygenerowano:`
+single exception of the G3 report, which differs only in its `- generated:`
 line.
 
 Seven groups need no engine. The eighth, `ecg`, does: pass it `--xretractor` and
 `--xqry`; without them it reports `SKIP` and prints the recipe. The binary is
 gated there exactly as in measurement mode — the figure is meant to come from
 the pinned engine, not from whatever happens to sit on `PATH`.
+
+K18 is the one group whose products are frozen measurement output from engine
+`bc37186` rather than something this script recomputes, so they are copied
+verbatim and their markers are in Polish. The originals are kept as the
+evidence — a measurement record is not rewritten in order to translate it — and
+an English rendering is written beside each one as `*.en.txt` / `*.en.md`. The
+counts are parsed from the original, never from the rendering.
 
 The workspace is **single-use** and some of the frozen scripts write next to
 their inputs; the script reports how many files each group touched in it, and
