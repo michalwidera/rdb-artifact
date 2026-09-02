@@ -14,10 +14,10 @@ DOCS_PL_URL="${RDB_DOCS_PL_URL:-https://github.com/michalwidera/dokumentacja-rdb
 DOCS_EN_URL="${RDB_DOCS_EN_URL:-https://github.com/michalwidera/documentation-rdb.git}"
 PAPER_URL="${RDB_PAPER_URL:-https://github.com/michalwidera/paper-arXiv.git}"
 
-ENGINE_SNAPSHOT="6dec187e6b0cc66d119d4d9a9dc384e93adf6839"
+ENGINE_SNAPSHOT="8aa4ee2f18a003fcf55db8a4f810c720094e1b1a"
 EXPERIMENT_SNAPSHOT="4ca09c56713757b480eb6fda4d6718506a9153fd"
-DOCS_PL_SNAPSHOT="ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1"
-DOCS_EN_SNAPSHOT="8d543c8cbf95ab7cdb41049be3b30163e225bf5b"
+DOCS_PL_SNAPSHOT="07c89acd493500be248836fbadbabbdf4cc0eadd"
+DOCS_EN_SNAPSHOT="5b57ebd82093ecfd71954aa3896faab791f42886"
 PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
 PAPER_TAG="artifact/K9b"

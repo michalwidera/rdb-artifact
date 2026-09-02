@@ -17,10 +17,10 @@ nothing blocks its mirror any more.
 | Role | Source repository | Revision to mirror | Mirror ID |
 |---|---|---|---|
 | Artifact entry point | `rdb-artifact` | HEAD at mirror creation -- see below | `retractordb-artifact` |
-| Engine snapshot | `retractordb` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | `retractordb-engine` |
-| Experiments and data | `rdb-experiment` | `b713e1df47a5f94357f708706b85f5603f261534` | `retractordb-experiment` |
-| Canonical documentation | `dokumentacja-rdb` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | `dokumentacja-rdb` |
-| English documentation | `documentation-rdb` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | `documentation-rdb` |
+| Engine snapshot | `retractordb` | `8aa4ee2f18a003fcf55db8a4f810c720094e1b1a` | `retractordb-engine` |
+| Experiments and data | `rdb-experiment` | `4ca09c56713757b480eb6fda4d6718506a9153fd` | `retractordb-experiment` |
+| Canonical documentation | `dokumentacja-rdb` | `07c89acd493500be248836fbadbabbdf4cc0eadd` | `dokumentacja-rdb` |
+| English documentation | `documentation-rdb` | `5b57ebd82093ecfd71954aa3896faab791f42886` | `documentation-rdb` |
 
 The four source mirrors were created on 2026-08-26 and expire on 2027-08-25.
 The mirror ID is chosen, not generated: it is the repository name, unless that

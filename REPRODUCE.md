@@ -196,26 +196,29 @@ confirmed the third state — `HALT` and a stop instead of a loop. Evidence:
 
 ## 5. What is deliberately non-deterministic
 
-The only deliberately non-deterministic field of the persistent artifacts is the
-range **offset 0–7** of every main `*.meta` file: an `int64_t` holding the number
-of nanoseconds since the system clock's epoch at creation time, written in the
-platform's native byte order. `MetaIndexStore::writeHeader()` implements it.
+**On the pinned engine: nothing.** The `.meta` header — the range **offset 0–7**
+of every main `*.meta` file — is a reserved `int64_t` written as zero by
+`MetaIndexStore::writeHeader()`. Every persistent artifact a reproduction
+produces is therefore bit-for-bit repeatable over its whole length.
 
-The comparison excludes exactly those eight bytes (`tail -c +9`). All the rest of
-the `.meta` file — the gap flag, `recordCount`, the bit count and the packed
-`NULL` pattern — must be identical. The `*.meta.shadow` file **has no such
-header** and is compared in full. The data, `.desc`, `.shadow` and the remaining
-artifacts are compared in full as well.
+The comparison still excludes exactly those eight bytes (`tail -c +9`). That is
+now a legacy step rather than a necessity, and it is kept for one reason: it is
+the boundary the recorded campaigns used, so keeping it lets artifacts from
+before and after the change be compared by one procedure. Everything else — the
+gap flag, `recordCount`, the bit count and the packed `NULL` pattern — must be
+identical. The `*.meta.shadow` file **has no such header** and is compared in
+full. The data, `.desc`, `.shadow` and the remaining artifacts are compared in
+full as well.
 
-> **Note on a format change (post-campaign).** The description above applies to
-> the engine on which the campaign was run and remains a record of its
-> conditions. In the engine after 2026-09-02 the field at offset 0–7 is
-> **reserved and written as zero**: the timestamp was withdrawn because no
-> execution path read it. Reproducing with the current engine therefore yields
-> `.meta` files that are bit-for-bit repeatable over their whole length, and
-> `tail -c +9` remains a legacy step — still correct, but no longer necessary.
-> The header size (8 bytes) and the entry offsets did not change, so artifacts
-> from both engines stay comparable by the same procedure.
+> **How this looked during the campaigns.** Until 2026-09-02 those eight bytes
+> held the number of nanoseconds since the system clock's epoch at file
+> creation, in the platform's native byte order — the one deliberately
+> non-deterministic field of the persistent artifacts, and the reason the
+> comparison boundary exists at all. The field was withdrawn because no
+> execution path read it. The campaigns of `MANIFEST.md` §2.2 were measured
+> before the withdrawal, so their stored artifacts still carry a timestamp
+> there; the header size (8 bytes) and the entry offsets never changed, which is
+> what keeps the two comparable.
 
 The check cannot pass on an empty set: it prints the number of files compared,
 and requires an identical set of names and a non-zero count for the named

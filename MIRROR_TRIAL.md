@@ -9,6 +9,16 @@ Run on **2026-08-26**; the four source mirrors finished at
 with no GitHub session and no Anonymous GitHub session, using `curl` against the
 public endpoints only.
 
+> **This record is superseded and is kept as a record, not as a status.** On
+> 2026-09-02 every pin in `MANIFEST.md` §1 moved: the engine to `8aa4ee2f`, the
+> experiment to `4ca09c56`, the two documentation repositories to `07c89acd` and
+> `5b57ebd8`, and the entry point to the commit carrying those pins. The
+> revisions in the table below are the ones this trial actually ran against, so
+> they are left as they were — what a trial checked is not editable after the
+> fact. **The live mirrors therefore have no acceptance trial covering their
+> current revisions**, and the availability claim of `REVIEW_MIRROR.md` is not
+> supported until step 6 is repeated and recorded here.
+
 ## Mirrors
 
 | Role | Source | Pinned revision | Mirror ID |

@@ -12,10 +12,10 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
-| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `6dec187e6b0cc66d119d4d9a9dc384e93adf6839` | engine and fixed tooling | `retractordb-engine` |
+| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `8aa4ee2f18a003fcf55db8a4f810c720094e1b1a` | engine and fixed tooling | `retractordb-engine` |
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `4ca09c56713757b480eb6fda4d6718506a9153fd` | campaigns and data | `retractordb-experiment` |
-| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ed00f6aa3f2d7b7bd1c91e2eb7248a1ee8de3bf1` | PL documentation (canonical) | `dokumentacja-rdb` |
-| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `8d543c8cbf95ab7cdb41049be3b30163e225bf5b` | EN documentation (derived) | `documentation-rdb` |
+| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `07c89acd493500be248836fbadbabbdf4cc0eadd` | PL documentation (canonical) | `dokumentacja-rdb` |
+| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `5b57ebd82093ecfd71954aa3896faab791f42886` | EN documentation (derived) | `documentation-rdb` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
 The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
@@ -23,7 +23,7 @@ in the same commit. Its URL is
 `https://github.com/michalwidera/rdb-artifact.git` and it has been **public
 since 2026-08-23**. Its reviewer mirror `retractordb-artifact` has existed since
 2026-08-26 and is frozen at revision
-`609d64de7d3e9e640a4243dd752802913cfd869a`; the other four mirrors in the table
+`fc7836a25c2f6f239d660ae507be27301e7d435a`; the other four mirrors in the table
 were created the same day. All five are valid until 2027-08-25, and automatic
 updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
@@ -60,23 +60,32 @@ exit code 2 from the provenance gate, with no way to regenerate anything.
 ### 2.1. Code for reproduction and new measurements
 
 The engine code and the tooling come from the full SHA
-`6dec187e6b0cc66d119d4d9a9dc384e93adf6839`. This snapshot contains critical
-tooling fixes introduced after the measurement revisions. A result obtained on it
-is a **new reproduction**, not a historical measurement from the paper's tables.
+`8aa4ee2f18a003fcf55db8a4f810c720094e1b1a`. A result obtained on it is a **new
+reproduction**, not a historical measurement from the paper's tables.
 
-The pin was bumped on 2026-08-23 from
-`661635072872b2a3dbd432f3d4a2654f0fc1b32e`. The bump does not move the engine:
-the `src/` tree of both revisions is object-identical.
+The pin was bumped on 2026-09-02 from
+`6dec187e6b0cc66d119d4d9a9dc384e93adf6839`, and **this bump does move the
+engine**. The earlier bump of 2026-08-23 could be justified by an object
+identity of the `src/` tree; this one cannot, and pretending otherwise would be
+the more dangerous of the two options. Twenty-one commits separate the two
+revisions, and they carry real functional work: a new stream grammar (issue
+236), AGSE and array-propagation fixes, window aggregates in `SELECT`, an IPC
+rework, and two changes made for the reviewer's sake — the withdrawal of the
+`.meta` creation timestamp and the removal of Polish text from the engine's
+runtime messages.
 
-```text
-661635072872b2a3dbd432f3d4a2654f0fc1b32e:src
-  == 6dec187e6b0cc66d119d4d9a9dc384e93adf6839:src
-  == 661259115d5c9301e53d0b163796148e7812ea7b
-```
+The consequence is stated rather than hidden: **the analytic products were
+re-derived on the new pin, not carried over.** The full run of 2026-09-02
+regenerated eight groups out of eight against the stored copies, `fig:qrs`
+included; the ECG frame still holds 400 samples with QRS complexes at `x=128`
+and `x=371`. Where a product depends on the engine, it was recomputed; where it
+depends only on frozen campaign data, the data did not move.
 
-The six commits between them concern `scripts/`, `.agents/`, `README.md` and CI
-configuration. The products of analytic mode — including `fig:qrs`, regenerated
-on the older of those two revisions — therefore remain valid without a repeat.
+One thing the bump does change for a reader of §5 in `REPRODUCE.md`: from this
+pin onward the `.meta` header is a reserved field written as zero, so a
+reproduction on the pinned engine yields artifacts that are bit-for-bit
+repeatable over their whole length. The campaigns of §2.2 were measured before
+that change and their records keep the older behaviour.
 
 ### 2.2. The revisions on which the historical campaigns were run
 
