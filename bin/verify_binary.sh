@@ -15,7 +15,11 @@ fail() { echo "ERROR: $*" >&2; exit 2; }
 [[ -x "$BINARY" ]] || fail "binary is not executable: $BINARY"
 
 HELP="$($BINARY --help 2>&1)" || fail "cannot read build identity from $BINARY"
-EMBEDDED="$(sed -nE 's/^Branch: [^:]+:([0-9a-f]{7,40}),.*/\1/p' <<<"$HELP" | head -n 1)"
+# The branch name is EMPTY when the engine was built from a detached HEAD, which is
+# exactly what bin/checkout.sh produces: it checks out by SHA. Requiring [^:]+ there
+# made a binary built from this package's own pinned checkout fail this gate -- the
+# K9b-F5 class of defect again, a gate never run from someone else's directory.
+EMBEDDED="$(sed -nE 's/^Branch: [^:]*:([0-9a-f]{7,40}),.*/\1/p' <<<"$HELP" | head -n 1)"
 [[ -n "$EMBEDDED" ]] || fail "binary does not expose Branch:<name>:<sha> in --help"
 
 if [[ "$EXPECTED" == "$EMBEDDED"* ]]; then
