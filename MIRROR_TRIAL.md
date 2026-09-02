@@ -201,7 +201,7 @@ record of the first trial and are not edited.
 | Experiments and data | `rdb-experiment` | `4ca09c56713757b480eb6fda4d6718506a9153fd` | `retractordb-experiment` |
 | Canonical documentation | `dokumentacja-rdb` | `07c89acd493500be248836fbadbabbdf4cc0eadd` | `dokumentacja-rdb` |
 | Derived documentation | `documentation-rdb` | `5b57ebd82093ecfd71954aa3896faab791f42886` | `documentation-rdb` |
-| Artifact entry point | `rdb-artifact` | `3214adb52b708077c0ad99b812792584edec5233` | `retractordb-artifact` |
+| Artifact entry point | `rdb-artifact` | `3c5e4357de0e2fec0377f465848fcb128a1dc86d` | `retractordb-artifact` |
 
 | Step | Verdict |
 |---|---|
@@ -232,6 +232,21 @@ revisions above:
   terms while its value is redacted to `XXXX`. A term search that reports the
   key as a hit is reporting the schema, not a leak; the redaction of that file
   is complete.
+
+The entry-point mirror was re-pointed once during this trial. Steps 1-4 first
+ran against `3214adb5`; an independent review of the two rewritten documentation
+sections then found four defects — one outright false sentence in `REPRODUCE.md`
+§5, a wrong QRS peak reference in `bin/reproduce_analytic.sh` that passed only
+inside the tolerance, and two internal contradictions introduced by the pin bump
+— so the corrections were committed as `3c5e4357` and the mirror was re-pointed.
+**Steps 1-4 were then re-run in full against `3c5e4357`** and are the results
+reported in the table above: HTTP 200 unauthenticated, an 88K archive of 41
+files downloaded without a `401`, zero term hits, and `verify_pins.sh` taken
+from that mirror exiting 0 with 38 checks OK and no `ERROR`. The re-run also
+confirmed the mirror carries the corrected content. Step 5 was not repeated: the
+corrections touch only the `ecg` group's peak reference, and that group was
+re-run separately against the pinned engine, giving `peak_positions=128,371`
+with zero distance from the reference rather than a match inside the tolerance.
 
 The skipped checks are the same six as in the first trial, for the same reason
 -- they ask git which commit a directory is, and a mirror is a snapshot without
