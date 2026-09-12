@@ -31,6 +31,30 @@ Auditing a campaign's historical layout is a separate mode:
 Do not use that mode as the default environment for a new measurement. It
 preserves the campaign's actual provenance, not the current tooling.
 
+**K24f differs from every other campaign in this package and the difference is
+not optional.** Its corpus is **not** the frozen H10 corpus: the record-window
+stratum is opt-in, so the campaign must be invoked as
+
+```bash
+python3 run_campaign.py --seed 20260912 --count 10010 --with-window \
+        --xretractor <engine> --out h10_20260912.csv
+python3 decision_rule.py --raw h10_20260912.csv --out VERDICT.md \
+        --seed 20260912 --engine 098e531
+```
+
+Without `--with-window` the run reproduces the nine-class K24e corpus and the
+tenth class simply is not there — the result looks green and answers a different
+question. The same flag applies to `run_mapping_gate.py`.
+
+One further caveat, stated in `MANIFEST.md` §2.2 and repeated here because this
+is the file a reproducer reads first: the mapping-gate level must be run with the
+**repaired** apparatus, which is in the experiment repository under
+`results_20260912_K24f/apparatus/`, not with the apparatus of the pinned engine
+commit. The pinned commit carries the pre-repair run sizing and will reproduce
+three content divergences whose cause is the apparatus, not the engine. The
+campaign proper — both seeds and the decision procedure — is unaffected and
+reproduces from the pinned commit as recorded.
+
 ## 2. Pin verification — run this before anything else
 
 ```bash

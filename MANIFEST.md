@@ -100,6 +100,26 @@ that change and their records keep the older behaviour.
 | `campaign/H9-K26v3` | `856ee54b0f4ab450a6b61e3c08e045f404a79488` | `campaign/H9-K26v3` | `81bf4bea00efb922678862c90462fb3c0dfe5fda` | `tab:h9-primary` |
 | `campaign/H10-K24d` | `34db1a291fff686d63402270722edf9c772bd4b6` | `campaign/H10-K24d` | `15ee150a779e5374248f8172d197b976d604416d` | superseded by K24e |
 | `campaign/H10-K24e` | `e2a61ffff77f0ec393aded2c220379db1564af44` | `campaign/H10-K24e` | `a9d5e18e75ef7cf5dd8a63619f469517e13aa4af` | `tab:tail-exactness` |
+| `campaign/H10-K24f` | `098e531e83d1f0b706561c1cb63672697a05ad34` | `campaign/H10-K24f` | `4ba28803c872370f2246f756f70e20d3f65179f3` | complements `tab:tail-exactness` — record-window class |
+
+K24f needs no §2.4-style exception: it was measured on a commit reachable on
+`master`, because the branch was merged first and the campaign run afterwards.
+The "Engine measured" field and the reachable commit are the same SHA.
+
+One caveat applies to reproducing K24f and to nothing else in this table. The
+campaign proper — both seeds, the decision procedure run once per seed — was
+measured on `098e531e…` exactly as recorded. The **mapping-gate level** was run
+twice: its first run hit a defect in the apparatus's own run sizing (the horizon
+ignored the accumulated logical origin, and the slot budget was confused with
+ticks of the fastest stream), which surfaced as three content divergences on
+plans with chained `>N`. The sizing was repaired and the level re-run, with the
+human's explicit decision recorded in the campaign's `STOP.md`. A reproducer who
+checks out `098e531e…` therefore gets the **pre-repair** mapping gate and will
+reproduce those three divergences; the repaired apparatus is in the experiment
+repository at `results_20260912_K24f/apparatus/` and in `retractordb` at
+`2e9ab7d91c5528d706ac703ebd891f03a8dfd59f`. Nothing else in K24f is affected: the
+corpus, the event model, the replica, the mutant set and both verdicts come from
+the pinned apparatus and were not re-run.
 
 The K24e engine tag points at the reachable commit
 `ef18105701158db9986d57fd74defdda72920871`, whose `src/` tree is object-identical

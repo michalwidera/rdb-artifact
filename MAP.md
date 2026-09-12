@@ -21,7 +21,8 @@ comes from `paper-arXiv/debs/research_plan.md` §3.6 and §14, and from
 
 | Directory | Code name | The question it answers | Status |
 |---|---|---|---|
-| `results_20260818_K24e` | K24e / H10 — *plan-derived startup boundaries* | Is the static calculus of the logical origin and the startup tail exact in every operator class? | **current** — nine exact classes out of nine, on both seeds; source of `tab:tail-exactness` |
+| `results_20260818_K24e` | K24e / H10 — *plan-derived startup boundaries* | Is the static calculus of the logical origin and the startup tail exact in **the nine stream-operator classes the corpus reaches**? | **current, complemented by K24f** — nine exact classes out of nine, on both seeds; source of `tab:tail-exactness`. Not superseded: K24f narrows its claim to one further rule and leaves this measurement standing for its own engine state |
+| `results_20260912_K24f` | K24f / H10 — *record-window logical origin* | Does the origin rule for a **record window in the `SELECT` list** (`O = O_src + W - 1`) agree with the event model, and do the nine K24e classes show no regression? | **current** — ten exact classes out of ten in both quantities, on both seeds (784 and 769 window nodes); the window's tail equals its producer's on every node. Adds the tenth class that K24e's corpus could not reach |
 | `results_20260814_K26v3` | K26v3 / H9 — *equivalence-guarded materialization sharing* | Having allowed sharing only after a proof of subplan equivalence, does the compiler arrive at a common materialized subplan on its own — and does the reduction in **logical materialization write volume** come without a time penalty? | **current in the `Q=8` class**, 3/3 families; the primary measure is logical bytes of materialization writes per public record (50.0–58.3% against ablation, 84.4–87.5% against Flink's natural plan), with a time penalty below the 1.05 threshold; the warrant does not extend to peak resident state size or to general performance advantage; source of `tab:h9-primary` |
 | `results_20260801_K22v5` | K22v5 / H8 | What is the cost of specifying and modifying a query relative to procedural solutions? | **current** — descriptive result `C1=C3=C4=0`; the metric has a unit floor and is described as such; source of `tab:k22-constructs` |
 | `results_20260730_K6c` | K6c | Where does the resource boundary of a multi-query plan lie? | **current** — boundary measured; the slot cost model failed (`MAE_test=258%`) and is described as such; source of `tab:k6-primary` |
@@ -99,7 +100,7 @@ the paper to this package requires no guessing:
 |---|---|---|
 | **H8** | the cost of specification and modification is lower than in procedural solutions | **split**; a descriptive result — nowhere is "H8 refuted" stated (K22v5) |
 | **H9** | materialization sharing, admitted only after a proof of subplan equivalence, reduces the **logical bytes of materialization writes per public record** without a time penalty | **supported in the `Q=8` class**, 3/3 families (K26v3, 2026-08-16) |
-| **H10a** | the static tail calculus is exact | **supported**, nine classes out of nine (K24e, 2026-08-18) |
+| **H10a** | the static calculus of the startup tail and the logical origin is exact | **supported**, ten classes out of ten (K24e nine classes, 2026-08-18; K24f adds the record-window class, 2026-09-12) |
 | **H10b** | the calculus is **non-local** for `#` nodes with both components declared: the natural local rule underestimates, and the shortfall has the pre-declared closed form `ceil((p+q-1)/p)` | **supported**, 2310/2310 divergences of that form (K24b, confirmed by K24d) |
 
 **H9 is not a claim about plan size**, and this row's earlier wording ("reduces
@@ -111,6 +112,27 @@ showed it (0/13 cells, tokens smaller by 8–28% with no improvement in slot cos
 Taken together the two campaigns therefore say that a node count does not
 suffice, and that what must be measured is materialization traffic or work
 performed. Corrected 2026-08-26.
+
+**The coverage of the logical origin is not complete**, and the H10a row must not
+be read as saying it is. "Ten exact classes out of ten" means: for the ten
+operator classes the generator's corpus produces, at the intervals, widths and
+depths it draws. Outside that corpus the logical origin is **unmeasured**, and
+three gaps are known by name:
+
+* the RQL **stream generator** (`cells[$] STREAM cell[24]`) appears in no H10
+  corpus — `oracle/plan.py` has no such construct;
+* **rule conditions** and the **ad-hoc recompilation path** are likewise absent,
+  although both run the same expression evaluator;
+* the shape **"a record window over a record window"** is deliberately excluded
+  from the random corpus — a window node carries `RATIONAL` fields, which the
+  content model would mis-size — and is pinned only by a hand-computed case. The
+  origin rule composes correctly there (measured), but not in the campaign.
+
+Until K24f this had a sharper form worth recording: the record-window rule stood
+in the engine, and in the snapshot pinned as this package's default reproduction
+engine, **without any campaign or gate having measured it** — the corpus emitted
+only `SELECT *`, so `windowWidthOf()` had no window token to find. That specific
+gap is closed; the general statement above is not. Added 2026-09-12.
 
 **H10b was written the wrong way round relative to the hypothesis** — the row
 asserted that the calculus was local, whereas what was measured was its
