@@ -13,9 +13,9 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
 | `retractordb` | `https://github.com/michalwidera/retractordb.git` | `40c28dbefec8324df45365d863050fc577623768` | engine and fixed tooling | `retractordb-engine` |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `4ca09c56713757b480eb6fda4d6718506a9153fd` | campaigns and data | `retractordb-experiment` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `4ba28803c872370f2246f756f70e20d3f65179f3` | campaigns and data | `retractordb-experiment` |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | PL documentation (canonical) | `dokumentacja-rdb` |
-| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `81874bbdddbcffa46e6508e12298e735644218e6` | EN documentation (derived) | `documentation-rdb` |
+| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | EN documentation (derived) | `documentation-rdb` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
 The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
@@ -27,10 +27,15 @@ since 2026-08-23**. Its reviewer mirror `retractordb-artifact` has existed since
 were re-pointed the same day to the pins then above. **Pending:** on 2026-09-13
 the engine pin moved (§2.1) and so did both documentation pins, from `07c89ac`
 and `5b57ebd`, to carry the documentation's own drift against the Lean proofs
-(`doc_drift_scalar_functions` and `proof_drift` pass against them). None of
-`retractordb-engine`, `dokumentacja-rdb`, `documentation-rdb` or
-`retractordb-artifact` has been re-pointed yet; until they are, the mirrors show
-the 2026-09-02 revisions, without `math_proofs/`.
+(`doc_drift_scalar_functions` and `proof_drift` pass against them). The English
+documentation pin then moved once more, to `4b0b7ae`, which only removes
+`gen_anonymous_pdf.sh`: its patterns spelled the author's name inside regular
+expressions, where word-boundary redaction cannot reach it, so the mirror showed
+it. The script now lives in the private paper repository. The experiment pin
+moved from `4ca09c5` to `4ba2880`, which only adds `results_20260912_K24f/` —
+the campaign that §2.2, `MAP.md` and `REPRODUCE.md` already describe, and that
+the old pin did not contain. None of the five mirrors has been re-pointed to
+these pins yet; until they are, they show the 2026-09-02 revisions.
 Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
