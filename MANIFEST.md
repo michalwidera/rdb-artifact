@@ -14,8 +14,8 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 |---|---|---|---|---|
 | `retractordb` | `https://github.com/michalwidera/retractordb.git` | `40c28dbefec8324df45365d863050fc577623768` | engine and fixed tooling | `retractordb-engine` |
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `4ca09c56713757b480eb6fda4d6718506a9153fd` | campaigns and data | `retractordb-experiment` |
-| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `07c89acd493500be248836fbadbabbdf4cc0eadd` | PL documentation (canonical) | `dokumentacja-rdb` |
-| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `5b57ebd82093ecfd71954aa3896faab791f42886` | EN documentation (derived) | `documentation-rdb` |
+| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | PL documentation (canonical) | `dokumentacja-rdb` |
+| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `81874bbdddbcffa46e6508e12298e735644218e6` | EN documentation (derived) | `documentation-rdb` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
 The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
@@ -24,9 +24,13 @@ in the same commit. Its URL is
 since 2026-08-23**. Its reviewer mirror `retractordb-artifact` has existed since
 2026-08-26 and was re-pointed on 2026-09-02 to revision
 `3c5e4357de0e2fec0377f465848fcb128a1dc86d`; the other four mirrors in the table
-were re-pointed the same day to the pins then above. **Pending:** the engine pin
-moved on 2026-09-13 (§2.1) and `retractordb-engine` has not yet been re-pointed
-to it; until it is, that mirror shows `8aa4ee2`, without `math_proofs/`.
+were re-pointed the same day to the pins then above. **Pending:** on 2026-09-13
+the engine pin moved (§2.1) and so did both documentation pins, from `07c89ac`
+and `5b57ebd`, to carry the documentation's own drift against the Lean proofs
+(`doc_drift_scalar_functions` and `proof_drift` pass against them). None of
+`retractordb-engine`, `dokumentacja-rdb`, `documentation-rdb` or
+`retractordb-artifact` has been re-pointed yet; until they are, the mirrors show
+the 2026-09-02 revisions, without `math_proofs/`.
 Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
