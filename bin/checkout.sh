@@ -114,7 +114,13 @@ clone_or_fetch documentation-rdb "$DOCS_EN_URL" "$DOCS_EN_SNAPSHOT"
 # Making it mandatory had one concrete effect and no benefit: a stranger holding
 # the artifact URL got four repositories, exit code 2 from the provenance gate,
 # and no way to regenerate anything.
-if clone_or_fetch paper-arXiv "$PAPER_URL" "$PAPER_SNAPSHOT" 2>/dev/null; then
+#
+# The subshell matters: clone_or_fetch reports a failed clone through fail(),
+# whose `exit 2` would otherwise end this whole script inside the `if` and never
+# reach the skip branch -- which is what happened until 2026-09-13. Without a
+# terminal prompt, a private HTTPS URL fails at once instead of asking an
+# outsider for GitHub credentials.
+if (GIT_TERMINAL_PROMPT=0 clone_or_fetch paper-arXiv "$PAPER_URL" "$PAPER_SNAPSHOT") 2>/dev/null; then
   PAPER_STATE="$(git -C "$TARGET/paper-arXiv" rev-parse HEAD)"
 else
   rm -rf "$TARGET/paper-arXiv"
