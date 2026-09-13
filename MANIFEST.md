@@ -13,7 +13,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
 | `retractordb` | `https://github.com/michalwidera/retractordb.git` | `40c28dbefec8324df45365d863050fc577623768` | engine and fixed tooling | `retractordb-engine` |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `4ba28803c872370f2246f756f70e20d3f65179f3` | campaigns and data | `retractordb-experiment` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `f5475d004d0224f8ae2fce94fccadd3feb5e6d88` | campaigns and data | `retractordb-experiment` |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | PL documentation (canonical) | `dokumentacja-rdb` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | EN documentation (derived) | `documentation-rdb` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
@@ -34,8 +34,14 @@ expressions, where word-boundary redaction cannot reach it, so the mirror showed
 it. The script now lives in the private paper repository. The experiment pin
 moved from `4ca09c5` to `4ba2880`, which only adds `results_20260912_K24f/` —
 the campaign that §2.2, `MAP.md` and `REPRODUCE.md` already describe, and that
-the old pin did not contain. None of the five mirrors has been re-pointed to
-these pins yet; until they are, they show the 2026-09-02 revisions.
+the old pin did not contain. It then moved once more, to `f5475d0`, which only
+adds `.csv.gz` copies of the nineteen raw K24-series CSV files of 1.2 MB or
+more: the mirror refuses to serve a text file of that size (HTTP 502) and cuts
+the repository ZIP off before reaching them, while it serves compressed files
+byte for byte (`REVIEW_MIRROR.md`). The `campaign/H10-K24f` row of §2.2 keeps
+`4ba2880`, the revision the campaign was recorded at. All five mirrors were
+re-pointed on 2026-09-13 to the pins as they stood before that last move;
+`retractordb-experiment` and `retractordb-artifact` still have to follow it.
 Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).

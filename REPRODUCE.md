@@ -308,3 +308,10 @@ See [`MANIFEST.md`](MANIFEST.md) section 5. In short: `fig:qrs` requires you to
 supply a built engine, and measurement mode does not reproduce timings. All 18
 raw archives are present, verified and in the repository (2026-08-23);
 `study_06_W8` arrives in parts and needs one assembling command.
+
+If you work from the anonymized mirror of the experiment repository rather than
+a clone: the raw K24-series campaign CSV files of 1.2 MB or more (for example
+`results_20260818_K24e/raw/campaign_seed20260818.csv`) cannot be opened there,
+and the whole-repository ZIP stops before reaching them. Take the `.csv.gz`
+copy beside each one; `gunzip` restores the original byte for byte. A clone
+carries both and needs neither step. Details in `REVIEW_MIRROR.md`, step 2.

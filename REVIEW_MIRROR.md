@@ -18,7 +18,7 @@ nothing blocks its mirror any more.
 |---|---|---|---|
 | Artifact entry point | `rdb-artifact` | HEAD at mirror creation -- see below | `retractordb-artifact` |
 | Engine snapshot | `retractordb` | `40c28dbefec8324df45365d863050fc577623768` | `retractordb-engine` |
-| Experiments and data | `rdb-experiment` | `4ba28803c872370f2246f756f70e20d3f65179f3` | `retractordb-experiment` |
+| Experiments and data | `rdb-experiment` | `f5475d004d0224f8ae2fce94fccadd3feb5e6d88` | `retractordb-experiment` |
 | Canonical documentation | `dokumentacja-rdb` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | `dokumentacja-rdb` |
 | English documentation | `documentation-rdb` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | `documentation-rdb` |
 
@@ -102,6 +102,21 @@ session:
 
 1. Open every URL exactly as printed in the generated paper.
 2. Download all five archives and verify that no request returns `401`.
+
+   **The experiment archive cannot be downloaded whole, and the step is run
+   per file there.** Measured on 2026-09-13: the service builds the ZIP as a
+   stream at about 2.2 MB/s and cuts it off after about 220 s, with no central
+   directory — the experiment tree (613 MB) ends after 1,107 of 4,346 files.
+   Single files come from `/api/repo/<id>/file/<path>`: binary files of any size
+   byte for byte (a 45 MB W8 part in 5 s), but a **text** file of about 1.2 MB
+   or more returns HTTP 502. The nineteen raw K24-series CSV files of that size
+   therefore also exist as `<name>.csv.gz` beside the original, and a reviewer
+   takes those. Completeness is checked by listing directories through
+   `/api/repo/<id>/files/?path=` against `git ls-tree` of the pinned revision
+   (the listing reports pre-redaction sizes, so it proves presence, not
+   redaction). The listing endpoint is rate-limited per address: a burst of
+   about a hundred requests draws HTTP 429 with a `Retry-After` of up to nine
+   minutes, so pace it.
 3. Search paths and text for all configured identifying terms.
 4. Arrange the extracted directories as siblings under one workspace, named
    `retractordb`, `rdb-experiment`, `dokumentacja-rdb` and `documentation-rdb`,
