@@ -252,3 +252,60 @@ The skipped checks are the same six as in the first trial, for the same reason
 -- they ask git which commit a directory is, and a mirror is a snapshot without
 history -- plus the assembled W8 archive, which lives outside git by design and
 is rebuilt with `lib/raw_parts.sh join`.
+
+## Third trial -- 2026-09-13 revisions
+
+The pins moved on 2026-09-13 (`MANIFEST.md` §1 and §2.1) and all five mirrors
+were re-pointed, two of them twice. This section records the final state.
+
+| Role | Source | Pinned revision | Mirror ID |
+|---|---|---|---|
+| Engine snapshot | `retractordb` | `40c28dbefec8324df45365d863050fc577623768` | `retractordb-engine` |
+| Experiments and data | `rdb-experiment` | `f5475d004d0224f8ae2fce94fccadd3feb5e6d88` | `retractordb-experiment` |
+| Canonical documentation | `dokumentacja-rdb` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | `dokumentacja-rdb` |
+| Derived documentation | `documentation-rdb` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | `documentation-rdb` |
+| Artifact entry point | `rdb-artifact` | `427f72e689cd5ee3ba8321fdcc7d09ff10c82bb0` | `retractordb-artifact` |
+
+| Step | Verdict |
+|---|---|
+| 1. Open every URL as printed in the paper | **pass**: all five addresses answer HTTP 200 `text/html` unauthenticated |
+| 2. Download all archives, no `401` | **pass with a documented limit**: no `401` anywhere. Four archives download whole (4.4M, 412K, 348K, 96K). The experiment archive does not: the service cuts its streamed ZIP after about 220 s, three times out of three, after 1,107 of 4,346 files. The step was run per file there instead — see below |
+| 3. Search paths and text for every configured term | **pass**: zero hits in the four whole archives, in the 1,107 experiment files of the cut ZIP and in every experiment file added since the second trial; the only match is `wideRational` in this file |
+| 4. `verify_pins.sh` in mirror mode | **pass**, exit status 0: 38 checks OK, 7 skipped by design, zero `ERROR` — run with the checker taken from the entry-point mirror at `427f72e`, which declares the experiment at `f5475d0`; the archives it checks were taken from the experiment mirror before the `.gz` copies were added, which touched none of them |
+| 5. Analytic reproduction | **pass** on a clone: **eight groups out of eight**, `ecg` included, peaks at `x=122` and `x=365`; the `k24e` group re-run on `f5475d0` |
+| 6. Record the run | this section |
+
+**How the experiment mirror was checked without its ZIP.** Every mirror was
+first compared with `git ls-tree` of its pin: the four small ones file by file
+from their archives, with differences confined to redaction markers. For the
+experiment, the cut ZIP was read stream-wise (deflate entries with data
+descriptors) and gave exactly the first 1,107 files of the pinned tree, all CRCs
+correct, 915 byte-identical and 192 differing only by redaction, none of them
+binary. The remaining 3,239 files were confirmed present through
+`/api/repo/<id>/files/?path=`, 514 directory listings paced against the
+service's rate limit: the mirror holds exactly the 4,346 files of the tree, none
+missing and none extra, including all 32 files of K24f. Single files then came
+from `/api/repo/<id>/file/<path>`, which serves binary files of any size byte
+for byte (a 45 MB W8 part, the five archives step 4 needed beyond the ZIP).
+
+**The finding that moved the experiment pin a second time.** A **text** file of
+about 1.2 MB or more is not served at all: HTTP 502 within two seconds (1,215,900
+bytes refused, 1,204,445 bytes served). With the ZIP cut short, the sixteen raw
+campaign CSV files of K24, K24r, K24d, K24p, K24e and K24f above that size —
+among them the inputs of `tab:tail-exactness` — were unreachable from the
+mirror by either route. In the second trial the ZIP was complete and they were
+not. `rdb-experiment` `f5475d0` adds a `.csv.gz` copy beside each of them and
+beside the three files just under the measured boundary: nineteen copies,
+deterministic (`gzip -9n`), each restoring its original byte for byte, and
+checked for identifying terms before compression, since redaction does not look
+inside them. After re-pointing, all nineteen downloaded from the mirror with HTTP
+200 and byte-identical to git, and all six `raw/` directories list exactly the
+files of the pinned tree.
+
+**The finding that moved the English documentation pin.** `gen_anonymous_pdf.sh`
+in `documentation-rdb` held the author's first name and a handle inside regular
+expressions (`\bname\b`). Word-boundary redaction sees `bname` as one word and
+left them in the mirror. The script now lives in the private paper repository;
+`4b0b7ae` removes it, and the re-pointed mirror no longer has the file.
+
+The skipped checks in step 4 are the same seven as in the second trial.
