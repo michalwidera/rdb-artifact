@@ -157,6 +157,7 @@ CAMPAIGN_DIR=""
 case "$CAMPAIGN" in
   campaign/H9-K26v3) CAMPAIGN_DIR="results_20260814_K26v3" ;;
   campaign/H10-K24e) CAMPAIGN_DIR="results_20260818_K24e" ;;
+  campaign/H10-K24f) CAMPAIGN_DIR="results_20260912_K24f" ;;
   campaign/H10-K24d) CAMPAIGN_DIR="results_20260807_K24d" ;;
   campaign/K22v5)    CAMPAIGN_DIR="results_20260801_K22v5" ;;
   campaign/K18)      CAMPAIGN_DIR="results_20260728_K18" ;;

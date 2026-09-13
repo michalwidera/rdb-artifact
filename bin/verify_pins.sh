@@ -21,7 +21,7 @@ PAPER="${RDB_PAPER:-$WORKSPACE/paper-arXiv}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ENGINE_SNAPSHOT="40c28dbefec8324df45365d863050fc577623768"
-EXPERIMENT_SNAPSHOT="f5475d004d0224f8ae2fce94fccadd3feb5e6d88"
+EXPERIMENT_SNAPSHOT="d319e886ce14ec541fd5f9bbb2e18ea53b0a38c6"
 DOCS_PL_SNAPSHOT="ba875ba5e648d46412c8d82ce669c43777ec1e8e"
 DOCS_EN_SNAPSHOT="4b0b7ae70b42f2279afb080b22bee4d78f2643bc"
 PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
@@ -65,6 +65,8 @@ campaign_pair() {
       printf '%s\t%s\n' 34db1a291fff686d63402270722edf9c772bd4b6 15ee150a779e5374248f8172d197b976d604416d ;;
     campaign/H10-K24e)
       printf '%s\t%s\n' ef18105701158db9986d57fd74defdda72920871 a9d5e18e75ef7cf5dd8a63619f469517e13aa4af ;;
+    campaign/H10-K24f)
+      printf '%s\t%s\n' 098e531e83d1f0b706561c1cb63672697a05ad34 4ba28803c872370f2246f756f70e20d3f65179f3 ;;
     *) return 1 ;;
   esac
 }
@@ -194,7 +196,7 @@ else
   K24E_REACHABLE="ef18105701158db9986d57fd74defdda72920871"
 
   for tag in campaign/K6c-W2-W7 campaign/K6c-W8-W9 campaign/K18 campaign/K22v5 \
-             campaign/H9-K26v3 campaign/H10-K24d campaign/H10-K24e; do
+             campaign/H9-K26v3 campaign/H10-K24d campaign/H10-K24e campaign/H10-K24f; do
     mine="$(campaign_pair "$tag" | tr '\t' ' ')"
     expect_manifest="$mine"
     if [[ "$tag" == campaign/H10-K24e ]]; then
@@ -268,6 +270,7 @@ campaign/K22v5 dd733e3792fbcd5727db244b802610a6d710b8dc campaign/K22v5 0390a8910
 campaign/H9-K26v3 856ee54b0f4ab450a6b61e3c08e045f404a79488 campaign/H9-K26v3 81bf4bea00efb922678862c90462fb3c0dfe5fda
 campaign/H10-K24d 34db1a291fff686d63402270722edf9c772bd4b6 campaign/H10-K24d 15ee150a779e5374248f8172d197b976d604416d
 campaign/H10-K24e ef18105701158db9986d57fd74defdda72920871 campaign/H10-K24e a9d5e18e75ef7cf5dd8a63619f469517e13aa4af
+campaign/H10-K24f 098e531e83d1f0b706561c1cb63672697a05ad34 campaign/H10-K24f 4ba28803c872370f2246f756f70e20d3f65179f3
 PINS_EOF
 )
 

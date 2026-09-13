@@ -13,7 +13,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
 | `retractordb` | `https://github.com/michalwidera/retractordb.git` | `40c28dbefec8324df45365d863050fc577623768` | engine and fixed tooling | `retractordb-engine` |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `f5475d004d0224f8ae2fce94fccadd3feb5e6d88` | campaigns and data | `retractordb-experiment` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `d319e886ce14ec541fd5f9bbb2e18ea53b0a38c6` | campaigns and data | `retractordb-experiment` |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | PL documentation (canonical) | `dokumentacja-rdb` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | EN documentation (derived) | `documentation-rdb` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
@@ -40,8 +40,16 @@ more: the mirror refuses to serve a text file of that size (HTTP 502) and cuts
 the repository ZIP off before reaching them, while it serves compressed files
 byte for byte (`REVIEW_MIRROR.md`). The `campaign/H10-K24f` row of §2.2 keeps
 `4ba2880`, the revision the campaign was recorded at. All five mirrors were
-re-pointed on 2026-09-13 to the pins above, the entry point to `427f72e`, and the
-acceptance trial was repeated against them: `MIRROR_TRIAL.md`, *Third trial*.
+re-pointed on 2026-09-13 to the pins as they then stood (experiment `f5475d0`),
+the entry point to `427f72e`, and the acceptance trial was repeated against them:
+`MIRROR_TRIAL.md`, *Third trial*. Later the same day the experiment pin moved
+once more, to `d319e88`, which changes no campaign data: the artifact-hygiene
+regression now counts tracked files only and records five closed exceptions in
+R14, and the K26v3 manifest entry of `verdict.py` is re-pinned after a
+message-only translation, with the frozen SHA kept beside it. The tags
+`campaign/H10-K24f` were created in both repositories, where §2.2 had declared
+them before they existed. `retractordb-experiment` and `retractordb-artifact`
+still have to follow this move.
 Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
