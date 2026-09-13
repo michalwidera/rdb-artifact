@@ -168,12 +168,16 @@ group_k26v3() {
   python3 - "$out/verdict.txt" <<'PY'
 import re, sys
 text = open(sys.argv[1], encoding="utf-8").read()
-print(f"COUNT families_supporting={len(re.findall(r'FAMILY: SUPPORT', text))}")
+# verdict.py printed Polish markers until rdb-experiment 80acea1 ("Translation") and
+# English ones since; accept both, or a count silently drops to 0 on one of them.
+print(f"COUNT families_supporting={len(re.findall(r'(?:FAMILY|RODZINA): SUPPORT', text))}")
 print(f"COUNT families_total={len(re.findall(r'^--- F9-', text, re.M))}")
-m = re.search(r"Families supporting H9: (\d+)/(\d+)", text)
+m = re.search(r"(?:Families supporting H9|Rodzin wspierajacych H9): (\d+)/(\d+)", text)
 if m:
     print(f"COUNT verdict_rule={m.group(1)}_of_{m.group(2)}")
-print("COUNT verdict_supported=" + ("1" if "H9 WSPARTA" in text else "0"))
+# Anchored on the whole verdict line, so "H9 NOT SUPPORTED" / "H9 BEZ WSPARCIA" never count.
+supported = re.search(r"^(?:VERDICT: H9 SUPPORTED|WERDYKT: H9 WSPARTA)\b", text, re.M)
+print("COUNT verdict_supported=" + ("1" if supported else "0"))
 PY
   wc -l < "$EXP/results_20260814_K26v3/matrix/gates.tsv" | xargs printf 'COUNT gate_rows=%s\n'
 }
