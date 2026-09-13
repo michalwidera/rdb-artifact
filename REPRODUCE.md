@@ -8,6 +8,8 @@ defect in these instructions, and we ask you to report it as an issue.
 
 `git`, `bash`. The measurement mode additionally needs the engine toolchain
 (Conan 2, CMake, Ninja, a C++23 compiler) — described in `retractordb/CLAUDE.md`.
+Proof mode (§6) needs no toolchain of its own: its installer fetches Lean 4 and
+Mathlib.
 
 ## 1. Fetching the pinned set of repositories
 
@@ -111,12 +113,13 @@ git.
 | `g3` | 75,548 / 143,065,922 | 0 mismatches, 10 mutations, 13 engine identity checks |
 | `k19` | 468,220 / 2,239,488 | 4 mutations, verdict OK |
 | `k18` | deterministic artifacts | 67 files compared, 16 `.meta` after skipping the header field, 51 byte-identical, 6 round-trip checks |
-| `ecg` | `fig:qrs` | 400 samples in the frame, 2 QRS complexes, peaks at x=128 and x=371 |
+| `ecg` | `fig:qrs` | 400 samples in the frame, 2 QRS complexes, peaks at x=122 and x=365 |
 
-The 2026-08-20 run on the pinned snapshot: **eight groups out of eight**, all
-comparisons against the stored files in agreement — byte for byte, with the
-single exception of the G3 report, which differs only in its `- generated:`
-line.
+The 2026-09-13 run on the pinned snapshot, from a fresh checkout: **eight groups
+out of eight**, all comparisons against the stored files in agreement — byte for
+byte, with the single exception of the G3 report, which differs only in its
+`- generated:` line. A group counts as failed when any of its steps fails, not
+only its last one (fixed on the same day; `MANIFEST.md` §2.1).
 
 Seven groups need no engine. The eighth, `ecg`, does: pass it `--xretractor` and
 `--xqry`; without them it reports `SKIP` and prints the recipe. The binary is
@@ -151,7 +154,10 @@ xqry -w -s qrs_out -p 400,400 -m 1671 | gnuplot
 ```
 
 The final frame is always samples `[1271,1670]` of the `qrs_out` stream, with
-QRS complexes at `x=128` and `x=371`. The `x` axis runs backwards in time:
+QRS complexes at `x=122` and `x=365`. Until 2026-09-13 this said `x=128` and
+`x=371`: the client then lost the rows computed before it subscribed, so its
+frame ended six records late. The engine's values did not change — see
+`MANIFEST.md` §2.1. The `x` axis runs backwards in time:
 `x=0` is the most recent sample. The script checks this property numerically —
 400 samples in the frame, two complexes, peaks at the pinned positions within a
 tolerance of 3 samples — so swapping the data or the engine stops the group
@@ -251,7 +257,52 @@ and requires an identical set of names and a non-zero count for the named
 streams. The engine regression `it_replay_stability-run` requires at least 36
 files and non-empty data for nine named streams; K18 compared 67 files.
 
-## 6. Limits
+## 6. Proof mode — checking the Lean formalization
+
+The engine snapshot carries a Lean 4 formalization of the stream-rate operators
+in `retractordb/math_proofs/`: interleaving as a sequential covering,
+deinterleaving and its exact inversion over the rationals, the event-order
+counterexample, sum commutativity, rate-matched shift and the exact interleave
+tail. `math_proofs/README.md` lists which statement lives in which file.
+
+```bash
+cd artifact-workspace/retractordb/math_proofs
+./install-lean.sh --no-upgrade-check   # elan, the pinned Lean, Mathlib cache, pandoc, TeX Live
+./render.sh                            # expect the last line: DOWODY: OK
+```
+
+`--no-upgrade-check` keeps the versions pinned in `lean-toolchain`, `lakefile.lean`
+and `lake-manifest.json`; without it the installer offers a newer Lean/Mathlib,
+which is not the checked configuration. `render.sh` builds with `--wfail`, so a
+`sorry` (which Lean reports only as a warning) fails the run just like an error,
+and prints `DOWODY: BLAD`. The products — HTML, plain text and a PDF — are
+written under `math_proofs/build/verso/`.
+
+What this costs: about 7 GB for Mathlib and its downloaded build cache, and a
+Debian/Ubuntu host for the TeX Live packages the installer adds with `apt-get`.
+Checking the proofs needs no engine build; the engine comparison below does.
+
+**What the proofs establish, and what they do not.** The theorems are about a
+mathematical model of the operators, not about the C++ code. The link to the
+engine is differential: `math_proofs/gen-oracle.sh` evaluates the model's
+definitions into `test/UnitTest/proofOracle.hpp`, and `ut_proofOracle` compares
+the functions in `SOperations.hpp` against those tables on a **bounded grid**
+(for interleaving, `a, b` in 1..11 and `n` below 48) and checks theorem
+statements as properties there. That is testing against a checked model, not a
+verification of the implementation.
+
+```bash
+ctest --test-dir artifact-workspace/retractordb/build/Debug -R 'proof_drift|ut_proofOracle'
+```
+
+`proof_drift` needs no Lean, which is why it also runs in CI. It fails when a
+theorem has no row in `test/proof_manifest.tsv`, and when the oracle tables are
+older than any file they depend on — the proofs, the generator and the three
+version pins. A green CI run therefore says the tables match the proofs as
+committed; only `render.sh` says the proofs compile. The per-theorem coverage is
+in [`MAP.md`](MAP.md), *Formal proofs*.
+
+## 7. Limits
 
 See [`MANIFEST.md`](MANIFEST.md) section 5. In short: `fig:qrs` requires you to
 supply a built engine, and measurement mode does not reproduce timings. All 18

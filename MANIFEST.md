@@ -12,7 +12,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
-| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `8aa4ee2f18a003fcf55db8a4f810c720094e1b1a` | engine and fixed tooling | `retractordb-engine` |
+| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `40c28dbefec8324df45365d863050fc577623768` | engine and fixed tooling | `retractordb-engine` |
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `4ca09c56713757b480eb6fda4d6718506a9153fd` | campaigns and data | `retractordb-experiment` |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `07c89acd493500be248836fbadbabbdf4cc0eadd` | PL documentation (canonical) | `dokumentacja-rdb` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `5b57ebd82093ecfd71954aa3896faab791f42886` | EN documentation (derived) | `documentation-rdb` |
@@ -24,7 +24,10 @@ in the same commit. Its URL is
 since 2026-08-23**. Its reviewer mirror `retractordb-artifact` has existed since
 2026-08-26 and was re-pointed on 2026-09-02 to revision
 `3c5e4357de0e2fec0377f465848fcb128a1dc86d`; the other four mirrors in the table
-were re-pointed the same day to the pins above. Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
+were re-pointed the same day to the pins then above. **Pending:** the engine pin
+moved on 2026-09-13 (§2.1) and `retractordb-engine` has not yet been re-pointed
+to it; until it is, that mirror shows `8aa4ee2`, without `math_proofs/`.
+Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
 
@@ -59,12 +62,39 @@ exit code 2 from the provenance gate, with no way to regenerate anything.
 ### 2.1. Code for reproduction and new measurements
 
 The engine code and the tooling come from the full SHA
-`8aa4ee2f18a003fcf55db8a4f810c720094e1b1a`. A result obtained on it is a **new
+`40c28dbefec8324df45365d863050fc577623768`. A result obtained on it is a **new
 reproduction**, not a historical measurement from the paper's tables.
 
-The pin was bumped on 2026-09-02 from
-`6dec187e6b0cc66d119d4d9a9dc384e93adf6839`, and **this bump does move the
-engine**. The earlier bump of 2026-08-23 could be justified by an object
+The pin was bumped on 2026-09-13 from
+`8aa4ee2f18a003fcf55db8a4f810c720094e1b1a`, to bring the Lean 4 formalization
+(`math_proofs/`) and its engine oracle (`ut_proofOracle`, `proof_drift`) into
+the snapshot — see `REPRODUCE.md` §6. **This bump also moves the engine**:
+eleven commits separate the two revisions, among them the multi-server bus
+(issue 238), expression type inference (issue 240), a compiler fix for a loop in
+the plan, and a fix in the file accessor group.
+
+The full analytic run of 2026-09-13, from a fresh checkout at the new pin,
+regenerated eight groups out of eight, and every product with a stored copy
+matched it: seven byte for byte, the G3 report modulo its generation timestamp.
+One pinned value changed, and not because of the engine. The `fig:qrs` peaks
+moved from `x=128`/`x=371` to `x=122`/`x=365`. The engine computes the same
+values — all three series of the frame are identical to the old ones shifted by
+six records — but the old client lost the rows computed between its `get` and
+its later `show` subscription, six of them here, so the old frame ended six
+records late. That client fix was made because parallel integration tests
+failed on starved CI containers; locally the loss was stable, which is why it
+passed unnoticed. The new positions held in 13 runs out of 13, three of them
+pinned to one loaded CPU core. The frame now really is records `[1271,1670]`.
+
+The same run exposed a defect in `bin/reproduce_analytic.sh` and it was fixed
+with the bump: groups were called inside an `if`, where bash ignores errexit,
+so a failed step anywhere but on a group's last line was recorded as `OK`. The
+`ecg` group printed `ERROR` for the stale peaks and still passed. Each group now
+runs in a subshell with errexit in force; a deliberate failure in the middle of
+a group, and the stale peak window, both turn the run red.
+
+The previous bump, on 2026-09-02 from
+`6dec187e6b0cc66d119d4d9a9dc384e93adf6839`, **did move the engine** too. The earlier bump of 2026-08-23 could be justified by an object
 identity of the `src/` tree; this one cannot, and pretending otherwise would be
 the more dangerous of the two options. Twenty-one commits separate the two
 revisions, and they carry real functional work: a new stream grammar (issue
@@ -78,8 +108,8 @@ re-derived on the new pin, not carried over.** The full run of 2026-09-02
 regenerated eight groups out of eight; seven of them were compared against the
 copies stored in git and matched. The eighth, `ecg`, has no stored copy to
 compare against — it renders a figure, and what is checked instead is the pinned
-window: the frame still holds 400 samples with QRS complexes at `x=128` and
-`x=371`. That run is recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md), *Second
+window: the frame still held 400 samples with QRS complexes at `x=128` and
+`x=371` (positions superseded on 2026-09-13, see above). That run is recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md), *Second
 trial*. Where a product depends on the engine, it was recomputed; where it
 depends only on frozen campaign data, the data did not move.
 
@@ -275,8 +305,8 @@ without it the script prints `SKIP` with the recipe, never an error.
 1. `fig:qrs` is the only item in §3 that requires a working engine, so
    `bin/reproduce_analytic.sh` reproduces it only when given `--xretractor` and
    `--xqry`; without them it reports `SKIP` together with the recipe. The window
-   is pinned by the limit `-m 1671` (samples `[1271,1670]`, peaks at `x=128` and
-   `x=371`) — see `REPRODUCE.md` §3.
+   is pinned by the limit `-m 1671` (samples `[1271,1670]`, peaks at `x=122` and
+   `x=365`) — see `REPRODUCE.md` §3.
 2. All 18 raw archives are present, verified entry by entry and **in the
    repository** (2026-08-23) — see §4. A clone carries seventeen as files and the
    eighteenth in four parts; `lib/raw_parts.sh join` restores it byte for byte.
@@ -311,3 +341,11 @@ without it the script prints `SKIP` with the recipe, never an error.
      gate on paths relative to the repository root: it checks the same thing
      (every hit reviewed and confirmed) without depending on one directory
      layout (finding K9b-F3).
+8. The Lean proofs are **not built by CI**. What CI checks, through
+   `proof_drift`, is that the engine oracle tables are not older than the files
+   they were computed from: the proofs, the generator `OracleMain.lean` and the
+   three version pins. Whether the proofs compile at the pinned revision is
+   answered only by proof mode (`REPRODUCE.md` §6), which needs about 7 GB for
+   Mathlib. And the engine is compared with the proved model on a bounded
+   parameter grid: a green `ut_proofOracle` says the implementation agrees with
+   the model there, not that the implementation is proved.

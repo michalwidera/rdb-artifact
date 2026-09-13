@@ -266,7 +266,15 @@ QRS_SAMPLES=1671
 # Measured on the pinned engine. This said 372 until 2026-09-02 and passed only
 # because the check allows +-3 samples; a tolerance is there to absorb sampling
 # jitter, not to cover a wrong reference.
-QRS_PEAKS="128 371"
+#
+# It said "128 371" until 2026-09-13. Those positions came from an xqry that
+# subscribed with `show` only after `get`, so the rows computed in between were
+# lost -- six of them here. The frame therefore ended six records late. The fix
+# (retractordb, it_xqrywait_first_row; found as a CI-only failure on starved
+# containers) changed which records the client receives, not what the engine
+# computes: all three series of the frame are identical to the old ones shifted
+# by six. The frame now really is records [1271,1670].
+QRS_PEAKS="122 365"
 
 group_ecg() {
   local out="$OUT/ecg"
@@ -348,7 +356,16 @@ FAILED=0
 for g in "${SELECTED[@]}"; do
   echo "=== $g ==="
   before=$(git -C "$EXP" status --porcelain | wc -l)
-  if "group_$g"; then
+  # Not `if "group_$g"`: bash ignores errexit for everything a function runs inside
+  # an `if` condition, so a failed analysis step or a DIFFERS from compare_stored
+  # anywhere but on a group's last line used to be recorded as OK. Until
+  # 2026-09-13 that let the ecg peak check print ERROR and still pass. The
+  # subshell runs outside a condition, so errexit applies inside the group.
+  set +e
+  ( set -e; "group_$g" )
+  rc=$?
+  set -e
+  if [ "$rc" -eq 0 ]; then
     if [[ "$g" == ecg && ( -z "$XRETRACTOR" || -z "$XQRY" ) ]]; then
       record "$g" SKIP "fig:qrs needs --xretractor and --xqry"
     else

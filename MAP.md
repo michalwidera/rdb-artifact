@@ -144,3 +144,40 @@ corpus and the divergence has the form `ceil((p+q-1)/p)` in 100% of cases
 counts the nodes at which the local rule **underestimated**, not those at which
 it sufficed; the paper carries the same point in the paragraph *"Why the
 interleave tail is not local"*. The verdict is unchanged. Corrected 2026-08-25.
+
+## Formal proofs
+
+Not a campaign: the engine snapshot carries a Lean 4 formalization in
+`retractordb/math_proofs/`, checked by proof mode (`REPRODUCE.md` §6). The
+authoritative per-theorem record is `retractordb/test/proof_manifest.tsv`; every
+theorem has exactly one row there, and `proof_drift` fails when one does not.
+Each row has one of three statuses: **TEST** (a test in `ut_proofOracle` checks
+the engine against it), **uncovered** (it is about the engine but has no test
+yet) and **out of scope** (a helper lemma, or a form with no engine
+counterpart).
+
+| Lean file | Statement | TEST | uncovered | out of scope |
+|---|---|---|---|---|
+| `InterleaveCovering` | interleaving is a sequential covering | 1 | 0 | 12 |
+| `BeattyModel`, `BeattyPartition` | Beatty partition of positions (via Rayleigh's theorem in Mathlib) | 2 | 0 | 7 |
+| `Deinterleave` | deinterleaving satisfies Fraenkel's conditions | 6 | 0 | 4 |
+| `ExactInvertibility` | exact invertibility over the rationals | 2 | 2 | 0 |
+| `EventOrder` | event-order perturbation (a counterexample) | 2 | 0 | 0 |
+| `SumCommutativity` | commutativity of stream sum | 0 | 3 | 0 |
+| `ShiftMatching` | rate-matched shift (R1) | 5 | 0 | 6 |
+| `CausalShift` | R1 extended to causal shift, logical origins and record availability | 2 | 11 | 0 |
+| `InterleaveTailExact` | exactness of the interleave tail as an availability bound | 2 | 0 | 9 |
+| **total** | 76 theorems | **22** | **16** | **38** |
+
+Coverage is 22 of the 38 theorems that concern the engine (57.9%), as printed by
+`proof_drift`. The sixteen uncovered ones fall into three groups, each named in
+the manifest: the logical origin of interleaving, which the compiler computes
+inside `computeLogicalOrigin` rather than in a separable function; the tail and
+read of the shift operator, computed inline in `computeStartupLatency` and in
+`dataModel`; and the sample index of stream sum, also in `dataModel`. Testing
+them needs a compiled plan rather than a table.
+
+The tests compare on a bounded grid, so a TEST row means "the engine agrees with
+the proved model on that grid", not "the engine is proved". The exact-tail
+theorems are the model-level counterpart of H10a, which K24e and K24f support
+empirically; neither replaces the other.
