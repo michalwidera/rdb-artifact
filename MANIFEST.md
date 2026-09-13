@@ -48,8 +48,10 @@ regression now counts tracked files only and records five closed exceptions in
 R14, and the K26v3 manifest entry of `verdict.py` is re-pinned after a
 message-only translation, with the frozen SHA kept beside it. The tags
 `campaign/H10-K24f` were created in both repositories, where §2.2 had declared
-them before they existed. `retractordb-experiment` and `retractordb-artifact`
-still have to follow this move.
+them before they existed. Both mirrors that this move concerns were re-pointed
+the same day, `retractordb-experiment` to `d319e88` and `retractordb-artifact`
+to `c15b1b5`, and the acceptance trial was run against them: `MIRROR_TRIAL.md`,
+*Fourth trial*.
 Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).

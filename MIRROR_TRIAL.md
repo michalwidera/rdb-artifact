@@ -309,3 +309,72 @@ left them in the mirror. The script now lives in the private paper repository;
 `4b0b7ae` removes it, and the re-pointed mirror no longer has the file.
 
 The skipped checks in step 4 are the same seven as in the second trial.
+
+## Fourth trial -- d319e88 / c15b1b5
+
+Later on 2026-09-13 the experiment pin moved from `f5475d0` to `d319e88`
+(`MANIFEST.md` §1), and the entry point was committed at `c15b1b5` to declare
+it. Those two mirrors were re-pointed; `/api/repo/<id>/options` gives both a
+`lastUpdateDate` of 2026-09-13T16:32 UTC. The other three mirrors did not move.
+The trial ran from 16:39 to 17:58 UTC.
+
+| Role | Source | Pinned revision | Mirror ID |
+|---|---|---|---|
+| Engine snapshot | `retractordb` | `40c28dbefec8324df45365d863050fc577623768` | `retractordb-engine` |
+| Experiments and data | `rdb-experiment` | `d319e886ce14ec541fd5f9bbb2e18ea53b0a38c6` | `retractordb-experiment` |
+| Canonical documentation | `dokumentacja-rdb` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | `dokumentacja-rdb` |
+| Derived documentation | `documentation-rdb` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | `documentation-rdb` |
+| Artifact entry point | `rdb-artifact` | `c15b1b5` -- the revision the trial ran on; this record is the next commit | `retractordb-artifact` |
+
+| Step | Verdict |
+|---|---|
+| 1. Open every URL as printed in the paper | **pass**: the four addresses in `references.bib` and the root of all five mirrors answer HTTP 200 `text/html` unauthenticated |
+| 2. Download all archives, no `401` | **pass with the documented limit**: no `401` anywhere. Four archives download whole and pass a ZIP integrity test (4.3M, 410K, 345K, 97K). The experiment ZIP answers HTTP 200 and was not pulled whole; the step was run per file there, as in the third trial |
+| 3. Search paths and text for every configured term | **pass**: zero hits on word boundaries in the four whole archives, in all 4,365 experiment paths and in the 42 experiment files fetched singly, among them the four files `d319e88` changed; the only substring matches are `wideRational`, in the engine and in this file |
+| 4. `verify_pins.sh` in mirror mode | **pass**, exit status 0: 39 checks OK (fifteen pin declarations in section 0, twenty-four archive checks in section 4), 7 skipped by design, zero `ERROR` -- every directory of the workspace taken from a mirror |
+| 5. Analytic reproduction | **pass** on a clone of the pins made earlier the same day with `bin/checkout.sh`: `verify_pins.sh snapshot` matched with two `SKIP`, **eight groups out of eight**, `ecg` peaks at `x=122` and `x=365`; not repeated in this run |
+| 6. Record the run | this section |
+
+**Every byte step 4 checked came from a mirror.** This closes a gap in a run
+made earlier the same day, where the checker came from the entry-point mirror
+but section 4 read the archives of a GitHub clone. Here the workspace held
+`retractordb`, `dokumentacja-rdb` and `documentation-rdb` extracted from their
+mirror archives, the entry point extracted from its own, and an `rdb-experiment`
+directory holding only what the checker reads: the sixteen `raw.index.tsv`, the
+seventeen archives, the four W8 parts and their index, all fetched through
+`/api/repo/retractordb-experiment/file/<path>` and byte-identical to
+`d319e88`. `bin/verify_pins.sh` in the entry-point mirror is byte-identical to
+its source at `c15b1b5`.
+
+**How the mirrors were compared with their pins.** The four whole archives were
+compared file by file with `git archive` of their pins. Every file that differs
+differs only in lines that carry a redaction marker. The only files missing are
+images (2 in the engine, 69 and 72 in the documentation mirrors), and no
+archive holds a file its pin lacks. The engine's one symbolic link arrives as a file holding its target. For
+the experiment, all 784 directories of `d319e88` were listed through
+`/api/repo/<id>/files/?path=`, 2 s apart, pausing four times on HTTP 429 for
+the `Retry-After` of up to 524 s. The listing has exactly the 4,365 paths of the
+tree, none missing and none extra, and every reported size equals the size in
+`d319e88`. Against `f5475d0` exactly four sizes differ: the four files
+`d319e88` changed, so the mirror serves the new pin. Of those four files
+fetched singly, `tests/test_artifacts.sh` and `results_20260814_K26v3/manifest.sha256`
+are byte-identical to git, and `JOURNAL.md` and `REQUIREMENTS.md` differ only by
+`XXXX-12` in place of the account name.
+
+**A note on the file count in the third trial.** The third trial says the
+experiment mirror holds "exactly the 4,346 files of the tree", while its table
+pins `f5475d0`, whose tree has 4,365. Both numbers are right, for different
+revisions. The full listing was made on `4ba2880`, which has 4,346 files. That
+same trial then ran into the limits of the anonymizing service: the ZIP is cut
+short, and a text file of about 1.2 MB or more is refused with HTTP 502. To get
+around them the pin moved to `f5475d0`, which adds nineteen `.csv.gz` copies
+and nothing else. After that move only the nineteen copies and the six `raw/`
+directories holding them were checked, not the whole tree again. The count in
+that section is left as it was recorded. This trial lists the whole tree of
+`d319e88` directly and finds 4,365.
+
+**A listing trap worth knowing.** The listing marks a directory by the absence
+of `sha`, but it gives an empty file a `size` of 0 and no `sha` either. The tree
+has 197 empty files. A walker that treats a missing `sha` as a directory
+queries each of them as a path, wastes the rate budget on it and never counts
+it as a file. Test for the absence of both `sha` and `size`.
