@@ -378,3 +378,24 @@ of `sha`, but it gives an empty file a `size` of 0 and no `sha` either. The tree
 has 197 empty files. A walker that treats a missing `sha` as a directory
 queries each of them as a path, wastes the rate budget on it and never counts
 it as a file. Test for the absence of both `sha` and `size`.
+
+## Fifth trial -- 7584a58 / 88a8ba6
+
+On 2026-10-02 the experiment pin moved from `d319e88` to `7584a58` with `bin/move_pin.sh` (`MANIFEST.md` section 1), and the entry point was committed at `88a8ba6` to declare it. Those two mirrors were re-pointed; `/api/repo/<id>/options` gives `anonymizedAt` 2026-10-02T20:40:56Z for `retractordb-experiment` and 2026-10-02T20:41:17Z for `retractordb-artifact`. The other three mirrors did not move: their `anonymizedAt` stays at 2026-09-13 and their root listings match their pins. The trial follows `REVIEW_MIRROR.md`, *Moving a pin*, step 4, and took 28 paced requests with no HTTP 429.
+
+| Role | Source | Pinned revision | Mirror ID |
+|---|---|---|---|
+| Engine snapshot | `retractordb` | `40c28dbefec8324df45365d863050fc577623768` | `retractordb-engine` |
+| Experiments and data | `rdb-experiment` | `7584a58b20073b1495dfe7357a4d2169e86f9d5f` | `retractordb-experiment` |
+| Canonical documentation | `dokumentacja-rdb` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | `dokumentacja-rdb` |
+| Derived documentation | `documentation-rdb` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | `documentation-rdb` |
+| Artifact entry point | `rdb-artifact` | `88a8ba6fc0467c519817c1d5500886a818ff11d9` -- the revision the trial ran on; this record is the next commit | `retractordb-artifact` |
+
+| Step | Verdict |
+|---|---|
+| 1. Open every URL as printed in the paper | **pass**: the five mirror roots in `debs/references.bib` answer HTTP 200 unauthenticated |
+| 2. Delta, file by file | **pass**: the nine files of the experiment delta (`d319e88..7584a58`) and the six files of the entry-point delta since the mirror's previous revision `7757706` were fetched singly through `/api/repo/<id>/file/<path>`. Each has the line count of its blob at the new pin and differs from it only in lines carrying a redaction marker: one line in `JOURNAL.md` and one in `results_20261002_G3b/README.md` (the issue address with the account name), seven in `MANIFEST.md` and five in `bin/checkout.sh` (repository URLs). The listings of `results_20261002_G3b/`, its `results/` and the entry point's `bin/` match `git ls-tree` of the new pins in names and sizes; so do the root listings of all five mirrors |
+| 3. Search for every configured term | **pass**: zero hits in the fifteen delta files as served |
+| 4. `verify_pins.sh` in mirror mode | **not re-run over mirror bytes**: the delta holds no archive and no index, so section 4 would check the bytes the fourth trial checked; the three files section 0 reads (`MANIFEST.md`, `bin/checkout.sh`, `bin/verify_pins.sh`) are among the delta files of step 2 and declare `7584a58` identically |
+| 5. Analytic reproduction | **pass** on a fresh clone of the pins made by `bin/move_pin.sh --apply` the same day: `verify_pins.sh snapshot` matched with one `SKIP` (the W8 whole archive), seven groups OK, `ecg` skipped because it needs the engine binaries |
+| 6. Record the run | this section |
