@@ -241,6 +241,8 @@ two replay runs, plus six round-trip checks,
 `results_20260728_K18/exactness/`), not identity checks. The number 13 itself is
 correct and does not change — what changes is its source (finding K9b-F4).
 
+The 13 bridge checks were recorded on an engine that still charged a time shift with the whole tail of its producer (`results/engine.json`: `5c3f32ad` with uncommitted changes). Since `fcc5a444` (2026-08-07) the factored form `(A#B)>L` carries a tail shorter by exactly `min(W, L) >= 1` than the blocked form `(A>i)#(B>k)`; Corollary `cor:shift-tail-gap` of `main-debs.tex` states it and the Lean theorem `causal_shift_matching_declared` proves it. Re-running the frozen `engine_check.py` against the pinned engine therefore reports 0/13 although the value part agrees in every case: the apparatus reads only `tail=` (the plan prints `origin=` and `tail=` separately since `5f310515`) and expects the three forms to carry equal tails. `bin/reproduce_analytic.sh` reads the stored `engine.json` and is not affected. The corrected bridge is `results_20261002_G3b/` in `rdb-experiment` at `7584a58b20073b1495dfe7357a4d2169e86f9d5f`, after the experiment pin `d319e88`. It reuses `run_case` from the frozen directory and takes the expected tail of each form from the K24 event model, checked against the theorem; it passes 13/13 on the pinned engine `40c28dbe`, while `fcc5a444^` fails it 0/13 on the tail alone. Moving the experiment pin to that commit requires re-pointing the review mirrors and is a separate decision (retractordb #353).
+
 ## 4. Raw archives
 
 There are 16 index files. They describe 18 archives, because the K26v3 P8 index

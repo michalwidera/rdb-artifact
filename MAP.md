@@ -30,7 +30,7 @@ comes from `paper-arXiv/debs/research_plan.md` §3.6 and §14, and from
 | `results_20260728_K19` | K19 | Do the `SUBTRACT` and AGSE phase formulas and their boundaries agree with the engine? | **current** — 468,220 + 2,239,488 phases; the capacity coverage gap was later measured in `results_20260728_extend` |
 | `results_20260728_K4` | K4 | Which R1/R2 rule fires in the existing corpus, and how often? | **current** — five profiles, 400 results; the limitation of the non-reproducible path is stated explicitly |
 | `results_20260728_extend` | extend | Did the AGSE capacity defect invalidate K18/K19/K4, and does the corrected revision preserve determinism? | **current as an audit** — no result was invalidated; the 360 Hz timing stage was repeated and exactness confirmed byte for byte |
-| `results_20260726_G3` | K2 / G3 | Do the R1 oracle and the bridge to the engine agree over the full corpus? | **current** — 75,548 cases / 143,065,922 positions, plus a 13/13 bridge |
+| `results_20260726_G3` | K2 / G3 | Do the R1 oracle and the bridge to the engine agree over the full corpus? | **current** — 75,548 cases / 143,065,922 positions, plus a 13/13 bridge recorded before `fcc5a444`. From that commit the frozen `engine_check.py` reports 0/13 by design, also on the pinned engine; the corrected bridge is `results_20261002_G3b` (`7584a58`, after the experiment pin), 13/13 on the pinned engine (retractordb #353) |
 | `results_20260725` | SDF/CSDF axis | Do the four interleave representations share one trace, and what is their structural cost? | **current** — the basis of `tab:repr`; the later K2/G3 extends the bridge to the present semantics but does not replace the comparison of representations |
 
 ## Historical context still cited in the paper
