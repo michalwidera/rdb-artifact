@@ -159,3 +159,15 @@ to reviewers through an anonymized mirror. The claim that step 4 supports is
 availability and integrity of the delivered bytes. It is not a claim that a
 reviewer can reproduce the analysis from the mirror alone: today that needs a
 clone, and making the analytic path work without history is an open item.
+
+## Moving a pin
+
+A pin moves forward only, one source repository at a time, and the package must not declare a revision its mirror does not serve. `bin/move_pin.sh` does the local part; the mirror and the trial stay manual. The paper pin is the tag `artifact/K9b` and moves with the tag, not with this procedure.
+
+1. **Dry run.** Copy the term list of `paper-arXiv/debs/procedura_anonimizacji.md` (section 4) to a file outside every repository and run `RDB_REDACTION_TERMS_FILE=<file> bin/move_pin.sh <repository> <new-sha>`. It needs a local clone of the source repository next to this one (or `RDB_SOURCES`) holding both revisions. It must end with `RESULT: dry run, 0 finding(s), 0 skipped`. A text file of 1.2 MB or more without a `.gz` copy is a finding: fix it by a commit in the source repository and start again from the new SHA. Every file it lists under *identifying terms* goes on the search list of step 4.
+2. **Apply, commit, push** - only when step 3 can follow in the same session. `bin/move_pin.sh <repository> <new-sha> --apply` writes the four declarations of the pin (`MANIFEST.md` section 1, `bin/verify_pins.sh`, `bin/checkout.sh`, the table in *Sources and revisions* above), clones a fresh pinned workspace into a temporary directory and runs `verify_pins.sh snapshot` and `reproduce_analytic.sh` there, products outside this repository. Commit those four files together with a paragraph in `MANIFEST.md` section 1 saying what the new revision adds, and push.
+3. **Re-point the mirrors** (external, by the mirror owner): the mirror of the moved repository to `<new-sha>` and `retractordb-artifact` to the commit of step 2. Automatic updates stay off and the term list stays as it is. `/api/repo/<id>/options` reports the `lastUpdateDate` that confirms the move.
+4. **Acceptance trial on the delta.** Steps 1, 4 and 5 of the trial above run in full. Steps 2 and 3 are narrowed to what moved: fetch every file of the delta singly through `/api/repo/<id>/file/<path>`, check that it equals its blob at the new pin except for redaction markers and contains none of the configured terms, and list the directories holding the delta through `/api/repo/<id>/files/?path=` against `git ls-tree` of the new pin, pacing the requests for the rate limit.
+5. **Record** a new trial section in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md), as the fourth trial did for `d319e88`: the pins, the `lastUpdateDate` of each re-pointed mirror, the verdict of each step and the delta it covered.
+
+Between steps 2 and 3 the package declares a revision its mirror does not serve yet; that window is why the two steps belong to one session.
