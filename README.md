@@ -18,6 +18,9 @@ not know where to start, read in this order:
    redaction configuration and an acceptance trial without credentials.
 5. [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md) — **the record of the acceptance
    trial**: what passed, what was skipped and where it was verified instead.
+6. [`LITERATURE_PROTOCOL.md`](LITERATURE_PROTOCOL.md) — **the literature review
+   behind the paper's positioning**: questions, criteria, search routes with
+   dates and counts, the nearest-work matrices and the limits of the review.
 
 ## What RetractorDB is
 

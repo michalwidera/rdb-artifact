@@ -377,3 +377,20 @@ without it the script prints `SKIP` with the recipe, never an error.
    Mathlib. And the engine is compared with the proved model on a bounded
    parameter grid: a green `ut_proofOracle` says the implementation agrees with
    the model there, not that the implementation is proved.
+
+## 6. Literature-review protocol
+
+The positioning in the paper's Related Work section rests on a targeted
+literature review, and the paper refers here for its full protocol:
+[`LITERATURE_PROTOCOL.md`](LITERATURE_PROTOCOL.md). It records the review
+questions and the two-part decision tests, the inclusion and exclusion criteria
+with the recorded exclusions, every search route with its date, instrument and
+counts (coverage end date 2026-08-25), the nearest-work matrices, including the
+21 entries of the two-part test on the sharing axis, and the limits of the
+review. Section 1 of that file maps each statement of the paper's paragraph on
+the scope of the search to the section that records it.
+
+The protocol is a record of searches, not of measurements, so no pin of this
+manifest covers it and no reproduction mode reads it. The candidate works it
+names are cited by bibliographic data; their files are not part of any pinned
+repository.

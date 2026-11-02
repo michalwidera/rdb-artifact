@@ -181,3 +181,14 @@ The tests compare on a bounded grid, so a TEST row means "the engine agrees with
 the proved model on that grid", not "the engine is proved". The exact-tail
 theorems are the model-level counterpart of H10a, which K24e and K24f support
 empirically; neither replaces the other.
+
+## Literature review
+
+Not a campaign: the literature review behind the paper's positioning has its own
+record, [`LITERATURE_PROTOCOL.md`](LITERATURE_PROTOCOL.md). On the sharing axis
+it applies a two-part test to H9 (the unit of sharing; who fixes its identity,
+and when) and on the startup-transient axis a two-part test to H10 (whether the
+logical origin and the startup tail are separated; whether they come statically
+from the plan). Neither axis has a work that answers both parts as the paper
+does; the startup-transient axis has one conceptual precedent, named in section
+7.3 of that file.
