@@ -15,7 +15,7 @@ Hypothesis numbers follow [`MAP.md`](MAP.md), *Hypotheses - state*: **H9** is th
 | Statement in the paper | Recorded in |
 |---|---|
 | the recorded protocol combined citation chasing, term searches, subscription indexes, Google Scholar and all four DEBS proceedings from 2023 through 2026, none of which contained a gating work | citation chasing: 4.5, 5.2-5.4; term searches: 4.1-4.4, 5.5, 5.6; subscription indexes: 5.7, 5.9; Google Scholar: 5.8; DEBS 2023-2026: 4.1, 5.10; the enumeration of the routes: 6 |
-| across 21 state-sharing works, none matched both the substrate unit and the compiler-established identity | the two-part test: 2.2; the 21 entries and how they are counted: 7.2 |
+| across the 21 entries of the protocol's state-sharing matrix, none matched both the substrate unit and the compiler-established identity | the two-part test: 2.2; the 21 entries and how they are counted: 7.2 |
 | this directed review does not establish absence universally | the limits: 9 |
 | coverage is English-language apart from one cited Polish work | 9.3 |
 | Simulink rate transitions and Kafka Streams state stores were excluded by decision, as neither has a peer-reviewed description | 3.3 |
