@@ -18,7 +18,7 @@ nothing blocks its mirror any more.
 |---|---|---|---|
 | Artifact entry point | `rdb-artifact` | HEAD at mirror creation -- see below | `retractordb-artifact` |
 | Engine snapshot | `retractordb` | `40c28dbefec8324df45365d863050fc577623768` | `retractordb-engine` |
-| Experiments and data | `rdb-experiment` | `7584a58b20073b1495dfe7357a4d2169e86f9d5f` | `retractordb-experiment` |
+| Experiments and data | `rdb-experiment` | `5cc7b0a9c7bdb5485844f9c0b95014bbfa661c65` | `retractordb-experiment` |
 | Canonical documentation | `dokumentacja-rdb` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | `dokumentacja-rdb` |
 | English documentation | `documentation-rdb` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | `documentation-rdb` |
 

@@ -21,7 +21,7 @@ PAPER="${RDB_PAPER:-$WORKSPACE/paper-arXiv}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ENGINE_SNAPSHOT="40c28dbefec8324df45365d863050fc577623768"
-EXPERIMENT_SNAPSHOT="7584a58b20073b1495dfe7357a4d2169e86f9d5f"
+EXPERIMENT_SNAPSHOT="5cc7b0a9c7bdb5485844f9c0b95014bbfa661c65"
 DOCS_PL_SNAPSHOT="ba875ba5e648d46412c8d82ce669c43777ec1e8e"
 DOCS_EN_SNAPSHOT="4b0b7ae70b42f2279afb080b22bee4d78f2643bc"
 PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
@@ -321,14 +321,15 @@ if [[ "$SELECTION" != snapshot ]]; then
   echo "SKIP  snapshot-level invariant; run 'verify_pins.sh snapshot' to check it"
 else
 # A mirror has no index of tracked files, but it also has no untracked ones,
-# so walking the tree counts the same sixteen entries.
+# so walking the tree counts the same 28 entries: 16 of the paper's campaigns
+# and 12 of the later ones (MANIFEST.md section 4.3).
 if [[ "$MIRROR" == 1 ]]; then
 index_count="$(find "$EXPERIMENT" -type f -iname '*raw.index.tsv' | wc -l)"
 else
 index_count="$(git -C "$EXPERIMENT" ls-files | grep -Ei 'raw\.index\.tsv$' | wc -l)"
 fi
-[[ "$index_count" -eq 16 ]] && ok "index files = 16" \
-  || bad "index files = $index_count, expected 16"
+[[ "$index_count" -eq 28 ]] && ok "index files = 28" \
+  || bad "index files = $index_count, expected 28"
 
 PRESENT=$(cat <<'RAW_EOF'
 results_20260728_K4/results/raw.tar.gz 407cb32400c57fdc7c9f969821de134062120bce57399ac051c6162618d79968
@@ -348,6 +349,15 @@ results_20260731_hygiene220/results/raw.tar.gz 6993a2877741d65e480167a7068370b06
 artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R1.tar.gz 8c4ac248eb8e5f91f35ca90ce61f1f3ff10eef7db58042ab62238cd349b256a3
 artifacts/K26v3/k26v3_archives/K26v3-P8-F9-R2.tar.gz 62b065a89e82126c08f2a973195e10688bd1adfcbdb2840d5f57ea22248c0db7
 artifacts/K26v3/k26v3_archives/K26v3-P8-F9-X.tar.gz 3deb300733f3662dd042ca0109eb73aa696c4eb5da7d8b3b62745735c94c2e04
+artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_01_W2_raw.tar.gz 63ab410a5fa29835b50371e589628cc5e11eac03ada0d4ee73c872b61655157b
+artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_02_W3_raw.tar.gz f8c56f9517071ba34c478b3d4f31a69347921f9f545ea0d86988ca9433766a3c
+artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_03_W4_raw.tar.gz 0ecf1483fcbf7a8958d6250907d69a283d7451c47e7a71b452a763d6e4c53147
+artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_04_W5_raw.tar.gz 6d6a61f3de44a62ab4d9dbe3d0b35543ad8054cd32bf4572de76b76d88a2140e
+artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_05_W7_raw.tar.gz 2c57044ced18634c5a8d94f0b790d9d0772db227f15888f6d4d2bd05ac987c29
+artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_07_W9_raw.tar.gz 4fc39014f431fc22872b8791d64e8241a41b1fbebd7b44c136005a18627fe06b
+artifacts/R593/archives/R593-P8-F9-R1.tar.gz 45ac63dcb0a1e96799368c93320dee53c1268ac37d0653e147c4f57408393d63
+artifacts/R593/archives/R593-P8-F9-R2.tar.gz 2bdd80f2759e7b81122d857adf15737b6d1822b107322a8044e109fea946db98
+artifacts/R593/archives/R593-P8-F9-X.tar.gz 39892a02c964f4f9d189a50c848c2503316624a5dfa44a667a30c321ece700bc
 RAW_EOF
 )
 while read -r path expected; do
@@ -408,7 +418,7 @@ if [[ -n "$MISSING" ]]; then
       || bad "$path now exists; MANIFEST.md must be updated"
   done <<<"$MISSING"
 else
-  ok "no archive is declared lost (17 of 18 in git; W8 in four tracked parts)"
+  ok "no archive is declared lost (26 of 27 checked in git; W8 in four tracked parts; six outside git by design, MANIFEST.md section 4.3)"
 fi
 fi
 

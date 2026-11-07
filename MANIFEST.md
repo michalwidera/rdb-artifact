@@ -13,7 +13,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
 | `retractordb` | `https://github.com/michalwidera/retractordb.git` | `40c28dbefec8324df45365d863050fc577623768` | engine and fixed tooling | `retractordb-engine` |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `7584a58b20073b1495dfe7357a4d2169e86f9d5f` | campaigns and data | `retractordb-experiment` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `5cc7b0a9c7bdb5485844f9c0b95014bbfa661c65` | campaigns and data | `retractordb-experiment` |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | PL documentation (canonical) | `dokumentacja-rdb` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | EN documentation (derived) | `documentation-rdb` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
@@ -53,6 +53,7 @@ the same day, `retractordb-experiment` to `d319e88` and `retractordb-artifact`
 to `c15b1b5`, and the acceptance trial was run against them: `MIRROR_TRIAL.md`,
 *Fourth trial*.
 **Move of 2026-10-02:** the experiment pin moved from `d319e88` to `7584a58`, which only adds `results_20261002_G3b/` (the corrected G3 bridge of retractordb #353, see the note in section 3) and its `JOURNAL.md` entry; no campaign data changes. The move was made with `bin/move_pin.sh` (`REVIEW_MIRROR.md`, *Moving a pin*), which verified a fresh pinned workspace with `verify_pins.sh snapshot` and `reproduce_analytic.sh`. The mirrors `retractordb-experiment` and `retractordb-artifact` were re-pointed the same day to this pin and to the entry-point commit that declares it (`88a8ba6`), and the acceptance trial on the delta passed: `MIRROR_TRIAL.md`, *Fifth trial*.
+**Move of 2026-11-07:** the experiment pin moved from `7584a58` to `5cc7b0a`, which adds the campaigns run after the paper's (§4.3): the control replication R593 of retractordb #593 and the measurements R376, R376b, R600 and R603 to R607, with their `JOURNAL.md` entries, `config/campaign_rate_r593k18.csv`, a `.gitignore` exception for the six R593 K6c archives that are in git, the current-syntax copy `results_20260803_K24/evidence/sub_ratio3_all_null.current.rql`, and `verify_probe_binary` in `lib/common.sh` accepting `RDB_OPT_SIMPLIFY_EXPRESSIONS` in `--build-info`. No data of the paper's campaigns changes. The move was made with `bin/move_pin.sh`; the raw-archive inventory of `verify_pins.sh snapshot` was extended to the new archives at the same time (§4.3).
 Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
@@ -246,9 +247,10 @@ The 13 bridge checks were recorded on an engine that still charged a time shift 
 
 ## 4. Raw archives
 
-There are 16 index files. They describe 18 archives, because the K26v3 P8 index
-covers three separate families. **A clone carries all 18** — seventeen as files,
-the eighteenth (`study_06_W8`) in four parts.
+There are 28 index files. The 16 of the paper's campaigns describe the 18 archives
+below, because the K26v3 P8 index covers three separate families. **A clone
+carries all 18** — seventeen as files, the eighteenth (`study_06_W8`) in four
+parts. The other 12 belong to campaigns run after the paper's (§4.3).
 
 The "content bytes" column is the sum of the index entries' sizes, "archive
 bytes" is the actual size of the compressed file, and "in git" says whether
@@ -327,6 +329,37 @@ Silence is still not treated as availability. `bin/verify_pins.sh snapshot`
 checks seventeen archives by checksum, the four W8 parts by checksum and size,
 the presence of the parts index, and the assembled whole only if it is on disk —
 without it the script prints `SKIP` with the recipe, never an error.
+
+### 4.3. Campaigns after the paper's (experiment pin of 2026-11-07)
+
+The experiment pin `5cc7b0a` adds campaigns run after those the paper reports: the control replication R593 of retractordb #593 on engine `dfcc42d2` (`results_20261103_R593_*`, `results_20261104_R593_*`) and the measurements R376, R376b, R600 and R603 to R607 of retractordb #376, #600, #603 and #607. No claim of the paper rests on them, and the "18 of 18" of §4 and §5 counts the paper's campaigns only. They add 12 index files and 15 archives.
+
+Nine of the archives are in git, and `bin/verify_pins.sh snapshot` checks them by checksum together with the 18 above. The three R593 P8 archives have no `raw.index.tsv`; as for K26v3, their checksums are listed in `artifacts/R593/archives/archive-index.tsv`.
+
+| Archive | Entries | Content bytes | Archive bytes | in git | Archive SHA-256 |
+|---|---:|---:|---:|:---:|---|
+| `artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_01_W2_raw.tar.gz` | 1440 | 20765445 | 9531754 | yes | `63ab410a5fa29835b50371e589628cc5e11eac03ada0d4ee73c872b61655157b` |
+| `artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_02_W3_raw.tar.gz` | 960 | 16481333 | 7593644 | yes | `f8c56f9517071ba34c478b3d4f31a69347921f9f545ea0d86988ca9433766a3c` |
+| `artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_03_W4_raw.tar.gz` | 960 | 11355379 | 5079868 | yes | `0ecf1483fcbf7a8958d6250907d69a283d7451c47e7a71b452a763d6e4c53147` |
+| `artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_04_W5_raw.tar.gz` | 480 | 7324027 | 3268506 | yes | `6d6a61f3de44a62ab4d9dbe3d0b35543ad8054cd32bf4572de76b76d88a2140e` |
+| `artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_05_W7_raw.tar.gz` | 480 | 5973861 | 2716627 | yes | `2c57044ced18634c5a8d94f0b790d9d0772db227f15888f6d4d2bd05ac987c29` |
+| `artifacts/R593/k6c_raw/results_20261103_R593_K6c_study_07_W9_raw.tar.gz` | 960 | 154684095 | 8932146 | yes | `4fc39014f431fc22872b8791d64e8241a41b1fbebd7b44c136005a18627fe06b` |
+| `artifacts/R593/archives/R593-P8-F9-R1.tar.gz` | — | — | 6449351 | yes | `45ac63dcb0a1e96799368c93320dee53c1268ac37d0653e147c4f57408393d63` |
+| `artifacts/R593/archives/R593-P8-F9-R2.tar.gz` | — | — | 3554104 | yes | `2bdd80f2759e7b81122d857adf15737b6d1822b107322a8044e109fea946db98` |
+| `artifacts/R593/archives/R593-P8-F9-X.tar.gz` | — | — | 6554315 | yes | `39892a02c964f4f9d189a50c848c2503316624a5dfa44a667a30c321ece700bc` |
+
+Six indexed archives are **not** in the repository, by decision rather than by loss, so they are not on the `MISSING` list of `verify_pins.sh`. A clone carries their indexes, which name every file with its size and SHA-256, but not the data.
+
+| Index | Entries | Content bytes | Where the archive is |
+|---|---:|---:|---|
+| `results_20261103_R593_K6c/ablation/study_06_W8/raw.index.tsv` | 1080 | 641344866 | author's host; 161836474 bytes, SHA-256 `491466c8308b00d2840c6dc325a9c4ffbfa4377ae03fe4823ad6a3b252d178a4` (`artifacts/R593/k6c_raw/raw.sha256`) |
+| `results_20261104_R376/results_20261104_R376_raw.index.tsv` | 648 | 134928785 | outside the repository |
+| `results_20261107_R376b/results_20261107_R376b_raw.index.tsv` | 108 | 126838375 | outside the repository |
+| `results_20261104_R600/results_20261104_R600_raw.index.tsv` | 540 | 138951583 | outside the repository |
+| `results_20261105_R603/results_20261105_R603_raw.index.tsv` | 216 | 259280281 | outside the repository |
+| `results_20261105_R603C/results_20261105_R603C_raw.index.tsv` | 540 | 140862842 | outside the repository |
+
+The R593 W8 archive exceeds GitHub's 100 MB per-file limit and, unlike the paper's W8, was not split into parts (decision of 2026-11-04, `rdb-experiment` `artifacts/README.md`). The R376, R376b, R600, R603 and R603C campaigns ran on a use-case corpus that is not yet published; their READMEs say so, and only the index of checksums is in the repository.
 
 ## 5. Known limits of this package
 
