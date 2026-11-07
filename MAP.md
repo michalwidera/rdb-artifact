@@ -1,6 +1,6 @@
 # CAMPAIGN MAP — what each one answers and whether it still holds
 
-This file exists so that the forty-two `results_*` directories in
+This file exists so that the fifty-nine `results_*` directories in
 `rdb-experiment` can be read by someone who did not create them. The manifest
 says **on what** the measurements were taken; the map says **what** was measured
 and **whether the reading still holds**.
@@ -13,7 +13,7 @@ Status has three values:
 * **control** — a hygiene study or apparatus diagnostic; never a standalone
   result of the paper.
 
-Each of the 42 `results_*` directories has its own row below. The classification
+Each of the 59 `results_*` directories has its own row below. The classification
 comes from `paper-arXiv/debs/research_plan.md` §3.6 and §14, and from
 `rdb-experiment/JOURNAL.md`.
 
@@ -31,6 +31,7 @@ comes from `paper-arXiv/debs/research_plan.md` §3.6 and §14, and from
 | `results_20260728_K4` | K4 | Which R1/R2 rule fires in the existing corpus, and how often? | **current** — five profiles, 400 results; the limitation of the non-reproducible path is stated explicitly |
 | `results_20260728_extend` | extend | Did the AGSE capacity defect invalidate K18/K19/K4, and does the corrected revision preserve determinism? | **current as an audit** — no result was invalidated; the 360 Hz timing stage was repeated and exactness confirmed byte for byte |
 | `results_20260726_G3` | K2 / G3 | Do the R1 oracle and the bridge to the engine agree over the full corpus? | **current** — 75,548 cases / 143,065,922 positions, plus a 13/13 bridge recorded before `fcc5a444`. From that commit the frozen `engine_check.py` reports 0/13 by design, also on the pinned engine; the corrected bridge is `results_20261002_G3b` (`7584a58`, the experiment pin since 2026-10-02), 13/13 on the pinned engine (retractordb #353) |
+| `results_20261002_G3b` | G3b | Does the oracle-to-engine bridge of G3 still hold on the current engine once the expected tail of each form comes from the K24 event model? | **current** — corrected bridge of retractordb #353: 13/13 on the engine pin, while `fcc5a444^` fails it 0/13 on the tail alone; reuses `run_case` from the frozen G3 directory (`MANIFEST.md` §3) |
 | `results_20260725` | SDF/CSDF axis | Do the four interleave representations share one trace, and what is their structural cost? | **current** — the basis of `tab:repr`; the later K2/G3 extends the bridge to the present semantics but does not replace the comparison of representations |
 
 ## Historical context still cited in the paper
@@ -82,6 +83,40 @@ context, never as evidence of the present performance boundary.
 | `results_20260730_hygiene` | hygiene of the measurement probe | **control** — no effect |
 | `results_20260729_hygiene` | hygiene of the interval fix and of apparatus determinism | **control** — no effect; it caught empty comparisons posing as success |
 | `results_20260721_bufferfix` | a rate/clients/FIR repeat after `facctxtsrc` buffering was restored | **apparatus-repair control** — the source of the historical context, not the present ceiling |
+
+## Campaigns after the paper's
+
+None of these carries a claim of the paper on its own; `MANIFEST.md` §4.3 lists
+their archives. The R593 rows are the control replication of retractordb #593 on
+newer engine revisions; R593 K18b is the 360 Hz anchor the paper text calls the
+current revision. The other rows are engine-development measurements of
+retractordb #376, #600, #603 and #607 on a use-case corpus that is not yet
+published; their READMEs say so, and only checksum indexes of their raw data are
+in the repository.
+
+| Directory | Code name | The question it answers | Status |
+|---|---|---|---|
+| `results_20261103_R593_K6c` | R593 K6c | Does the K6c Tier B class distribution hold on engine `dfcc42d2`? | **control** — A=0, B=12, C=1 as in K6c; the frozen artifact-sum check flags the seven R1 cells, observable equality holds in 7 of 7 |
+| `results_20261103_R593_H9` | R593 H9 | Do the three K26v3 families stay supported at Q=8 on engine `dfcc42d2`? | **control** — 3 of 3 supported, prices 0.921 / 0.992 / 0.751; the Flink comparison was not repeated |
+| `results_20261104_R593_K18` | R593 K18 | Replay stability, round-trip exactness and the 360 Hz timing anchor on engine `dfcc42d2` | **superseded as the current-revision anchor by R593 K18b**; replay 67 files without difference, round-trip exact, E1 median 885.7 us |
+| `results_20261104_R593_K22v5` | R593 K22v5 | Do the K22v5 oracle runs at zero tolerance pass on engine `dfcc42d2`? | **control, not confirmed** — 9 of 15 cells pass; the six failures are field alignment in a window join after `5f310515`, not arithmetic; K22v5 stays a result of `dd733e3` |
+| `results_20261107_R593_K18b` | R593 K18b | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `e389edd3` | **current** — the current-revision anchor; replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 916.4 us, queue-emission max 1426.1 us (51.3% of the slot budget) |
+| `results_20261104_R376` | R376 | retractordb #376: slot delay when a client connects, before and after #283 | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261107_R376b` | R376b | retractordb #376: repetition of one family of R376 | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261104_R600` | R600 | retractordb #600: releasing an abandoned client queue off the slot thread | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261105_R603` | R603 | retractordb #603: residual cost after #600 | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261105_R603C` | R603C | retractordb #603: reply-queue pool instead of unmapping in the slot | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261105_R603D` | R603D | retractordb #603: draining in portions | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261106_R603E` | R603E | retractordb #603: portions aligned to the gap after the slot | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261106_R603F` | R603F | retractordb #603: subscriber liveness probe | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261106_R603G` | R603G | retractordb #603: liveness probe cost with long-lived subscribers | **control** — engine-development measurement on the unpublished use-case corpus |
+| `results_20261107_R607` | R607 | retractordb #607: liveness probe spread over communication-thread turns | **control** — engine-development measurement on the unpublished use-case corpus |
+
+The tree `current/` of `rdb-experiment` is not a campaign: it holds a copy in
+the current RQL syntax of each of the 224 campaign plans that still use a
+deprecated form, under the original's path, with an index of checksums and
+migration evidence (`current/README.md`). The originals and the campaigns' frozen
+checksum manifests are unchanged.
 
 ## Hypotheses — state
 
@@ -161,21 +196,26 @@ counterpart).
 | `InterleaveCovering` | interleaving is a sequential covering | 1 | 0 | 12 |
 | `BeattyModel`, `BeattyPartition` | Beatty partition of positions (via Rayleigh's theorem in Mathlib) | 2 | 0 | 7 |
 | `Deinterleave` | deinterleaving satisfies Fraenkel's conditions | 6 | 0 | 4 |
-| `ExactInvertibility` | exact invertibility over the rationals | 2 | 2 | 0 |
+| `ExactInvertibility` | exact invertibility over the rationals | 4 | 0 | 0 |
 | `EventOrder` | event-order perturbation (a counterexample) | 2 | 0 | 0 |
-| `SumCommutativity` | commutativity of stream sum | 0 | 3 | 0 |
+| `SumCommutativity` | commutativity of stream sum | 3 | 0 | 0 |
 | `ShiftMatching` | rate-matched shift (R1) | 5 | 0 | 6 |
-| `CausalShift` | R1 extended to causal shift, logical origins and record availability | 2 | 11 | 0 |
-| `InterleaveTailExact` | exactness of the interleave tail as an availability bound | 2 | 0 | 9 |
-| **total** | 76 theorems | **22** | **16** | **38** |
+| `CausalShift` | R1 extended to causal shift, logical origins and record availability | 13 | 0 | 0 |
+| `InterleaveTailExact` | exactness of the interleave tail as an availability bound | 4 | 0 | 9 |
+| **total** | 78 theorems | **40** | **0** | **38** |
 
-Coverage is 22 of the 38 theorems that concern the engine (57.9%), as printed by
-`proof_drift`. The sixteen uncovered ones fall into three groups, each named in
-the manifest: the logical origin of interleaving, which the compiler computes
-inside `computeLogicalOrigin` rather than in a separable function; the tail and
-read of the shift operator, computed inline in `computeStartupLatency` and in
-`dataModel`; and the sample index of stream sum, also in `dataModel`. Testing
-them needs a compiled plan rather than a table.
+Coverage is 40 of the 40 theorems that concern the engine (100.0%), as printed
+by `proof_drift` at the engine pin `e389edd3`. At the previous pin `40c28dbe` it
+was 22 of 38 (57.9%): sixteen theorems were uncovered because the logical origin
+of interleaving, the tail and read of the shift operator and the sample index of
+stream sum are computed inline in the compiler and in `dataModel`, with no
+separable function to test against a table. The engine code did not change for
+this: `ut_proofOracle` gained a test for each of the sixteen (`retractordb`
+`1389cc52`) that compiles a plan from RQL and runs it through `dataModel`, then
+compares origins, intervals, tails and record values with the model. Two
+theorems were added to `InterleaveTailExact` later
+(`exactInterleaveTail_declared_pos`, `causal_shift_matching_declared`), both
+with a test.
 
 The tests compare on a bounded grid, so a TEST row means "the engine agrees with
 the proved model on that grid", not "the engine is proved". The exact-tail

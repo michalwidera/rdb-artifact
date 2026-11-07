@@ -12,10 +12,10 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
-| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `40c28dbefec8324df45365d863050fc577623768` | engine and fixed tooling | `retractordb-engine` |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `5cc7b0a9c7bdb5485844f9c0b95014bbfa661c65` | campaigns and data | `retractordb-experiment` |
-| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `ba875ba5e648d46412c8d82ce669c43777ec1e8e` | PL documentation (canonical) | `dokumentacja-rdb` |
-| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `4b0b7ae70b42f2279afb080b22bee4d78f2643bc` | EN documentation (derived) | `documentation-rdb` |
+| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `e389edd3596e4b83b6f3f4a9e238905a91c667b4` | engine and fixed tooling | `retractordb-engine` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `84fee502acb77b111b0f83bb07a2104b7477e560` | campaigns and data | `retractordb-experiment` |
+| `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `f8c4bdc08f154acd9945af76857fe1168f3c79d5` | PL documentation (canonical) | `dokumentacja-rdb` |
+| `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | EN documentation (derived) | `documentation-rdb` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
 The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
@@ -54,6 +54,7 @@ to `c15b1b5`, and the acceptance trial was run against them: `MIRROR_TRIAL.md`,
 *Fourth trial*.
 **Move of 2026-10-02:** the experiment pin moved from `d319e88` to `7584a58`, which only adds `results_20261002_G3b/` (the corrected G3 bridge of retractordb #353, see the note in section 3) and its `JOURNAL.md` entry; no campaign data changes. The move was made with `bin/move_pin.sh` (`REVIEW_MIRROR.md`, *Moving a pin*), which verified a fresh pinned workspace with `verify_pins.sh snapshot` and `reproduce_analytic.sh`. The mirrors `retractordb-experiment` and `retractordb-artifact` were re-pointed the same day to this pin and to the entry-point commit that declares it (`88a8ba6`), and the acceptance trial on the delta passed: `MIRROR_TRIAL.md`, *Fifth trial*.
 **Move of 2026-11-07:** the experiment pin moved from `7584a58` to `5cc7b0a`, which adds the campaigns run after the paper's (§4.3): the control replication R593 of retractordb #593 and the measurements R376, R376b, R600 and R603 to R607, with their `JOURNAL.md` entries, `config/campaign_rate_r593k18.csv`, a `.gitignore` exception for the six R593 K6c archives that are in git, the current-syntax copy `results_20260803_K24/evidence/sub_ratio3_all_null.current.rql`, and `verify_probe_binary` in `lib/common.sh` accepting `RDB_OPT_SIMPLIFY_EXPRESSIONS` in `--build-info`. No data of the paper's campaigns changes. The move was made with `bin/move_pin.sh`; the raw-archive inventory of `verify_pins.sh snapshot` was extended to the new archives at the same time (§4.3).
+**Second move of 2026-11-07 (retractordb #593, step 8):** the engine pin moved from `40c28dbe` to `e389edd3` (§2.1), and the documentation pins moved from `ba875ba` and `4b0b7ae` to `f8c4bdc` and `aa9f9d4`, the heads that describe that engine (97 and 92 commits; `doc_drift_scalar_functions` and `proof_drift` pass against them). The experiment pin moved from `5cc7b0a` to `84fee50` (tag `campaign/R593b`), which adds two things and changes no data of the paper's campaigns. The first is the tree `current/`: 224 copies of the repository's `.rql` plans in the current RQL syntax, with `current/INDEX.tsv` (original and copy hashes, migration status) and `current/README.md`. The original plans, the frozen hash manifests and their gates stay as they are; the copies sit in a separate tree because the frozen gates of K23, K23v2, K26, K26v2, K26v3 and R593 H9 count the `.rql` files of their own directories. The second is `results_20261107_R593_K18b/`, the 360 Hz timing anchor re-measured on the new engine pin (§3). Each pin was moved with `bin/move_pin.sh`; for the final pins `reproduce_analytic.sh` regenerated all eight groups in a fresh pinned workspace, `fig:qrs` with the binaries of the engine pin. The re-pointing of the mirrors and the acceptance trial on the delta: `MIRROR_TRIAL.md`, *Sixth trial*.
 Automatic updates are disabled. Mirror identifiers are not randomized — the author chooses
 them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
@@ -89,8 +90,37 @@ exit code 2 from the provenance gate, with no way to regenerate anything.
 ### 2.1. Code for reproduction and new measurements
 
 The engine code and the tooling come from the full SHA
-`40c28dbefec8324df45365d863050fc577623768`. A result obtained on it is a **new
+`e389edd3596e4b83b6f3f4a9e238905a91c667b4`. A result obtained on it is a **new
 reproduction**, not a historical measurement from the paper's tables.
+
+The pin was bumped on 2026-11-07 from
+`40c28dbefec8324df45365d863050fc577623768` (retractordb #593, step 8). **This
+bump moves the engine far**: 466 commits, 153 of them in `src/`, separate the two
+revisions. Among them are the current source declarations `BINFILE` /
+`TEXTFILE` / `DEVICE` (retractordb #346), a RATIONAL result type for `SUMC`,
+`AVG`, `MIN` and `MAX` over an integer field where the old pin truncated to
+INTEGER, compile errors for plans the old pin accepted and computed differently
+from what they say (a field of a stream outside `FROM`, an element beyond what
+`FROM` supplies), the first dump-file name of a
+`DO DUMP ... RETENTION` rule (retractordb #379) and the IPC rework of
+retractordb #599 to #607. What carries the paper's products over to it:
+
+- the backward-compatibility check of the corpus (`paper-arXiv/measurment-tool/
+  check_backward_corpus_compatibility.sh`, private like the paper) run on
+  `e389edd3` against `40c28dbe` reports no unaccepted divergence in any of its
+  seven groups: 682 plans (3 accepted divergences, 33 rejected by both
+  engines, with the reasons in retractordb #593), 67 runs, 48 artifact trees,
+  the 13 bridge cases of G3 evaluated as in G3b, both seeds of K24e and of K24f
+  byte for byte, and `fig:qrs`. The engine under test runs each plan after the
+  migration to the current syntax, and for each of the 224 plans that the
+  migration changes the result is byte-identical to its copy in `rdb-experiment`
+  `current/` (§1);
+- the full analytic run on a fresh workspace at these pins regenerated eight
+  groups out of eight, `fig:qrs` included, with its QRS complexes still at
+  `x=122` and `x=365`;
+- the proof mode of `REPRODUCE.md` §6: `proof_drift` and `ut_proofOracle` pass,
+  and the engine-level coverage of the theorems is 40 of 40 (`MAP.md`,
+  *Formal proofs*).
 
 The pin was bumped on 2026-09-13 from
 `8aa4ee2f18a003fcf55db8a4f810c720094e1b1a`, to bring the Lean 4 formalization
@@ -226,7 +256,7 @@ concern tests, not the `src/` tree.
 | `tab:k6-primary` | K6c | `results_20260730_K6c/` | `campaign/K6c-W2-W7`, `campaign/K6c-W8-W9` |
 | `tab:h9-primary` | K26v3 | `results_20260814_K26v3/` | `campaign/H9-K26v3` |
 | `fig:arch` | diagram | — | not applicable |
-| `fig:qrs` | ECG pipeline | `retractordb/examples/ecg/rec205` | regenerated 2026-09-02 on the pinned `8aa4ee2f…`; window pinned by `-m 1671` |
+| `fig:qrs` | ECG pipeline | `retractordb/examples/ecg/rec205` | regenerated 2026-11-07 on the pinned `e389edd3…`, peaks at `x=122` / `x=365` as on `40c28dbe…`; window pinned by `-m 1671` |
 
 Numbers carried into the text outside the tables: 75,548 cases / 143,065,922
 positions (K2/G3, `results_20260726_G3/`, `results/equivalence.json`, key
@@ -236,6 +266,8 @@ engine bridge, `results/engine.json`, key `cases`), and the plan and observation
 counts from K24e (10,010 plans, 35,835 node observations in sample, 35,703 out
 of sample).
 
+The 360 Hz timing anchor, which the paper calls the current-revision anchor (E1, queue-emission latency and the share of its maximum in the slot budget, replay and round-trip exactness), comes since 2026-11-07 from R593 K18b (`results_20261107_R593_K18b/`, engine pin `e389edd3`, experiment `84fee50`): E1 median 916.4 us, queue-emission maximum 1426.1 us, 51.3% of the 2777.8 us slot. Before that it came from R593 K18 (`results_20261104_R593_K18/`, engine `dfcc42d2`); K18 (`results_20260728_K18/`, `bc37186`) stays the historical campaign result of §2.2.
+
 Until 2026-08-20 those 13 checks were attributed, in the plan and in this
 manifest, to K18. The attribution was wrong: what K18 contributes to that
 sentence of the paper is **deterministic artifacts** (67 files compared across
@@ -243,7 +275,7 @@ two replay runs, plus six round-trip checks,
 `results_20260728_K18/exactness/`), not identity checks. The number 13 itself is
 correct and does not change — what changes is its source (finding K9b-F4).
 
-The 13 bridge checks were recorded on an engine that still charged a time shift with the whole tail of its producer (`results/engine.json`: `5c3f32ad` with uncommitted changes). Since `fcc5a444` (2026-08-07) the factored form `(A#B)>L` carries a tail shorter by exactly `min(W, L) >= 1` than the blocked form `(A>i)#(B>k)`; Corollary `cor:shift-tail-gap` of `main-debs.tex` states it and the Lean theorem `causal_shift_matching_declared` proves it. Re-running the frozen `engine_check.py` against the pinned engine therefore reports 0/13 although the value part agrees in every case: the apparatus reads only `tail=` (the plan prints `origin=` and `tail=` separately since `5f310515`) and expects the three forms to carry equal tails. `bin/reproduce_analytic.sh` reads the stored `engine.json` and is not affected. The corrected bridge is `results_20261002_G3b/` in `rdb-experiment` at `7584a58b20073b1495dfe7357a4d2169e86f9d5f`, the experiment pin since 2026-10-02. It reuses `run_case` from the frozen directory and takes the expected tail of each form from the K24 event model, checked against the theorem; it passes 13/13 on the pinned engine `40c28dbe`, while `fcc5a444^` fails it 0/13 on the tail alone (retractordb #353).
+The 13 bridge checks were recorded on an engine that still charged a time shift with the whole tail of its producer (`results/engine.json`: `5c3f32ad` with uncommitted changes). Since `fcc5a444` (2026-08-07) the factored form `(A#B)>L` carries a tail shorter by exactly `min(W, L) >= 1` than the blocked form `(A>i)#(B>k)`; Corollary `cor:shift-tail-gap` of `main-debs.tex` states it and the Lean theorem `causal_shift_matching_declared` proves it. Re-running the frozen `engine_check.py` against the pinned engine therefore reports 0/13 although the value part agrees in every case: the apparatus reads only `tail=` (the plan prints `origin=` and `tail=` separately since `5f310515`) and expects the three forms to carry equal tails. `bin/reproduce_analytic.sh` reads the stored `engine.json` and is not affected. The corrected bridge is `results_20261002_G3b/` in `rdb-experiment` at `7584a58b20073b1495dfe7357a4d2169e86f9d5f`, the experiment pin from 2026-10-02 to 2026-11-07. It reuses `run_case` from the frozen directory and takes the expected tail of each form from the K24 event model, checked against the theorem; it passes 13/13 on `40c28dbe`, the engine pin of that time, while `fcc5a444^` fails it 0/13 on the tail alone (retractordb #353). The compatibility check of 2026-11-07 (§2.1) evaluates the same 13 cases on the engine pin `e389edd3` without divergence from `40c28dbe`.
 
 ## 4. Raw archives
 
@@ -332,7 +364,7 @@ without it the script prints `SKIP` with the recipe, never an error.
 
 ### 4.3. Campaigns after the paper's (experiment pin of 2026-11-07)
 
-The experiment pin `5cc7b0a` adds campaigns run after those the paper reports: the control replication R593 of retractordb #593 on engine `dfcc42d2` (`results_20261103_R593_*`, `results_20261104_R593_*`) and the measurements R376, R376b, R600 and R603 to R607 of retractordb #376, #600, #603 and #607. No claim of the paper rests on them, and the "18 of 18" of §4 and §5 counts the paper's campaigns only. They add 12 index files and 15 archives.
+The experiment pin `5cc7b0a` adds campaigns run after those the paper reports: the control replication R593 of retractordb #593 on engine `dfcc42d2` (`results_20261103_R593_*`, `results_20261104_R593_*`) and the measurements R376, R376b, R600 and R603 to R607 of retractordb #376, #600, #603 and #607. No claim of the paper rests on them, and the "18 of 18" of §4 and §5 counts the paper's campaigns only. They add 12 index files and 15 archives. The pin `84fee50` of the second move that day adds `current/` and R593 K18b (§1), neither of which has an index or an archive, so the inventory below is unchanged.
 
 Nine of the archives are in git, and `bin/verify_pins.sh snapshot` checks them by checksum together with the 18 above. The three R593 P8 archives have no `raw.index.tsv`; as for K26v3, their checksums are listed in `artifacts/R593/archives/archive-index.tsv`.
 

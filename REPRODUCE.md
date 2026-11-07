@@ -288,8 +288,11 @@ engine is differential: `math_proofs/gen-oracle.sh` evaluates the model's
 definitions into `test/UnitTest/proofOracle.hpp`, and `ut_proofOracle` compares
 the functions in `SOperations.hpp` against those tables on a **bounded grid**
 (for interleaving, `a, b` in 1..11 and `n` below 48) and checks theorem
-statements as properties there. That is testing against a checked model, not a
-verification of the implementation.
+statements as properties there. Logical origins, intervals, shift tails and the
+sample index of stream sum are computed by the compiler and by `dataModel`, so
+for those theorems the test compiles a small plan from RQL, runs it and compares
+the result with the model on bounded horizons. That is testing against a
+checked model, not a verification of the implementation.
 
 ```bash
 ctest --test-dir artifact-workspace/retractordb/build/Debug -R 'proof_drift|ut_proofOracle'
