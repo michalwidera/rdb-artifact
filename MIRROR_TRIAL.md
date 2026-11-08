@@ -399,3 +399,46 @@ On 2026-10-02 the experiment pin moved from `d319e88` to `7584a58` with `bin/mov
 | 4. `verify_pins.sh` in mirror mode | **not re-run over mirror bytes**: the delta holds no archive and no index, so section 4 would check the bytes the fourth trial checked; the three files section 0 reads (`MANIFEST.md`, `bin/checkout.sh`, `bin/verify_pins.sh`) are among the delta files of step 2 and declare `7584a58` identically |
 | 5. Analytic reproduction | **pass** on a fresh clone of the pins made by `bin/move_pin.sh --apply` the same day: `verify_pins.sh snapshot` matched with one `SKIP` (the W8 whole archive), seven groups OK, `ecg` skipped because it needs the engine binaries |
 | 6. Record the run | this section |
+
+## Sixth trial -- e389edd3 / 84fee50 / f8c4bdc / aa9f9d4 / 5287d11
+
+On 2026-11-07 every source pin moved (`MANIFEST.md` section 1, two moves that day), and the entry point was committed at `5287d11` to declare them. The mirrors were re-pointed twice that day: in the morning `retractordb-experiment` to `5cc7b0a` and `retractordb-artifact` to `3735d87`, in the evening all five to the revisions below. `/api/repo/<id>/options` gives `lastUpdateDate` 2026-11-07T20:32:18Z for `retractordb-engine`, 20:32:42Z for `retractordb-experiment`, 20:33:11Z for `dokumentacja-rdb`, 20:33:31Z for `documentation-rdb` and 20:33:50Z for `retractordb-artifact`. The morning experiment revision had its own delta trial the same day, which this section records as well; the morning entry-point revision `3735d87` had none, so the entry-point delta starts at `88a8ba6`, the last revision a trial covered. The trial follows `REVIEW_MIRROR.md`, *Moving a pin*, step 4, from a shell with no GitHub session and no Anonymous GitHub session. The deltas were checked by `paper-arXiv/debs/mirror_trials/delta_trial.py`, one delta at a time with requests 2 s apart, waiting out every HTTP 429 for its `Retry-After`; the verdict for every file and directory is kept there, one directory per delta.
+
+| Role | Source | Pinned revision | Mirror ID |
+|---|---|---|---|
+| Engine snapshot | `retractordb` | `e389edd3596e4b83b6f3f4a9e238905a91c667b4` | `retractordb-engine` |
+| Experiments and data | `rdb-experiment` | `84fee502acb77b111b0f83bb07a2104b7477e560` | `retractordb-experiment` |
+| Canonical documentation | `dokumentacja-rdb` | `f8c4bdc08f154acd9945af76857fe1168f3c79d5` | `dokumentacja-rdb` |
+| Derived documentation | `documentation-rdb` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | `documentation-rdb` |
+| Artifact entry point | `rdb-artifact` | `5287d119224f833d7baa7204c63dbd774a8d6f5a` -- the revision the trial ran on; this record is the next commit | `retractordb-artifact` |
+
+| Mirror | Delta | Files (A+M) | Identical | Redacted (marker lines) | Images withheld | Directories matching | Requests | HTTP 429 | UTC |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| `retractordb-experiment` | `7584a58..5cc7b0a` | 944 | 801 | 143 (208) | 0 | 213/213 | 1,163 | 6 | 2026-11-07 13:28-15:02 |
+| `retractordb-experiment` | `5cc7b0a..84fee50` | 259 | 251 | 8 (18) | 0 | 78/78 | 338 | 1 | 2026-11-08 08:17-08:39 |
+| `dokumentacja-rdb` | `ba875ba..f8c4bdc` | 159 | 105 | 32 (347) | 22 | 22/22 | 182 | 1 | 2026-11-08 09:09-09:25 |
+| `documentation-rdb` | `4b0b7ae..aa9f9d4` | 153 | 102 | 29 (342) | 22 | 21/21 | 175 | 1 | 2026-11-08 09:25-09:40 |
+| `retractordb-engine` | `40c28dbe..e389edd3` | 1,064 | 990 | 74 (163) | 0 | 224/224 | 1,295 | 7 | 2026-11-08 09:40-11:28 |
+| `retractordb-artifact` | `88a8ba6..5287d11` | 9 | 4 | 5 (16) | 0 | 2/2 | 11 | 0 | 2026-11-08 08:16-08:17 |
+
+The six runs fetched 2,588 files and listed 560 directories in 3,164 requests with 16 waits on HTTP 429; the five runs of 2026-11-08 downloaded 12.1 MB of file content. In every redacted file the line count equals its blob at the new pin and every changed line carries a redaction marker: no file has a difference without one.
+
+**Two corrections to the trial script, made before the runs above.** Both first runs are kept beside the accepted ones (`*_run1_substring`, `*_run1_images`), and neither was a defect of the mirror.
+
+- *Word boundaries.* The first run of the entry-point delta failed `MIRROR_TRIAL.md` with `FAIL-redaction`: three matches of a term inside `wideRational`, none on a word boundary. The anonymizer matches terms on word boundaries (*Findings* above), so the script now decides on word boundaries with ASCII word characters, as `\b` does in JavaScript, and records substring matches separately. The only substring matches in the trial are `wideRational` in `MIRROR_TRIAL.md` (3) and in `src/retractor/lib/compiler.cpp` (6, served byte-identical). As a positive control, the blob of `MIRROR_TRIAL.md` at `5287d11` has exactly one word-boundary match, the line the mirror redacted.
+- *Images.* The first run of the `dokumentacja-rdb` delta failed its 22 images (20 SVG, 2 PNG) with `FAIL-http`: HTTP 403 `{"error":"file_not_supported"}`. The documentation mirrors have image display off, which withholds images from every route (*Findings* above). The script now gives `withheld-image` to exactly that response for a file with an image extension; any other non-200 answer is still a failure. The 44 withheld images (22 in each documentation mirror) are checked by the directory listing only: present, with their source size. Their content is neither served nor checked.
+
+The morning experiment run used the earlier script. Its delta holds no image, and substring matching is stricter than matching on word boundaries, so its pass stands.
+
+**What the script does not cover.** It fetches added and modified files only. The 19 files the deltas delete (5 in the engine, 7 in each documentation repository) are shown absent by the listings of their directories, each of which holds a change of its delta and matched: the root and `src/include/` and `test/IntegrationTest/fatal_exit_path/` of the engine, `assets/` of both documentation mirrors. `.github/workflows/build.yml` was the only file under `.github/`, which the engine's root listing shows gone. The listings report pre-redaction sizes, so they prove presence and absence, not redaction. Binary files served byte for byte are not searched inside: in these deltas that is one engine fixture, `test/IntegrationTest/dump_nofollow/datafile.dat`, plus the raw archives of the morning experiment delta.
+
+**Accepted risk** (author's decision, 2026-11-07): `/home/<account>` paths inside `.tar.gz` archives of `rdb-experiment`, and the account name (7 occurrences) inside `artifacts/R593/r593_worker_logs.tar.gz`. Redaction does not reach into archives.
+
+| Step | Verdict |
+|---|---|
+| 1. Open every URL as printed in the paper | **pass**: the four mirror addresses in `debs/references.bib` (`retractordb-engine`, `documentation-rdb`, `retractordb-experiment` and `retractordb-artifact`, each `/README.md`) and the root of `dokumentacja-rdb`, which the bibliography does not cite, answer HTTP 200 unauthenticated, 2026-11-08T08:04Z |
+| 2. Delta, file by file | **pass**: every added or modified file of the six deltas above was fetched singly through `/api/repo/<id>/file/<path>` and is identical to its blob at the new pin or differs from it only in lines carrying a redaction marker, except the 44 images the documentation mirrors withhold by configuration; every directory holding a change of a delta lists the names and sizes of `git ls-tree` at the new pin. Among the entry-point files, `LITERATURE_PROTOCOL.md` is served byte-identical without credentials |
+| 3. Search for every configured term | **pass**: zero word-boundary matches in the 2,588 delta files as served and in their paths; the substring-only matches are listed above |
+| 4. `verify_pins.sh` in mirror mode | **not re-run over mirror bytes**: the new archives of this move came with the morning experiment delta, whose run checked them byte for byte; `5cc7b0a..84fee50` adds no archive and no binary file, and the archive inventory of `MANIFEST.md` section 4.3 is unchanged since `3735d87`. The three files section 0 reads (`MANIFEST.md`, `bin/checkout.sh`, `bin/verify_pins.sh`) belong to the entry-point delta of step 2. The whole experiment archive cannot be downloaded (`REVIEW_MIRROR.md`, step 2) |
+| 5. Analytic reproduction | **pass** on a fresh clone of the pins by `bin/checkout.sh`, 2026-11-08T09:41Z, entry point at `5287d11`: `verify_pins.sh snapshot` with `RDB_XRETRACTOR` matched with one `SKIP` (the W8 whole archive), the binary revision `e389edd3` matching the engine pin; `reproduce_analytic.sh` with the `xretractor` and `xqry` of a Release build of `e389edd3` regenerated all eight groups, `fig:qrs` with `peak_positions=122,365`, products outside the repository; transcripts and product checksums in `paper-arXiv/debs/mirror_trials/20261108_step5_reproduction/` |
+| 6. Record the run | this section |
