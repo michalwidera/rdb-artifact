@@ -79,7 +79,7 @@ The repository was created as step **K9b** of the research plan
   omissions and the checksums are recorded in
   [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
 * the analytic path from the reviewer mirror without git (`bin/review.sh`) — **done**, run against the live experiment mirror and, on 2026-11-08, from the ZIP of the re-pointed `retractordb-artifact` mirror alone (*Seventh trial* of [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md));
-* remeasurement of the deterministic quantities from prebuilt engine bundles (`bin/review.sh --remeasure`, bundles in `rdb-binaries`) — **done** on x86_64 against a simulated mirror of the pins on 2026-11-08; the same run on aarch64 is pending `[#588]` and the run from the mirrors alone `[#594]`;
+* remeasurement of the deterministic quantities from prebuilt engine bundles (`bin/review.sh --remeasure`, bundles in `rdb-binaries`) — **done** on x86_64 and aarch64 against a simulated mirror of the pins on 2026-11-08; the run from the mirrors alone is pending `[#594]`;
 * open: the DOI (decision D-2), before the paper is submitted.
 
 The paper repository `paper-arXiv` is pinned but **private until review** and is

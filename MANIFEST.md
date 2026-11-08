@@ -457,7 +457,7 @@ The R593 W8 archive exceeds GitHub's 100 MB per-file limit and, unlike the paper
    * The engine example data of the `ecg` group come from the engine mirror and the expected values are pinned in `bin/reproduce_remeasure.sh`, because the measurement for the paper is not in `rdb-experiment`.
    * The H9 gate `corpus_validity` asks git for the engine revision; the driver answers with the engine pin once the bundles have been checked against §7, and runs the apparatus otherwise unchanged.
    * `--workspace` needs a clone of `rdb-binaries` at its pin beside the clones of `bin/checkout.sh`, which does not make it.
-   * It has passed on x86_64 against a simulated mirror of the pins on 2026-11-08, with a `PATH` without git, a compiler or cmake (`bin/make_inputs.sh --remeasure`); the same run on aarch64 is pending `[#588]`, the run from the re-pointed mirrors alone `[#594]`.
+   * It has passed on 2026-11-08 against a simulated mirror of the pins, with a `PATH` without git, a compiler or cmake, on x86_64 (`bin/make_inputs.sh --remeasure`) and on aarch64 (the pi400, from the same copy of the inputs), with the same 14 `COUNT` lines; the run from the re-pointed mirrors alone is pending `[#594]`.
 
 ## 6. Literature-review protocol
 
@@ -498,4 +498,4 @@ The archives sit in `rdb-binaries` under the directory named by the full engine 
 What the table establishes and what it does not:
 
 * The SHA-256 proves that the reviewer ran the bundle declared here. It does not prove that the bundle was built from the declared sources: the build happened on the author's machine. The proof of provenance stays a build from the pinned sources (§2.1, `REPRODUCE.md` §4), with which `bin/build_bundle.sh` can repeat the bundles.
-* A rebuild does not give the same archive. The binaries embed their build time (`--help`), and the image follows the floating `debian:trixie-slim` tag and unpinned packages, so a later image may carry another compiler. What a rebuild must give is the same remeasured quantities. The bundles of this table give them: on x86_64 their run equals the stored results, which come from the pi400 (aarch64) and the x86_64 host, built there with other compilers (§2.2).
+* A rebuild does not give the same archive. The binaries embed their build time (`--help`), and the image follows the floating `debian:trixie-slim` tag and unpinned packages, so a later image may carry another compiler. What a rebuild must give is the same remeasured quantities. The bundles of this table give them: on x86_64 and on aarch64 their run equals the stored results, which come from the pi400 (aarch64) and the x86_64 host, built there with other compilers (§2.2).
