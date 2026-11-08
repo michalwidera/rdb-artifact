@@ -12,8 +12,8 @@ public endpoints only.
 > **This record covers the 2026-08-26 revisions only.** On 2026-09-02 every pin
 > in `MANIFEST.md` §1 moved. The revisions in the table below are the ones this
 > trial actually ran against, so they are left as they were — what a trial
-> checked is not editable after the fact. The trial for the current revisions is
-> recorded separately, in *Second trial* at the end of this file.
+> checked is not editable after the fact. The later trials follow below, in order
+> from *Second trial*; the last section of this file covers the current revisions.
 
 ## Mirrors
 
