@@ -10,7 +10,7 @@ acceptance trial below.
 
 ## Sources and revisions
 
-Create five read-only mirrors, each pinned to the revision below. The
+Create six read-only mirrors, each pinned to the revision below. The
 documentation correction that held the entry point landed on 2026-08-26, so
 nothing blocks its mirror any more.
 
@@ -21,6 +21,9 @@ nothing blocks its mirror any more.
 | Experiments and data | `rdb-experiment` | `84fee502acb77b111b0f83bb07a2104b7477e560` | `retractordb-experiment` |
 | Canonical documentation | `dokumentacja-rdb` | `f8c4bdc08f154acd9945af76857fe1168f3c79d5` | `dokumentacja-rdb` |
 | English documentation | `documentation-rdb` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | `documentation-rdb` |
+| Engine bundles for `--remeasure` | `rdb-binaries` | `50f6c7057ba09e709dae32fe637b117eb73208f2` | `retractordb-binaries` |
+
+The bundles mirror carries only the `.tar.gz` engine bundles of `MANIFEST.md` §7, their `build-info.txt` and `SHA256SUMS`. It serves the archives byte for byte, as it serves the raw archives of the experiment mirror, and the redaction never reaches inside them; `bin/build_bundle.sh --terms` checks every binary for the identifying terms before the bundles are committed. It is the one mirror not created on 2026-08-26 `[#594]`.
 
 The four source mirrors were created on 2026-08-26 and expire on 2027-08-25.
 The mirror ID is chosen, not generated: it is the repository name, unless that
@@ -50,7 +53,7 @@ The historical H9 measurement revisions remain the pair already recorded in
 
 ## Redaction configuration
 
-Use the same replacement rules for all five mirrors. At minimum, redact the
+Use the same replacement rules for all six mirrors. At minimum, redact the
 author's name in accented and ASCII forms, GitHub account, email addresses,
 ORCID, personal domains, affiliation, local absolute paths, and any preprint
 title that resolves to the author. The term field takes regular expressions, so
@@ -101,7 +104,7 @@ Run the trial in a browser profile and shell with no GitHub or Anonymous GitHub
 session:
 
 1. Open every URL exactly as printed in the generated paper.
-2. Download all five archives and verify that no request returns `401`.
+2. Download all six archives and verify that no request returns `401`.
 
    **The experiment archive cannot be downloaded whole, and the step is run
    per file there.** Measured on 2026-09-13: the service builds the ZIP as a
@@ -142,6 +145,8 @@ session:
 
 5. Reproduction is run on the mirror. `bin/reproduce_analytic.sh` alone reads stored products with `git show HEAD:<path>` and detects regeneration diffs with `git status`, so it has no meaning on a snapshot without history; `bin/review.sh` is the path that needs none. From an empty directory, extract the archive of `retractordb-artifact` from step 2 and run `bash bin/review.sh` there, in a shell whose `PATH` has no `git` (the archive drops the executable bit, hence `bash`). It fetches every input listed in `INPUTS.tsv` singly from the experiment mirror, checks each against the pin, regenerates the analytic groups and writes `review-report.md`. Expect exit status 0, `VERDICT PASS`, every input matching `INPUTS.tsv`, seven groups `OK` with their stored products identical, `ecg` `SKIP` with its reason, and every `COUNT` line as expected. Then run `bin/review.sh --workspace <workspace>` on clones made by `bin/checkout.sh` at the SHAs pinned above: it must give the same verdict and the same counts. `REPRODUCE.md` §3, *Without git: from the reviewer mirror*, describes the run and its checks.
 
+   Then, from the same extracted archive and with the same `PATH`, run `bash bin/review.sh --remeasure` once on an x86_64 machine and once on an aarch64 machine, each a Linux with glibc 2.38 or later and with no other `xretractor` running. It fetches the inputs of `REMEASURE.tsv` from the experiment, engine and bundles mirrors, checks the four bundles of its architecture against `MANIFEST.md` §7 and measures the deterministic quantities again. Expect exit status 0, `VERDICT PASS`, seven groups `OK` and every `COUNT` line as expected; the run takes about 70 minutes. Record its `VERDICT`, `INPUTS` and `FETCH` lines, elapsed time and platform. `REPRODUCE.md` §3, *Without a compiler: remeasuring the deterministic quantities*, describes the groups.
+
 6. Record the mirror IDs, pinned revisions, UTC time, command transcript, and
    generated checksums in the submission handoff, together with the six skipped
    checks from step 4 and where they were verified instead. The record lives in
@@ -149,7 +154,7 @@ session:
 
 Only after all six steps pass may the paper say that the artifact is available
 to reviewers through an anonymized mirror. The claim that step 4 supports is
-availability and integrity of the delivered bytes. The claim that step 5 supports is that a reviewer can regenerate the analytic products from the mirrors alone, without git or a clone. The tool for it exists and has passed against the live experiment mirror with the inputs of the current pin; the run from the archive of a re-pointed `retractordb-artifact` mirror, which is what step 5 asks for, is pending `[#594]`. Until it passes, the paper must not make the second claim.
+availability and integrity of the delivered bytes. The claim that step 5 supports is that a reviewer can regenerate the analytic products from the mirrors alone, without git or a clone; its run from the archive of the re-pointed `retractordb-artifact` mirror passed on 2026-11-08 (*Seventh trial*). The `--remeasure` run of step 5 supports a third claim: that a reviewer can measure the deterministic quantities again from the mirrors alone, without git or a compiler, on x86_64 and on aarch64. It has passed only against a simulated mirror of the pins; the run from the mirrors is pending `[#594]`, and until it passes the paper must not make the third claim.
 
 ## Moving a pin
 
@@ -162,3 +167,5 @@ A pin moves forward only, one source repository at a time, and the package must 
 5. **Record** a new trial section in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md), as the fourth trial did for `d319e88`: the pins, the `lastUpdateDate` of each re-pointed mirror, the verdict of each step and the delta it covered, and from step 5 the `VERDICT`, `INPUTS` and `FETCH` lines of `bin/review.sh` with its elapsed time.
 
 Between steps 2 and 3 the package declares a revision its mirror does not serve yet; that window is why the two steps belong to one session.
+
+`bin/move_pin.sh` renews `INPUTS.tsv` but not `REMEASURE.tsv`, which `bin/fetch_mirror.sh` then refuses as generated for the old pins. Renew it in step 2 with `RDB_REDACTION_TERMS_FILE=<file> bin/make_inputs.sh --remeasure --workspace <workspace>` on clones of the new pins and a clone of `rdb-binaries`. When the engine pin moves, rebuild the bundles first: `bin/build_bundle.sh --arch x86_64 --terms <file>` and the same with `--arch aarch64`, from a clone of the new engine pin, commit them to `rdb-binaries`, and update its pin in section 1 of `MANIFEST.md` and in the table above, and the sums in §7. The bundles mirror is then re-pointed in step 3 with the others.

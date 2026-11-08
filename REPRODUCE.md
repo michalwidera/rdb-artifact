@@ -13,6 +13,8 @@ Mathlib.
 
 The analytic path from the reviewer mirror (§3, *Without git: from the reviewer mirror*) needs neither `git` nor `curl`: bash 4 or later, python3 3.8 or later, the usual POSIX tools and 100 MB of free space.
 
+Remeasuring the deterministic quantities (§3, *Without a compiler: remeasuring the deterministic quantities*) needs no `git` and no toolchain either: the same tools, Linux on x86_64 or aarch64 with glibc 2.38 or later, 500 MB of free space and about 70 minutes.
+
 ## 1. Fetching the pinned set of repositories
 
 ```bash
@@ -162,7 +164,38 @@ The steps can also be run one by one: `bash bin/fetch_mirror.sh --dest DIR` fetc
 
 `INPUTS.tsv` is generated, not written: `bin/make_inputs.sh` derives it from a traced run of this script on clean pinned clones, and `bin/move_pin.sh --apply` renews it whenever a pin moves (`REVIEW_MIRROR.md`, *Moving a pin*). Do not edit it by hand.
 
-Re-measurement from engine binaries (`review.sh --remeasure`) is not ready `[#588]`.
+### Without a compiler: remeasuring the deterministic quantities
+
+The analytic path regenerates the tables from stored measurements and measures nothing. `--remeasure` measures again, on your machine, the quantities of the paper that follow from the plan and the input and not from the platform, and compares each with the stored result exactly. The engine comes from prebuilt bundles (`MANIFEST.md` §7), so the run needs neither git nor a compiler:
+
+```bash
+bash bin/review.sh --remeasure                         # inputs and bundles from the mirrors
+bash bin/review.sh --remeasure --workspace DIR         # the same on pinned clones
+```
+
+With `--workspace`, DIR holds the clones of `bin/checkout.sh` and, next to them, a clone of `rdb-binaries` at its `MANIFEST.md` pin (`bin/checkout.sh` does not make it). The options are those of the analytic path; the report defaults to `./remeasure-report.md`.
+
+What is measured, group by group (`bin/reproduce_remeasure.sh`):
+
+| Group | Quantity | Compared with |
+|---|---|---|
+| `bundles` | the four bundles of this architecture | SHA-256 of `MANIFEST.md` §7, engine pin in every binary, `--build-info` equal to the profile row |
+| `plans` | 84 plan dumps of the H9 corpus and 4 rejected controls (`validate_corpus.py`) | `corpus_validation/` of R593 H9, byte for byte; the logs without their `COMPILE_NS` line and temporary directory |
+| `p6` | 4 profiles x 21 plans on the main data (`run_main_rdb.sh`, unchanged): LOGICAL write bytes per public record, the WORK counter, the public artifacts | the stored tree `artifacts/R593/r593_gates_rdb.tar.gz` (pi400), 4604 files byte for byte |
+| `gates` | `corpus_validity`, `oracle_mutants`, `public_identity`, `near_miss_controls`, `no_materialization`, three families; reduction at Q=8 | clean; reduction within the predeclared tolerance (1/2, 1/2, 7/12 +- 0.005) |
+| `mechanism` | substrates, R1/R2 and counters of the Q grid, 72 RDB rows | RDB rows of `results_20260814_K26v3/matrix/mechanism.tsv`; its Flink rows are taken from that record and not measured again |
+| `k24` | tail accounting on 10 010 plans, K24e and K24f, two seeds each | the stored raw CSV and `VERDICT*.md`, byte for byte |
+| `ecg` | records and bytes of `ecg_raw` and `qrs_ship` at 100/200/300/500 s, tail deficit 59 (`examples/ecg/rec205_h10`) | the values pinned in `bin/reproduce_remeasure.sh`, measured for the paper |
+
+How it differs from the analytic path:
+
+* **Bundles before anything else.** A bundle whose SHA-256, revision or switches differ from the declaration stops the run before the first measurement, and the report names which of the three it was. The SHA-256 proves which bundle ran, not that it was built from the pinned sources; that proof stays the build from source of §4.
+* **One provenance query replaced.** The H9 gate `corpus_validity` asks git for the engine revision. Here the driver gives it the engine pin after the bundles group has established it, and changes nothing else in the apparatus. Every apparatus file runs from a working copy, so the fetched inputs stay as fetched.
+* **Time.** `p6` and `ecg` are paced in real time and take about 45 and 20 minutes on any machine; `k24` takes minutes. Timing is not measured and not compared. No other `xretractor` may run during the run, because `run_main_rdb.sh` refuses to start next to one.
+* **Requirements.** Linux on x86_64 or aarch64 with glibc 2.38 or later and the libstdc++ of GCC 14 or later (Debian 13, Ubuntu 24.04), bash 4, python3 3.8, the POSIX tools the script names, and 500 MB of free space. The inputs are `REMEASURE.tsv`: the apparatus and stored results from the experiment mirror, the example data from the engine mirror, and the bundles of both architectures from the binaries mirror (the run uses the four of its own): 266 inputs at the current pin, about 48 MB in at least 266 requests, so the pacing of the analytic path waits out the 15-minute window at least once.
+* **Flink.** The Flink side of H9 is not run: it needs a JDK and a Flink image of several hundred MB. Its plan counts come from the stored record, as the `mechanism` row says.
+
+`REMEASURE.tsv` is generated like `INPUTS.tsv`: `bin/make_inputs.sh --remeasure` traces this run on pinned clones, and accepts the new list only after `bin/review.sh --remeasure` has passed on a simulated mirror with a `PATH` that has no git, no compiler and no cmake.
 
 ### The `fig:qrs` window
 
@@ -211,6 +244,8 @@ binary), then checks provenance — `verify_pins.sh` for the selected campaign a
 **A mismatch stops the script with exit code 2 and nothing is started.** The
 environment is recorded even then, because a refusal is also information about
 the machine.
+
+The deterministic quantities of the paper (write bytes, counters, substrate counts, gates, tail accounting, the ECG traffic ratio) need none of this: §3, *Without a compiler: remeasuring the deterministic quantities*, measures them again with prebuilt binaries. This mode is for the timings.
 
 The script **starts nothing**. A run takes days and must not begin as a side
 effect of a preflight check; starting it is a separate command issued to the
@@ -335,7 +370,10 @@ in [`MAP.md`](MAP.md), *Formal proofs*.
 ## 7. Limits
 
 See [`MANIFEST.md`](MANIFEST.md) section 5. In short: `fig:qrs` requires you to
-supply a built engine, and measurement mode does not reproduce timings. All 18
+supply a built engine, and measurement mode does not reproduce timings. The
+remeasurement from prebuilt bundles (§3) repeats the deterministic quantities
+exactly, but the bundles' provenance is declared by their SHA-256, not proved;
+the proof is a build from the pinned sources. All 18
 raw archives are present, verified and in the repository (2026-08-23);
 `study_06_W8` arrives in parts and needs one assembling command.
 

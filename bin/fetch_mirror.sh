@@ -228,6 +228,6 @@ if not check_only:
     where = f"from {source}" if source else "from the mirror service"
     print(f"FETCH {stats['fetched']} file(s) {where}, {stats['bytes']} bytes, "
           f"{stats['requests']} request(s), {stats['r429']} HTTP 429")
-print(f"INPUTS {good} of {total} match INPUTS.tsv ({detail})")
+print(f"INPUTS {good} of {total} match {os.path.basename(inputs)} ({detail})")
 sys.exit(1 if failed else 0)
 PY

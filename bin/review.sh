@@ -4,13 +4,21 @@
 #
 #   bash bin/review.sh                    # from the reviewer mirror: no git, no account
 #   bash bin/review.sh --workspace DIR    # from clones made by bin/checkout.sh
+#   bash bin/review.sh --remeasure        # measure the deterministic quantities again
 #
 # Options:
+#   --remeasure      instead of the analytic path, fetch the inputs of
+#                    REMEASURE.tsv (apparatus, stored results and the engine
+#                    bundles of this architecture) and run
+#                    bin/reproduce_remeasure.sh: no git and no compiler, about
+#                    70 minutes, most of it paced in real time
 #   --workspace DIR  use the pinned clones in DIR (verified by bin/verify_pins.sh)
-#                    instead of fetching from the mirror
+#                    instead of fetching from the mirror; with --remeasure, DIR
+#                    also needs a clone of rdb-binaries at its pin
 #   --dest DIR       where the mirror path keeps its inputs and both paths their
 #                    products (default: ./review-workspace)
-#   --report FILE    the report (default: ./review-report.md)
+#   --report FILE    the report (default: ./review-report.md, with --remeasure
+#                    ./remeasure-report.md)
 #   --source DIR     a local directory in place of the mirror service (see
 #                    bin/fetch_mirror.sh); for the author's checks only
 #   -h, --help       this text
@@ -23,7 +31,8 @@
 # The run passes when every input matches INPUTS.tsv, every group regenerates
 # (the ecg group is skipped, with its reason, unless the engine binaries are
 # given to bin/reproduce_analytic.sh), every product with a stored copy equals
-# it, and every COUNT line equals the one INPUTS.tsv expects.
+# it, and every COUNT line equals the one INPUTS.tsv expects. With --remeasure
+# the same holds for REMEASURE.tsv, and no group may be skipped.
 #
 # Exit status: 0 - PASS, 1 - FAIL (the report names what failed), 2 - a
 # prerequisite is missing or the options are wrong.
@@ -33,9 +42,10 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKSPACE=""
 DEST="./review-workspace"
-REPORT="./review-report.md"
+REPORT=""
 SOURCE=""
-INPUTS="${RDB_INPUTS:-$HERE/INPUTS.tsv}"
+REMEASURE=no
+INPUTS=""
 TOOLS=(awk cat cksum cmp comm cp cut diff find grep head mkdir mktemp rm sed sort tail tee uname wc)
 
 usage() { sed -n '2,/^$/p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
@@ -47,11 +57,23 @@ while [ "$#" -gt 0 ]; do
     --dest)      [ "$#" -ge 2 ] || fail "--dest needs a value";      DEST="$2";      shift 2 ;;
     --report)    [ "$#" -ge 2 ] || fail "--report needs a value";    REPORT="$2";    shift 2 ;;
     --source)    [ "$#" -ge 2 ] || fail "--source needs a value";    SOURCE="$2";    shift 2 ;;
+    --remeasure) REMEASURE=yes; shift ;;
     -h|--help) usage; exit 0 ;;
     *) fail "unknown option: $1" ;;
   esac
 done
 [ -z "$WORKSPACE" ] || [ -z "$SOURCE" ] || fail "--workspace and --source exclude each other"
+if [ "$REMEASURE" = yes ]; then
+  INPUTS="${RDB_INPUTS:-$HERE/REMEASURE.tsv}"
+  REPORT="${REPORT:-./remeasure-report.md}"
+  NEED_MB=500
+  LOGNAME_=review-remeasure.log
+else
+  INPUTS="${RDB_INPUTS:-$HERE/INPUTS.tsv}"
+  REPORT="${REPORT:-./review-report.md}"
+  NEED_MB=100
+  LOGNAME_=review.log
+fi
 
 echo "=== prerequisites ==="
 [ "${BASH_VERSINFO[0]}" -ge 4 ] || fail "bash ${BASH_VERSION} is too old; bash 4 or later is needed"
@@ -65,14 +87,14 @@ python3 -c 'import sys; sys.exit(sys.version_info < (3, 8))' \
 mkdir -p "$DEST"
 DEST="$(cd "$DEST" && pwd)"
 free_kb="$(df -Pk "$DEST" | awk 'NR == 2 { print $4 }')"
-[ "${free_kb:-0}" -ge 102400 ] || fail "less than 100 MB free in $DEST"
+[ "${free_kb:-0}" -ge $((NEED_MB * 1024)) ] || fail "less than $NEED_MB MB free in $DEST"
 PYVER="$(python3 -c 'import platform; print(platform.python_version())')"
 echo "OK    bash $BASH_VERSION, python3 $PYVER, $((free_kb / 1024)) MB free"
 echo
 
 START="$(date -u +%s)"
 STARTED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-LOG="$DEST/review.log"
+LOG="$DEST/$LOGNAME_"
 : >"$LOG"
 FETCH_RC=0
 FETCH_LINE=""
@@ -81,7 +103,7 @@ if [ -z "$WORKSPACE" ]; then
   [ -z "$SOURCE" ] || MODE="local directory $SOURCE (author's check, not the mirror)"
   echo "=== fetching the inputs from the $MODE ===" | tee -a "$LOG"
   set +e
-  bash "$HERE/bin/fetch_mirror.sh" --dest "$DEST" ${SOURCE:+--source "$SOURCE"} 2>&1 | tee -a "$LOG"
+  RDB_INPUTS="$INPUTS" bash "$HERE/bin/fetch_mirror.sh" --dest "$DEST" ${SOURCE:+--source "$SOURCE"} 2>&1 | tee -a "$LOG"
   FETCH_RC="${PIPESTATUS[0]}"
   set -e
   FETCH_LINE="$(grep '^FETCH ' "$LOG" | tail -n 1 || true)"
@@ -90,12 +112,17 @@ else
   MODE="pinned clones in $WORKSPACE"
   ANALYTIC=(--workspace "$WORKSPACE")
 fi
+[ "$REMEASURE" = no ] || MODE="$MODE; remeasure with the engine bundles"
 echo | tee -a "$LOG"
 
 RUN_RC=0
 if [ "$FETCH_RC" -eq 0 ]; then
   set +e
-  bash "$HERE/bin/reproduce_analytic.sh" "${ANALYTIC[@]}" --out "$DEST/tables" 2>&1 | tee -a "$LOG"
+  if [ "$REMEASURE" = yes ]; then
+    bash "$HERE/bin/reproduce_remeasure.sh" --workspace "${WORKSPACE:-$DEST}" --out "$DEST/remeasure" 2>&1 | tee -a "$LOG"
+  else
+    bash "$HERE/bin/reproduce_analytic.sh" "${ANALYTIC[@]}" --out "$DEST/tables" 2>&1 | tee -a "$LOG"
+  fi
   RUN_RC="${PIPESTATUS[0]}"
   set -e
 else
@@ -103,7 +130,8 @@ else
 fi
 ELAPSED=$(( $(date -u +%s) - START ))
 
-# Verdict and report from the log; the expected counts are the "# expect" lines of INPUTS.tsv.
+# Verdict and report from the log; the expected counts are the "# expect" lines of
+# INPUTS.tsv (REMEASURE.tsv with --remeasure).
 set +e
 python3 -I - "$LOG" "$INPUTS" "$HERE/MANIFEST.md" "$REPORT" "$MODE" "$STARTED" "$ELAPSED" \
   "$FETCH_RC" "$RUN_RC" "$FETCH_LINE" "$PYVER" "$(uname -sm)" <<'PY'

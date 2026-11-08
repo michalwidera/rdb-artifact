@@ -57,6 +57,8 @@ bash bin/review.sh
 
 Call it through `bash`: the mirror's archive stores every file with mode 0644, so `./bin/review.sh` is not executable there. The script fetches the inputs of the analytic path from the experiment mirror file by file, verifies each against `INPUTS.tsv`, regenerates the products, compares them with the stored ones and writes `review-report.md`. Exit status 0 is PASS, 1 is FAIL (the report names what failed), 2 is a missing prerequisite. Requirements, options and limits are in [`REPRODUCE.md`](REPRODUCE.md) §3, *Without git: from the reviewer mirror*.
 
+To measure the deterministic quantities of the paper again on your own machine, rather than regenerate the tables from stored measurements, run `bash bin/review.sh --remeasure`. It takes prebuilt engine binaries for x86_64 or aarch64 from the mirror `retractordb-binaries`, checks them against the SHA-256 sums of [`MANIFEST.md`](MANIFEST.md) §7, runs the deterministic set (about 70 minutes, no git and no compiler) and compares every number with the stored result exactly. Timing is not part of it. Details in [`REPRODUCE.md`](REPRODUCE.md) §3, *Without a compiler: remeasuring the deterministic quantities*.
+
 ## State
 
 The repository was created as step **K9b** of the research plan
@@ -76,7 +78,8 @@ The repository was created as step **K9b** of the research plan
   without credentials and valid until 2027-08-25; the full verdict, the
   omissions and the checksums are recorded in
   [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
-* the analytic path from the reviewer mirror without git (`bin/review.sh`) — **done** and run against the live experiment mirror; the first run from the ZIP of a re-pointed `retractordb-artifact` mirror alone is pending `[#594]`;
+* the analytic path from the reviewer mirror without git (`bin/review.sh`) — **done**, run against the live experiment mirror and, on 2026-11-08, from the ZIP of the re-pointed `retractordb-artifact` mirror alone (*Seventh trial* of [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md));
+* remeasurement of the deterministic quantities from prebuilt engine bundles (`bin/review.sh --remeasure`, bundles in `rdb-binaries`) — **done** on x86_64 against a simulated mirror of the pins on 2026-11-08; the same run on aarch64 is pending `[#588]` and the run from the mirrors alone `[#594]`;
 * open: the DOI (decision D-2), before the paper is submitted.
 
 The paper repository `paper-arXiv` is pinned but **private until review** and is

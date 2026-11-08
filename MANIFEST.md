@@ -16,6 +16,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `84fee502acb77b111b0f83bb07a2104b7477e560` | campaigns and data | `retractordb-experiment` |
 | `dokumentacja-rdb` | `https://github.com/michalwidera/dokumentacja-rdb.git` | `f8c4bdc08f154acd9945af76857fe1168f3c79d5` | PL documentation (canonical) | `dokumentacja-rdb` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | EN documentation (derived) | `documentation-rdb` |
+| `rdb-binaries` | `https://github.com/michalwidera/rdb-binaries.git` | `50f6c7057ba09e709dae32fe637b117eb73208f2` | prebuilt engine bundles for `--remeasure` (§7) | `retractordb-binaries` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `b23aaf33ffef1cc15f77f83844da692fe9b1d96e` — tag `artifact/K9b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
 The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
@@ -447,8 +448,16 @@ The R593 W8 archive exceeds GitHub's 100 MB per-file limit and, unlike the paper
    * It checks every input it reads, one file at a time, against its blob at the pin. That attests the inputs, not the identity of the whole tree: a file the analytic path does not read is not looked at. `INPUTS.tsv` lists the inputs; at the current experiment pin they are 83 (79 `exact`, 2 `gz`, 2 `masked`).
    * A `masked` input is one the mirror rewrites because it carries identifying terms or links; at the current pin, the G3 `engine.json` and the K22v5 `manual_hits_review.csv` of item 7. Its redacted lines escape the check: what is verified is the number of lines and the SHA-256 of the lines without `XXXX`. `bin/make_inputs.sh` established that the regenerated products do not depend on the redacted lines, by running `bin/review.sh` on a simulated mirror before the list was accepted.
    * The `ecg` group (`fig:qrs`) is always `SKIP` on this path, because it needs the engine's example data and a built engine; see item 1.
-   * It has passed against the live experiment mirror with the inputs of the current pin. The run from the archive of a re-pointed `retractordb-artifact` mirror alone is pending `[#594]`.
-   * Re-measurement from engine binaries (`review.sh --remeasure`) is not ready `[#588]`.
+   * It has passed against the live experiment mirror with the inputs of the current pin, and on 2026-11-08 from the archive of the re-pointed `retractordb-artifact` mirror alone (`MIRROR_TRIAL.md`, *Seventh trial*).
+   * It measures nothing; item 10 is the path that measures again.
+10. Remeasurement from prebuilt bundles (`bash bin/review.sh --remeasure`, `REPRODUCE.md` §3, §7 here) has limits of its own:
+   * It covers the deterministic quantities only: LOGICAL write bytes per public record, the WORK counter, substrate counts and R1/R2 over the Q grid, the H9 gates without Flink and the reduction at Q=8, the H9 plan dumps, tail accounting on 10 010 plans with two seeds each for K24e and K24f, and the ECG traffic ratio. Timing is not measured.
+   * The Flink side of H9 is not run. Its rows of `mechanism.tsv` and the `oracle_values` gate come from the stored record (`results_20260814_K26v3`); repeating them needs a JDK and a Flink image of several hundred MB.
+   * The bundles' provenance is declared, not proved: their SHA-256 in §7 shows which binaries ran, and only a build from the pinned sources shows what they were built from.
+   * The engine example data of the `ecg` group come from the engine mirror and the expected values are pinned in `bin/reproduce_remeasure.sh`, because the measurement for the paper is not in `rdb-experiment`.
+   * The H9 gate `corpus_validity` asks git for the engine revision; the driver answers with the engine pin once the bundles have been checked against §7, and runs the apparatus otherwise unchanged.
+   * `--workspace` needs a clone of `rdb-binaries` at its pin beside the clones of `bin/checkout.sh`, which does not make it.
+   * It has passed on x86_64 against a simulated mirror of the pins on 2026-11-08, with a `PATH` without git, a compiler or cmake (`bin/make_inputs.sh --remeasure`); the same run on aarch64 is pending `[#588]`, the run from the re-pointed mirrors alone `[#594]`.
 
 ## 6. Literature-review protocol
 
@@ -466,3 +475,27 @@ The protocol is a record of searches, not of measurements, so no pin of this
 manifest covers it and no reproduction mode reads it. The candidate works it
 names are cited by bibliographic data; their files are not part of any pinned
 repository.
+
+## 7. Prebuilt engine bundles
+
+`bash bin/review.sh --remeasure` (`REPRODUCE.md` §3, *Without a compiler: remeasuring the deterministic quantities*) measures the deterministic quantities of the paper again with engine binaries that were built in advance, so the reviewer needs neither git nor a compiler. The binaries are kept in `rdb-binaries` (§1) and reach the reviewer through its mirror `retractordb-binaries`, which serves binary files byte for byte.
+
+Each bundle is one profile of the H9 campaign (`rdb-experiment/results_20261103_R593_H9/profiles.tsv`) on one architecture. It holds `bin/xretractor`, `bin/xqry`, `bin/xtrdb`, the `--build-info` and `--help` identity of each (`build-info.txt`) and the build record (`BUILD.txt`). `bin/build_bundle.sh` built them from the engine pin of §1 in Release with `RDB_BENCH_PROBE=ON` and the profile's `RDB_OPT_*` switches, inside the image of `packaging/portable/Dockerfile` of that revision: Debian 13, GCC 14.2.0, glibc 2.41, CMake 4.4.3, Conan 2.32.0; the image and base-image digests are in `BUILD.txt`. The aarch64 bundles were built on the same host under qemu emulation. `xqry` and `xtrdb` are built once per architecture, in the DEFAULT profile, and are the same two files in every bundle of that architecture: the `RDB_OPT_*` switches are compile definitions of the retractor target only. A machine that runs the bundles needs Linux with glibc 2.38 or later and the libstdc++ of GCC 14 or later (`GLIBCXX_3.4.32`); Debian 13 and Ubuntu 24.04 have both.
+
+| Archive | Profile | Architecture | SHA-256 |
+|---|---|---|---|
+| `rdb-e389edd3596e-h9-DEFAULT-linux-aarch64.tar.gz` | DEFAULT | aarch64 | `d65fcb9e6cade214fe096bc9ed82c36a019d8d78486fc509239e3ab71ede2378` |
+| `rdb-e389edd3596e-h9-NO_R2_CANON-linux-aarch64.tar.gz` | NO_R2_CANON | aarch64 | `13af4c60f4513901ba7ec4613b9aa08508ace3ef12d7aa5dabe9bc489e305f8e` |
+| `rdb-e389edd3596e-h9-NO_R1_FACTOR-linux-aarch64.tar.gz` | NO_R1_FACTOR | aarch64 | `d81f672ae71330926d6cc93557dde70dffbe0909afa48eec82d6c5afba50a21d` |
+| `rdb-e389edd3596e-h9-NO_R1_NO_R2-linux-aarch64.tar.gz` | NO_R1_NO_R2 | aarch64 | `9ab0921024ce0d0993c64b2e3c72c1032b100279d43471cb3e48ba5edd4506ad` |
+| `rdb-e389edd3596e-h9-DEFAULT-linux-x86_64.tar.gz` | DEFAULT | x86_64 | `1b3f3c601f92f17c7c005944679ec995fc534e4d353240fb2d855744b226a811` |
+| `rdb-e389edd3596e-h9-NO_R2_CANON-linux-x86_64.tar.gz` | NO_R2_CANON | x86_64 | `6276c63ec0e48e2e3321bf236ae4889e2e773ba0b7c8e333d11d9d682929be81` |
+| `rdb-e389edd3596e-h9-NO_R1_FACTOR-linux-x86_64.tar.gz` | NO_R1_FACTOR | x86_64 | `73383bc1cbae4f5da8b349163c8a943f144c91a267c2fa510b3dda7679bdc5ab` |
+| `rdb-e389edd3596e-h9-NO_R1_NO_R2-linux-x86_64.tar.gz` | NO_R1_NO_R2 | x86_64 | `98fa89ff0d9b82755742c1c9876ab9927356fe1cb0f28fff4e0890f5a913935b` |
+
+The archives sit in `rdb-binaries` under the directory named by the full engine SHA, with `SHA256SUMS` and each bundle's `build-info.txt` beside them. `bin/reproduce_remeasure.sh` takes the four bundles of the machine's architecture and accepts a bundle only when its SHA-256 equals this table, each of its three binaries reports the engine pin in `--help` (`bin/verify_binary.sh`) and `xretractor --build-info` equals the profile row byte for byte. Any other bundle stops the run before anything is measured, with the reason named: a SHA-256 that differs, a revision that differs, or the switches that differ.
+
+What the table establishes and what it does not:
+
+* The SHA-256 proves that the reviewer ran the bundle declared here. It does not prove that the bundle was built from the declared sources: the build happened on the author's machine. The proof of provenance stays a build from the pinned sources (§2.1, `REPRODUCE.md` §4), with which `bin/build_bundle.sh` can repeat the bundles.
+* A rebuild does not give the same archive. The binaries embed their build time (`--help`), and the image follows the floating `debian:trixie-slim` tag and unpinned packages, so a later image may carry another compiler. What a rebuild must give is the same remeasured quantities. The bundles of this table give them: on x86_64 their run equals the stored results, which come from the pi400 (aarch64) and the x86_64 host, built there with other compilers (§2.2).
