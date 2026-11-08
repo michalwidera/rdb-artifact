@@ -74,6 +74,16 @@ else
 fi
 command -v python3 >/dev/null || fail "python3 not found"
 
+# Why the ecg group is skipped. On a snapshot the binaries are not enough: the
+# group also reads the engine's example data beside the experiment, which
+# bin/fetch_mirror.sh does not fetch.
+ECG_SKIP_NOTE="fig:qrs needs --xretractor and --xqry"
+ECG_SKIP_LINE="fig:qrs needs a running engine; pass --xretractor and --xqry to regenerate it."
+if [ "$SNAPSHOT" = yes ] && [ ! -d "$WORKSPACE/retractordb/examples/ecg/rec205" ]; then
+  ECG_SKIP_NOTE="fig:qrs needs a clone: retractordb/examples/ecg/rec205, --xretractor and --xqry"
+  ECG_SKIP_LINE="fig:qrs needs a running engine and retractordb/examples/ecg/rec205, which the mirror path does not fetch; regenerate it from a clone with --xretractor and --xqry."
+fi
+
 mkdir -p "$OUT"
 OUT="$(cd "$OUT" && pwd)"
 
@@ -314,7 +324,7 @@ group_ecg() {
   mkdir -p "$out"
   if [ -z "$XRETRACTOR" ] || [ -z "$XQRY" ]; then
     cat <<EOF
-SKIP  fig:qrs needs a running engine; pass --xretractor and --xqry to regenerate it.
+SKIP  $ECG_SKIP_LINE
       Deterministic recipe (also recorded in the paper source next to the figure):
         cd retractordb/examples/ecg/rec205
         xretractor rec205-qrs.rql -r -k -x -m $QRS_SAMPLES
@@ -421,7 +431,7 @@ for g in "${SELECTED[@]}"; do
   set -e
   if [ "$rc" -eq 0 ]; then
     if [[ "$g" == ecg && ( -z "$XRETRACTOR" || -z "$XQRY" ) ]]; then
-      record "$g" SKIP "fig:qrs needs --xretractor and --xqry"
+      record "$g" SKIP "$ECG_SKIP_NOTE"
     else
       record "$g" OK ""
     fi
