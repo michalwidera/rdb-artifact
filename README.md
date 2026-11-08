@@ -47,6 +47,16 @@ cd rdb-artifact
 
 You need no account, no credentials and nothing beyond this address.
 
+## From the reviewer mirror, without git
+
+If all you have is the anonymized mirror `retractordb-artifact`, you need neither git nor a clone. Download the mirror's ZIP archive (the address is printed in the paper; the service is `anonymous.4open.science`, the archive route `/api/repo/retractordb-artifact/zip`), extract it, change into the extracted directory and run:
+
+```bash
+bash bin/review.sh
+```
+
+Call it through `bash`: the mirror's archive stores every file with mode 0644, so `./bin/review.sh` is not executable there. The script fetches the inputs of the analytic path from the experiment mirror file by file, verifies each against `INPUTS.tsv`, regenerates the products, compares them with the stored ones and writes `review-report.md`. Exit status 0 is PASS, 1 is FAIL (the report names what failed), 2 is a missing prerequisite. Requirements, options and limits are in [`REPRODUCE.md`](REPRODUCE.md) §3, *Without git: from the reviewer mirror*.
+
 ## State
 
 The repository was created as step **K9b** of the research plan
@@ -66,6 +76,7 @@ The repository was created as step **K9b** of the research plan
   without credentials and valid until 2027-08-25; the full verdict, the
   omissions and the checksums are recorded in
   [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
+* the analytic path from the reviewer mirror without git (`bin/review.sh`) — **done** and run against the live experiment mirror; the first run from the ZIP of a re-pointed `retractordb-artifact` mirror alone is pending `[#594]`;
 * open: the DOI (decision D-2), before the paper is submitted.
 
 The paper repository `paper-arXiv` is pinned but **private until review** and is

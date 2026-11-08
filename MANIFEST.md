@@ -442,6 +442,13 @@ The R593 W8 archive exceeds GitHub's 100 MB per-file limit and, unlike the paper
    Mathlib. And the engine is compared with the proved model on a bounded
    parameter grid: a green `ut_proofOracle` says the implementation agrees with
    the model there, not that the implementation is proved.
+9. The analytic path from the reviewer mirror (`bash bin/review.sh`, `REPRODUCE.md` §3) has limits of its own:
+   * It reads the archive of `retractordb-artifact` and single files of `retractordb-experiment`, nothing else. The engine and documentation mirrors and the raw archives of §4 are outside it; their bytes are checked by `RDB_MIRROR=1 bin/verify_pins.sh snapshot` (`REVIEW_MIRROR.md`, step 4).
+   * It checks every input it reads, one file at a time, against its blob at the pin. That attests the inputs, not the identity of the whole tree: a file the analytic path does not read is not looked at. `INPUTS.tsv` lists the inputs; at the current experiment pin they are 83 (79 `exact`, 2 `gz`, 2 `masked`).
+   * A `masked` input is one the mirror rewrites because it carries identifying terms or links; at the current pin, the G3 `engine.json` and the K22v5 `manual_hits_review.csv` of item 7. Its redacted lines escape the check: what is verified is the number of lines and the SHA-256 of the lines without `XXXX`. `bin/make_inputs.sh` established that the regenerated products do not depend on the redacted lines, by running `bin/review.sh` on a simulated mirror before the list was accepted.
+   * The `ecg` group (`fig:qrs`) is always `SKIP` on this path, because it needs the engine's example data and a built engine; see item 1.
+   * It has passed against the live experiment mirror with the inputs of the current pin. The run from the archive of a re-pointed `retractordb-artifact` mirror alone is pending `[#594]`.
+   * Re-measurement from engine binaries (`review.sh --remeasure`) is not ready `[#588]`.
 
 ## 6. Literature-review protocol
 

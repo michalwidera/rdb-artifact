@@ -11,6 +11,8 @@ defect in these instructions, and we ask you to report it as an issue.
 Proof mode (§6) needs no toolchain of its own: its installer fetches Lean 4 and
 Mathlib.
 
+The analytic path from the reviewer mirror (§3, *Without git: from the reviewer mirror*) needs neither `git` nor `curl`: bash 4 or later, python3 3.8 or later, the usual POSIX tools and 100 MB of free space.
+
 ## 1. Fetching the pinned set of repositories
 
 ```bash
@@ -136,6 +138,31 @@ counts are parsed from the original, never from the rendering.
 The workspace is **single-use** and some of the frozen scripts write next to
 their inputs; the script reports how many files each group touched in it, and
 never writes outside the workspace.
+
+### Without git: from the reviewer mirror
+
+The mirrors are snapshots without `.git`, so the commands above cannot run on them: `verify_pins.sh` asks git which commit a directory is, and the stored products are read with `git show`. The path for a snapshot is one command, run from the extracted ZIP of the `retractordb-artifact` mirror (or from a clone of this repository):
+
+```bash
+bash bin/review.sh                          # inputs from the experiment mirror
+bash bin/review.sh --workspace ./artifact-workspace   # the same check on pinned clones
+```
+
+Options: `--dest DIR` holds the fetched inputs and the regenerated products (default `./review-workspace`); `--report FILE` names the report (default `./review-report.md`); `--workspace DIR` uses clones made by `bin/checkout.sh` instead of the mirror and must give the same verdict. `--source DIR` replaces the mirror service with a local directory and serves only the author's checks. `bash bin/review.sh --help` prints the full text.
+
+What the run does:
+
+* **Prerequisites.** bash 4 or later, python3 3.8 or later, the POSIX tools it names, 100 MB of free space; a missing one ends the run with exit status 2 before anything is fetched.
+* **Inputs.** `bin/fetch_mirror.sh` asks the experiment mirror for each file listed in [`INPUTS.tsv`](INPUTS.tsv) singly, without listing directories, and keeps it only if it passes its check: `exact` (the SHA-256 of the blob at the pin), `gz` (a text of 1.2 MB or more, which the mirror refuses; its `.gz` copy is fetched and must decompress to the blob) or `masked` (a file the mirror rewrites because it carries identifying terms or links: the same number of lines and the declared SHA-256 of the lines without `XXXX`). A file that fails is kept beside its target as `<name>.rejected` and named with its reason: `missing`, `truncated`, `redacted`, `differs` or `http-<code>`. At the current pin the list has 83 inputs, about 8 MB.
+* **Pacing.** The service allows about 175 requests per 15 minutes from one address and reports its budget in `ratelimit-*` headers; the script paces itself by them and waits out HTTP 429. An interrupted run resumes: inputs already in `--dest` that verify are not fetched again.
+* **Regeneration.** `bin/reproduce_analytic.sh --snapshot` runs the groups of the table above over the fetched inputs. The stored products are copied before the groups run and the regenerated ones are compared with that copy byte for byte (the G3 report modulo its `- generated:` line), touched files are counted by checksum, and the engine revision is read from `MANIFEST.md`. The `ecg` group is always `SKIP` on this path: `fig:qrs` needs the engine's example data and a built engine, which means a clone (see *The `fig:qrs` window* below).
+* **Verdict.** PASS requires every input verified, seven groups regenerated with their stored products identical, and every `COUNT` line equal to the `# expect` line of `INPUTS.tsv`. Exit status 0 is PASS, 1 is FAIL; `review-report.md` lists the pins, each group with its counts, and what failed.
+
+The steps can also be run one by one: `bash bin/fetch_mirror.sh --dest DIR` fetches and verifies, `bash bin/fetch_mirror.sh --check --dest DIR` verifies an existing directory without the network, and `bash bin/reproduce_analytic.sh --snapshot --workspace DIR` regenerates from it.
+
+`INPUTS.tsv` is generated, not written: `bin/make_inputs.sh` derives it from a traced run of this script on clean pinned clones, and `bin/move_pin.sh --apply` renews it whenever a pin moves (`REVIEW_MIRROR.md`, *Moving a pin*). Do not edit it by hand.
+
+Re-measurement from engine binaries (`review.sh --remeasure`) is not ready `[#588]`.
 
 ### The `fig:qrs` window
 
@@ -318,3 +345,5 @@ a clone: the raw K24-series campaign CSV files of 1.2 MB or more (for example
 and the whole-repository ZIP stops before reaching them. Take the `.csv.gz`
 copy beside each one; `gunzip` restores the original byte for byte. A clone
 carries both and needs neither step. Details in `REVIEW_MIRROR.md`, step 2.
+
+`bin/review.sh` takes those `.gz` copies by itself and checks both the archive and its decompressed content (§3, *Without git: from the reviewer mirror*).
