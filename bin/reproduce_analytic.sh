@@ -10,6 +10,13 @@
 # The workspace is disposable by design: groups whose frozen scripts write next
 # to their inputs are allowed to do so there, and the script reports how many
 # files they touched. Nothing is ever written to a repository outside it.
+#
+# With --snapshot the workspace is a copy without git history, as
+# bin/fetch_mirror.sh fills it from the reviewer mirror: the provenance gate is
+# the check of every input against INPUTS.tsv instead of bin/verify_pins.sh, the
+# stored products come from a copy taken before the groups run instead of from
+# `git show`, touched files are counted by checksum instead of `git status`, and
+# the engine revision comes from MANIFEST.md instead of `git rev-parse`.
 
 set -euo pipefail
 
@@ -19,6 +26,7 @@ OUT="$HERE/tables"
 GROUP="all"
 XRETRACTOR="${RDB_XRETRACTOR:-}"
 XQRY="${RDB_XQRY:-}"
+SNAPSHOT=no
 ALL_GROUPS=(k6c k22v5 k24e k26v3 g3 k19 k18 ecg)
 
 usage() {
@@ -28,14 +36,16 @@ Usage: ./bin/reproduce_analytic.sh [options]
 Options:
   --workspace DIR   pinned checkout produced by bin/checkout.sh
                     (default: $RDB_WORKSPACE or ./artifact-workspace)
+  --snapshot        DIR has no git history: a copy filled by
+                    bin/fetch_mirror.sh and checked against INPUTS.tsv
   --group NAME      one of: k6c k22v5 k24e k26v3 g3 k19 k18 ecg, or "all"
   --out DIR         where to write regenerated products (default: ./tables)
   --xretractor P    engine binary, needed only by the ecg group (fig:qrs)
   --xqry P          query client, needed only by the ecg group (fig:qrs)
   -h, --help        this text
 
-Runs bin/verify_pins.sh first and refuses to regenerate anything if the
-workspace does not match MANIFEST.md.
+Runs bin/verify_pins.sh first (with --snapshot: bin/fetch_mirror.sh --check)
+and refuses to regenerate anything if the workspace does not match.
 EOF
 }
 
@@ -48,6 +58,7 @@ while [ "$#" -gt 0 ]; do
     --out)       [ "$#" -ge 2 ] || fail "--out needs a value";       OUT="$2";       shift 2 ;;
     --xretractor) [ "$#" -ge 2 ] || fail "--xretractor needs a value"; XRETRACTOR="$2"; shift 2 ;;
     --xqry)       [ "$#" -ge 2 ] || fail "--xqry needs a value";       XQRY="$2";       shift 2 ;;
+    --snapshot)  SNAPSHOT=yes; shift ;;
     -h|--help)   usage; exit 0 ;;
     *) fail "unknown option: $1" ;;
   esac
@@ -56,7 +67,11 @@ done
 [ -d "$WORKSPACE" ] || fail "workspace not found: $WORKSPACE (run bin/checkout.sh first)"
 WORKSPACE="$(cd "$WORKSPACE" && pwd)"
 EXP="$WORKSPACE/rdb-experiment"
-[ -d "$EXP/.git" ] || fail "no rdb-experiment checkout in $WORKSPACE"
+if [ "$SNAPSHOT" = yes ]; then
+  [ -d "$EXP" ] || fail "no rdb-experiment snapshot in $WORKSPACE"
+else
+  [ -d "$EXP/.git" ] || fail "no rdb-experiment checkout in $WORKSPACE"
+fi
 command -v python3 >/dev/null || fail "python3 not found"
 
 mkdir -p "$OUT"
@@ -70,23 +85,37 @@ else
   SELECTED=("$GROUP")
 fi
 
-echo "=== 0. Provenance gate ==="
-RDB_WORKSPACE="$WORKSPACE" "$HERE/bin/verify_pins.sh" snapshot >"$OUT/verify_pins.log" 2>&1 \
-  || { cat "$OUT/verify_pins.log" >&2; fail "verify_pins.sh failed; refusing to regenerate"; }
-echo "OK    workspace matches MANIFEST.md (log: tables/verify_pins.log)"
-echo
-
 STATUS_FILE="$(mktemp)"
-trap 'rm -f "$STATUS_FILE"' EXIT
+STORED="$(mktemp -d)"
+trap 'rm -rf "$STATUS_FILE" "$STORED"' EXIT
+
+echo "=== 0. Provenance gate ==="
+if [ "$SNAPSHOT" = yes ]; then
+  bash "$HERE/bin/fetch_mirror.sh" --check --dest "$WORKSPACE" >"$OUT/inputs_check.log" 2>&1 \
+    || { cat "$OUT/inputs_check.log" >&2; fail "inputs do not match INPUTS.tsv; refusing to regenerate"; }
+  echo "OK    $(tail -n 1 "$OUT/inputs_check.log")"
+  # Taken before any group runs: some frozen scripts overwrite their stored products.
+  cp -R "$EXP" "$STORED/rdb-experiment"
+else
+  RDB_WORKSPACE="$WORKSPACE" bash "$HERE/bin/verify_pins.sh" snapshot >"$OUT/verify_pins.log" 2>&1 \
+    || { cat "$OUT/verify_pins.log" >&2; fail "verify_pins.sh failed; refusing to regenerate"; }
+  echo "OK    workspace matches MANIFEST.md (log: tables/verify_pins.log)"
+fi
+echo
 
 record() { printf '%s\t%s\t%s\n' "$1" "$2" "$3" >>"$STATUS_FILE"; }
 
-# Compare a regenerated product against the revision stored in git.
+# Compare a regenerated product against the revision stored in git (with
+# --snapshot: against the copy taken before the groups ran).
 # $1 repo-relative path  $2 regenerated file  $3 optional filter (sed program)
 compare_stored() {
   local rel="$1" got="$2" filter="${3:-}"
   local stored; stored="$(mktemp)"
-  git -C "$EXP" show "HEAD:$rel" >"$stored" 2>/dev/null || { rm -f "$stored"; echo "     stored copy absent: $rel"; return 0; }
+  if [ "$SNAPSHOT" = yes ]; then
+    cp "$STORED/rdb-experiment/$rel" "$stored" 2>/dev/null || { rm -f "$stored"; echo "     stored copy absent: $rel"; return 0; }
+  else
+    git -C "$EXP" show "HEAD:$rel" >"$stored" 2>/dev/null || { rm -f "$stored"; echo "     stored copy absent: $rel"; return 0; }
+  fi
   if [ -n "$filter" ]; then
     if diff -q <(sed "$filter" "$stored") <(sed "$filter" "$got") >/dev/null; then
       echo "     identical to stored $rel (modulo generation timestamp)"
@@ -299,8 +328,13 @@ EOF
 
   # The figure must come from the pinned engine, not from whatever binary
   # happens to be on PATH, so the same gate the measurement mode uses applies.
-  local engine_rev; engine_rev="$(git -C "$WORKSPACE/retractordb" rev-parse HEAD)"
-  "$HERE/bin/verify_binary.sh" "$engine_rev" "$XRETRACTOR" \
+  local engine_rev
+  if [ "$SNAPSHOT" = yes ]; then
+    engine_rev="$(grep -E '^\| `retractordb` \|' "$HERE/MANIFEST.md" | grep -oE '[0-9a-f]{40}' | head -n 1)"
+  else
+    engine_rev="$(git -C "$WORKSPACE/retractordb" rev-parse HEAD)"
+  fi
+  bash "$HERE/bin/verify_binary.sh" "$engine_rev" "$XRETRACTOR" \
     || fail "ecg: engine binary does not come from the pinned $engine_rev"
 
   local work; work="$(mktemp -d)"
@@ -356,10 +390,26 @@ PY
   rm -rf "$work"
 }
 
+# Files of the workspace that differ from the state before a group ran.
+workspace_state() {
+  if [ "$SNAPSHOT" = yes ]; then
+    (cd "$EXP" && find . -type f -exec cksum {} + | LC_ALL=C sort)
+  else
+    git -C "$EXP" status --porcelain
+  fi
+}
+touched() {
+  if [ "$SNAPSHOT" = yes ]; then
+    LC_ALL=C comm -3 <(printf '%s\n' "$1") <(printf '%s\n' "$2") | sed 's/^\t//' | cut -d' ' -f3- | LC_ALL=C sort -u | wc -l
+  else
+    echo $(( $(printf '%s' "$2" | grep -c '^' || true) - $(printf '%s' "$1" | grep -c '^' || true) ))
+  fi
+}
+
 FAILED=0
 for g in "${SELECTED[@]}"; do
   echo "=== $g ==="
-  before=$(git -C "$EXP" status --porcelain | wc -l)
+  before="$(workspace_state)"
   # Not `if "group_$g"`: bash ignores errexit for everything a function runs inside
   # an `if` condition, so a failed analysis step or a DIFFERS from compare_stored
   # anywhere but on a group's last line used to be recorded as OK. Until
@@ -378,8 +428,8 @@ for g in "${SELECTED[@]}"; do
   else
     record "$g" FAIL "see output above"; FAILED=$((FAILED + 1))
   fi
-  after=$(git -C "$EXP" status --porcelain | wc -l)
-  echo "     workspace files touched by this group: $((after - before))"
+  after="$(workspace_state)"
+  echo "     workspace files touched by this group: $(touched "$before" "$after")"
   echo
 done
 

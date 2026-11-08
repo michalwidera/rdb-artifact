@@ -1,3 +1,7 @@
 # Katalog roboczy tworzony przez bin/checkout.sh - zawiera klony innych
 # repozytoriow i nigdy nie wchodzi do tego repozytorium.
 artifact-workspace/
+
+# Wynik bin/review.sh: wejscia pobrane z lustra, produkty i raport.
+review-workspace/
+review-report.md

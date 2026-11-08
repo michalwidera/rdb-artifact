@@ -21,7 +21,10 @@
 #      the author, so they are never written here: pass them through
 #      RDB_REDACTION_TERMS_FILE, one extended regular expression per line (the
 #      list in paper-arXiv/debs/procedura_anonimizacji.md). Without it the
-#      check is reported as SKIP;
+#      check is reported as SKIP. A file of the delta that is an input of the
+#      analytic path (INPUTS.tsv) and matches a term or a link is named: the
+#      mirror serves it redacted, and --apply checks that no product depends
+#      on the redacted lines;
 #   5. the four places that declare the pin, as a unified diff: MANIFEST.md,
 #      bin/verify_pins.sh and bin/checkout.sh (compared by section 0 of
 #      verify_pins.sh) and the mirror table of REVIEW_MIRROR.md (compared by
@@ -29,8 +32,11 @@
 #
 # --apply writes those four places, clones the pinned workspace afresh with
 # bin/checkout.sh into a temporary directory and runs bin/verify_pins.sh snapshot
-# and bin/reproduce_analytic.sh against it, products outside this repository.
-# It never commits, pushes or touches a mirror.
+# against it, then renews INPUTS.tsv with bin/make_inputs.sh, which runs
+# bin/reproduce_analytic.sh there and bin/review.sh on a simulated mirror of the
+# new pins, products outside this repository. --apply needs
+# RDB_REDACTION_TERMS_FILE and strace. It never commits, pushes or touches a
+# mirror.
 #
 # Exit status: 0 - clean, 1 - findings, 2 - usage or environment.
 
@@ -51,6 +57,8 @@ APPLY=no
 if [[ $# -eq 3 ]]; then
   [[ "$3" == --apply ]] || die "unknown option $3"
   APPLY=yes
+  [[ -n "${RDB_REDACTION_TERMS_FILE:-}" ]] || die "--apply renews INPUTS.tsv and needs RDB_REDACTION_TERMS_FILE"
+  command -v strace >/dev/null || die "--apply renews INPUTS.tsv and needs strace"
 fi
 
 case "$REPO" in
@@ -64,7 +72,7 @@ esac
 [[ "$NEW" =~ ^[0-9a-f]{40}$ ]] || die "<new-sha> must be a full 40-character SHA"
 
 FILES=(MANIFEST.md bin/verify_pins.sh bin/checkout.sh REVIEW_MIRROR.md)
-for f in "${FILES[@]}"; do
+for f in "${FILES[@]}" INPUTS.tsv; do
   [[ -z "$(git -C "$ROOT" status --porcelain -- "$f")" ]] || die "$f has uncommitted changes; commit or revert them first"
 done
 
@@ -131,6 +139,9 @@ if [[ -n "${RDB_REDACTION_TERMS_FILE:-}" ]]; then
     [[ "$n" -gt 0 ]] || continue
     echo "note    $path: $n added line(s) match a term; the trial must find them redacted on the mirror"
     HITS=$((HITS + n))
+    if [[ "$REPO" == rdb-experiment ]] && cut -f2 "$ROOT/INPUTS.tsv" | grep -qxF -- "$path"; then
+      echo "note    $path is an input of the analytic path: the mirror serves it redacted (masked in INPUTS.tsv)"
+    fi
   done < <(git -C "$CLONE" diff --name-only --diff-filter=AM "$OLD" "$NEW")
   rm -f "$TERMS"
   [[ $HITS -gt 0 ]] || echo "ok      no added line matches a term"
@@ -183,12 +194,12 @@ status=$?
 grep -E '^(ERROR|SKIP|RESULT)' "$CHECK/verify_pins.log" | sed 's/^/        /'
 [[ $status -eq 0 ]] || { echo "ERROR verify_pins.sh exit $status, see $CHECK/verify_pins.log"; exit 1; }
 echo
-echo "== 8. reproduce_analytic.sh"
-"$HERE/reproduce_analytic.sh" --workspace "$CHECK/workspace" --out "$CHECK/tables" >"$CHECK/reproduce.log" 2>&1
+echo "== 8. INPUTS.tsv: reproduce_analytic.sh traced, review.sh on a simulated mirror"
+bash "$HERE/make_inputs.sh" --workspace "$CHECK/workspace" >"$CHECK/make_inputs.log" 2>&1
 status=$?
-tail -n 12 "$CHECK/reproduce.log" | sed 's/^/        /'
-[[ $status -eq 0 ]] || { echo "ERROR reproduce_analytic.sh exit $status, see $CHECK/reproduce.log"; exit 1; }
+sed 's/^/        /' "$CHECK/make_inputs.log" | tail -n 12
+[[ $status -eq 0 ]] || { echo "ERROR make_inputs.sh exit $status, see $CHECK/make_inputs.log"; exit 1; }
 echo
-echo "RESULT: $REPO pinned at $NEW in ${#FILES[@]} files; verify_pins.sh and reproduce_analytic.sh exit 0 in $CHECK"
+echo "RESULT: $REPO pinned at $NEW in ${#FILES[@]} files and INPUTS.tsv; verify_pins.sh, reproduce_analytic.sh and review.sh exit 0 in $CHECK"
 echo "        (their SKIP lines above are not passes; the acceptance trial covers them)"
 echo "Next: commit and push this repository, then REVIEW_MIRROR.md 'Moving a pin', steps 3-5."
