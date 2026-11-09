@@ -16,7 +16,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `84fee502acb77b111b0f83bb07a2104b7477e560` | campaigns and data | `retractordb-experiment` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | EN documentation (derived) | `documentation-rdb` |
 | `rdb-binaries` | `https://github.com/michalwidera/rdb-binaries.git` | `50f6c7057ba09e709dae32fe637b117eb73208f2` | prebuilt engine bundles for `--remeasure` (§7) | `retractordb-binaries` |
-| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `74016c3472b08054c616722e9ea84c7d1f309733` — tag `artifact/594` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
+| `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `3cf8e19dd40c9517ee0376e94d520320f5aa2c8c` — tag `artifact/594b` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
 The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
 in the same commit. Its URL is
@@ -60,7 +60,7 @@ them. The addresses, the pins and the result of the credential-free trial are
 recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md).
 
 **The `paper-arXiv` pin points at an annotated tag, not at a branch head
-(decision of 2026-08-23); first `artifact/K9b`, since 2026-11-09 `artifact/594`.** The other repositories pin by
+(decision of 2026-08-23); first `artifact/K9b`, then `artifact/594`, since 2026-11-09 `artifact/594b`.** The other repositories pin by
 snapshot SHA, because their `HEAD` moves rarely and for reasons that concern the
 package. The paper repository behaves differently: in the fourteen days before
 that tag it received **57 commits**, of which 28 touched `debs/`, 19 touched
@@ -74,6 +74,8 @@ The pin moves at a milestone, not at an editorial fix. Next move:
 in §2.2, and for the same reason.
 
 **Move of 2026-11-09 (retractordb #594):** the paper pin moved from `b23aaf33` (tag `artifact/K9b`) to `74016c3` under a new annotated tag `artifact/594` (decision of 2026-11-08: a new tag, not a re-tagged one). The paper text changed since `artifact/K9b`, among other things by the R593 K18b timing anchor of retractordb #593 step 8. `artifact/K9b` is not moved or deleted; it stays as the record of the pin the first seven trials ran against. The pinned text makes no claim about `--remeasure` (`REVIEW_MIRROR.md`, end of *Unauthenticated acceptance trial*).
+
+**Second move of 2026-11-09 (retractordb #594):** after the *Eighth trial* the paper pin moved from `74016c3` (tag `artifact/594`) to `3cf8e19` under a new annotated tag `artifact/594b`. The paper now states both paths from the mirrors alone, the analytic one and `--remeasure`, and cites the bundles mirror `retractordb-binaries`; the claim rests on the *Eighth trial* of `MIRROR_TRIAL.md`. `artifact/594` is not moved or deleted; it stays as the record of the pin the *Eighth trial* ran against.
 
 **Removal of 2026-11-09 (retractordb #594):** the Polish documentation `dokumentacja-rdb` left the package. The free plan of the mirror service allows five anonymized repositories per account, and the bundles mirror `retractordb-binaries` needed the fifth place, so the mirror `dokumentacja-rdb` was removed on 2026-11-09. The paper does not cite it. Its last pin was `f8c4bdc08f154acd9945af76857fe1168f3c79d5`; the English documentation `documentation-rdb`, pinned above at `aa9f9d4`, was derived from that revision and is the documentation the package carries. `bin/checkout.sh` no longer clones the Polish repository and `bin/verify_pins.sh` no longer checks it. Earlier records that name it (the moves above, `MIRROR_TRIAL.md` up to *Seventh trial*) describe the state of their date and are left as they were.
 

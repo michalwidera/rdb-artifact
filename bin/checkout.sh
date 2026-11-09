@@ -16,9 +16,9 @@ PAPER_URL="${RDB_PAPER_URL:-https://github.com/michalwidera/paper-arXiv.git}"
 ENGINE_SNAPSHOT="e389edd3596e4b83b6f3f4a9e238905a91c667b4"
 EXPERIMENT_SNAPSHOT="84fee502acb77b111b0f83bb07a2104b7477e560"
 DOCS_EN_SNAPSHOT="aa9f9d45c744c9effa09c7885b81e0641cc86793"
-PAPER_SNAPSHOT="74016c3472b08054c616722e9ea84c7d1f309733"
+PAPER_SNAPSHOT="3cf8e19dd40c9517ee0376e94d520320f5aa2c8c"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
-PAPER_TAG="artifact/594"
+PAPER_TAG="artifact/594b"
 
 fail() { echo "ERROR: $*" >&2; exit 2; }
 
