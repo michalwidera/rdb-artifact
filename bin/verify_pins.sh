@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verify the exact five-repository checkout, campaign tags, raw archives and,
+# Verify the exact four-repository checkout, campaign tags, raw archives and,
 # when RDB_XRETRACTOR is set, the source identity embedded in the binary.
 # RDB_MIRROR=1 runs the subset that holds on an anonymized snapshot without
 # .git -- pin declarations and archive checksums -- and reports the rest as
@@ -15,18 +15,16 @@ SELECTION="${1:-snapshot}"
 WORKSPACE="${RDB_WORKSPACE:-./artifact-workspace}"
 ENGINE="${RDB_ENGINE:-$WORKSPACE/retractordb}"
 EXPERIMENT="${RDB_EXPERIMENT:-$WORKSPACE/rdb-experiment}"
-DOCS_PL="${RDB_DOCS_PL:-$WORKSPACE/dokumentacja-rdb}"
 DOCS_EN="${RDB_DOCS_EN:-$WORKSPACE/documentation-rdb}"
 PAPER="${RDB_PAPER:-$WORKSPACE/paper-arXiv}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ENGINE_SNAPSHOT="e389edd3596e4b83b6f3f4a9e238905a91c667b4"
 EXPERIMENT_SNAPSHOT="84fee502acb77b111b0f83bb07a2104b7477e560"
-DOCS_PL_SNAPSHOT="f8c4bdc08f154acd9945af76857fe1168f3c79d5"
 DOCS_EN_SNAPSHOT="aa9f9d45c744c9effa09c7885b81e0641cc86793"
-PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
+PAPER_SNAPSHOT="74016c3472b08054c616722e9ea84c7d1f309733"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
-PAPER_TAG="artifact/K9b"
+PAPER_TAG="artifact/594"
 SRC_TREE_K24E="5ddad0fc7d56fb9b468d31905a6689e9896ddb39"
 
 # An anonymized reviewer mirror is served as a snapshot without .git, so every
@@ -71,7 +69,7 @@ campaign_pair() {
   esac
 }
 
-for repo in "$ENGINE" "$EXPERIMENT" "$DOCS_PL" "$DOCS_EN"; do
+for repo in "$ENGINE" "$EXPERIMENT" "$DOCS_EN"; do
   if [[ "$MIRROR" == 1 ]]; then
     [[ -d "$repo" ]] || { echo "ERROR missing directory: $repo"; exit 2; }
   else
@@ -176,7 +174,6 @@ if [[ ! -r "$MANIFEST_FILE" || ! -r "$CHECKOUT_FILE" ]]; then
 else
   agree retractordb       "$ENGINE_SNAPSHOT"     "$(manifest_snapshot retractordb)"       "$(checkout_snapshot ENGINE_SNAPSHOT)"
   agree rdb-experiment    "$EXPERIMENT_SNAPSHOT" "$(manifest_snapshot rdb-experiment)"    "$(checkout_snapshot EXPERIMENT_SNAPSHOT)"
-  agree dokumentacja-rdb  "$DOCS_PL_SNAPSHOT"    "$(manifest_snapshot dokumentacja-rdb)"  "$(checkout_snapshot DOCS_PL_SNAPSHOT)"
   agree documentation-rdb "$DOCS_EN_SNAPSHOT"    "$(manifest_snapshot documentation-rdb)" "$(checkout_snapshot DOCS_EN_SNAPSHOT)"
   agree paper-arXiv       "$PAPER_SNAPSHOT"      "$(manifest_snapshot paper-arXiv)"       "$(checkout_snapshot PAPER_SNAPSHOT)"
   # The tag name is a pin too: pointing three files at the same SHA under two
@@ -232,7 +229,6 @@ echo "=== 1-3. Revision identity, campaign tags, reachability ==="
 # note before RESULT says where they can be verified instead.
 skipped "retractordb HEAD, campaign tags and reachability; pinned at $EXPECTED_ENGINE"
 skipped "rdb-experiment HEAD, campaign tags and reachability; pinned at $EXPECTED_EXPERIMENT"
-skipped "dokumentacja-rdb HEAD; pinned at $DOCS_PL_SNAPSHOT"
 skipped "documentation-rdb HEAD; pinned at $DOCS_EN_SNAPSHOT"
 skipped "paper-arXiv HEAD and tag $PAPER_TAG; pinned at $PAPER_SNAPSHOT (not mirrored)"
 skipped "campaign/H10-K24e src tree; pinned at $SRC_TREE_K24E"
@@ -240,12 +236,11 @@ else
 echo "=== 1. Exact workspace checkout ($SELECTION) ==="
 check_head retractordb "$ENGINE" "$EXPECTED_ENGINE"
 check_head rdb-experiment "$EXPERIMENT" "$EXPECTED_EXPERIMENT"
-check_head dokumentacja-rdb "$DOCS_PL" "$DOCS_PL_SNAPSHOT"
 check_head documentation-rdb "$DOCS_EN" "$DOCS_EN_SNAPSHOT"
 if [[ "$PAPER_PRESENT" == yes ]]; then
   check_head paper-arXiv "$PAPER" "$PAPER_SNAPSHOT"
   # The pin names a tag, so the tag has to be what it says it is. Without this,
-  # re-tagging artifact/K9b onto a later commit would leave the manifest quietly
+  # re-tagging artifact/594 onto a later commit would leave the manifest quietly
   # describing a revision nobody can reach by that name any more -- and because
   # this repository is private, no stranger's run would ever notice.
   paper_tag_target="$(git -C "$PAPER" rev-parse -q --verify "${PAPER_TAG}^{commit}" 2>/dev/null)"

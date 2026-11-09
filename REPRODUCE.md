@@ -23,7 +23,7 @@ cd rdb-artifact
 ./bin/checkout.sh ./artifact-workspace
 ```
 
-The script clones the five repositories **separately**, into an explicit layout,
+The script clones the four repositories **separately**, into an explicit layout,
 and checks them out at the full SHAs of the manifest's default snapshot. There
 are no submodules here. The snapshot uses the engine's current HEAD because it
 carries critical tooling fixes.

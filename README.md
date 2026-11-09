@@ -14,7 +14,7 @@ not know where to start, read in this order:
 3. [`REPRODUCE.md`](REPRODUCE.md) — **how to repeat them**: analytic mode
    (regenerating the tables and figures from stored data) and measurement mode.
 4. [`REVIEW_MIRROR.md`](REVIEW_MIRROR.md) — **how to prepare the
-   double-anonymous version**: five sources with full revisions, a shared
+   double-anonymous version**: four sources with full revisions, a shared
    redaction configuration and an acceptance trial without credentials.
 5. [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md) — **the record of the acceptance
    trial**: what passed, what was skipped and where it was verified instead.

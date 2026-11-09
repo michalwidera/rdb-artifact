@@ -6,9 +6,10 @@
 #   bin/move_pin.sh <repository> <new-sha>            # dry run, changes nothing
 #   bin/move_pin.sh <repository> <new-sha> --apply    # write the pin, then verify
 #
-# <repository> is retractordb, rdb-experiment, dokumentacja-rdb or
-# documentation-rdb. paper-arXiv is pinned by the annotated tag artifact/K9b
-# (MANIFEST.md section 1) and moves with that tag, not with this script.
+# <repository> is retractordb, rdb-experiment or documentation-rdb.
+# paper-arXiv is pinned by an annotated tag (MANIFEST.md
+# section 1); its pin moves to a new annotated tag, written into PAPER_TAG and
+# PAPER_SNAPSHOT of checkout.sh and verify_pins.sh, never with this script.
 #
 # The new revision is inspected in a local clone, $RDB_SOURCES/<repository>
 # (default: the directory that holds this repository). The dry run reports:
@@ -64,9 +65,8 @@ fi
 case "$REPO" in
   retractordb) VAR=ENGINE_SNAPSHOT ;;
   rdb-experiment) VAR=EXPERIMENT_SNAPSHOT ;;
-  dokumentacja-rdb) VAR=DOCS_PL_SNAPSHOT ;;
   documentation-rdb) VAR=DOCS_EN_SNAPSHOT ;;
-  paper-arXiv) die "paper-arXiv is pinned by the tag artifact/K9b; move the tag, not this pin" ;;
+  paper-arXiv) die "paper-arXiv is pinned by an annotated tag; create a new tag and update PAPER_TAG and PAPER_SNAPSHOT, not this pin" ;;
   *) die "unknown repository $REPO" ;;
 esac
 [[ "$NEW" =~ ^[0-9a-f]{40}$ ]] || die "<new-sha> must be a full 40-character SHA"

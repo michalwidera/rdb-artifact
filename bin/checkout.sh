@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Clone the five repositories pinned by MANIFEST.md and check out exact commits.
+# Clone the four repositories pinned by MANIFEST.md and check out exact commits.
 # Default mode uses the current tooling snapshot. A campaign tag selects the
 # historical engine and experiment pair while keeping docs and paper pinned.
 
@@ -10,17 +10,15 @@ SELECTION="${2:-snapshot}"
 
 ENGINE_URL="${RDB_ENGINE_URL:-https://github.com/michalwidera/retractordb.git}"
 EXPERIMENT_URL="${RDB_EXPERIMENT_URL:-https://github.com/michalwidera/rdb-experiment.git}"
-DOCS_PL_URL="${RDB_DOCS_PL_URL:-https://github.com/michalwidera/dokumentacja-rdb.git}"
 DOCS_EN_URL="${RDB_DOCS_EN_URL:-https://github.com/michalwidera/documentation-rdb.git}"
 PAPER_URL="${RDB_PAPER_URL:-https://github.com/michalwidera/paper-arXiv.git}"
 
 ENGINE_SNAPSHOT="e389edd3596e4b83b6f3f4a9e238905a91c667b4"
 EXPERIMENT_SNAPSHOT="84fee502acb77b111b0f83bb07a2104b7477e560"
-DOCS_PL_SNAPSHOT="f8c4bdc08f154acd9945af76857fe1168f3c79d5"
 DOCS_EN_SNAPSHOT="aa9f9d45c744c9effa09c7885b81e0641cc86793"
-PAPER_SNAPSHOT="b23aaf33ffef1cc15f77f83844da692fe9b1d96e"
+PAPER_SNAPSHOT="74016c3472b08054c616722e9ea84c7d1f309733"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
-PAPER_TAG="artifact/K9b"
+PAPER_TAG="artifact/594"
 
 fail() { echo "ERROR: $*" >&2; exit 2; }
 
@@ -106,7 +104,6 @@ clone_or_fetch() {
 
 clone_or_fetch retractordb "$ENGINE_URL" "$ENGINE_REV"
 clone_or_fetch rdb-experiment "$EXPERIMENT_URL" "$EXPERIMENT_REV"
-clone_or_fetch dokumentacja-rdb "$DOCS_PL_URL" "$DOCS_PL_SNAPSHOT"
 clone_or_fetch documentation-rdb "$DOCS_EN_URL" "$DOCS_EN_SNAPSHOT"
 
 # The paper repository is OPTIONAL and its absence is not a failure (decision
@@ -134,7 +131,7 @@ fi
 
 echo
 echo "== pinned workspace ($SELECTION)"
-for name in retractordb rdb-experiment dokumentacja-rdb documentation-rdb; do
+for name in retractordb rdb-experiment documentation-rdb; do
   printf '%-20s %s\n' "$name" "$(git -C "$TARGET/$name" rev-parse HEAD)"
 done
 printf '%-20s %s\n' paper-arXiv "$PAPER_STATE"

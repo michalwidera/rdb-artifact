@@ -19,13 +19,12 @@ nothing blocks its mirror any more.
 | Artifact entry point | `rdb-artifact` | HEAD at mirror creation -- see below | `retractordb-artifact` |
 | Engine snapshot | `retractordb` | `e389edd3596e4b83b6f3f4a9e238905a91c667b4` | `retractordb-engine` |
 | Experiments and data | `rdb-experiment` | `84fee502acb77b111b0f83bb07a2104b7477e560` | `retractordb-experiment` |
-| Canonical documentation | `dokumentacja-rdb` | `f8c4bdc08f154acd9945af76857fe1168f3c79d5` | `dokumentacja-rdb` |
-| English documentation | `documentation-rdb` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | `documentation-rdb` |
+| Documentation | `documentation-rdb` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | `documentation-rdb` |
 | Engine bundles for `--remeasure` | `rdb-binaries` | `50f6c7057ba09e709dae32fe637b117eb73208f2` | `retractordb-binaries` |
 
-The bundles mirror carries only the `.tar.gz` engine bundles of `MANIFEST.md` §7, their `build-info.txt` and `SHA256SUMS`. It serves the archives byte for byte, as it serves the raw archives of the experiment mirror, and the redaction never reaches inside them; `bin/build_bundle.sh --terms` checks every binary for the identifying terms before the bundles are committed. It is the one mirror not created on 2026-08-26 `[#594]`.
+The bundles mirror carries only the `.tar.gz` engine bundles of `MANIFEST.md` §7, their `build-info.txt` and `SHA256SUMS`. It serves the archives byte for byte, as it serves the raw archives of the experiment mirror, and the redaction never reaches inside them; `bin/build_bundle.sh --terms` checks every binary for the identifying terms before the bundles are committed. It is the one mirror not created on 2026-08-26: it was created on 2026-11-09 and expires on 2027-08-25, like the others.
 
-The four source mirrors were created on 2026-08-26 and expire on 2027-08-25.
+The source mirrors were created on 2026-08-26 and expire on 2027-08-25. One more, of the Polish documentation `dokumentacja-rdb`, existed from 2026-08-26 to 2026-11-09; it was removed to make room for the bundles mirror within the service's limit of five repositories, and the Polish documentation left the package (`MANIFEST.md` §1, *Removal of 2026-11-09*).
 The mirror ID is chosen, not generated: it is the repository name, unless that
 name does not say what the repository is, in which case it takes a
 `retractordb-` prefix.
@@ -34,7 +33,7 @@ The entry point cannot name its own revision in the commit that names it, so it
 is pinned to whatever this repository's HEAD is when its mirror is created, and
 that SHA is written into `MIRROR_TRIAL.md` afterwards. The record is one commit
 behind the mirror by construction. Nothing is lost: `verify_pins.sh` checks the
-four source repositories and never asks which revision `rdb-artifact` itself is,
+source repositories and never asks which revision `rdb-artifact` itself is,
 because that is where the script lives. The entry point's pin is a record, not a
 check.
 
@@ -79,7 +78,7 @@ term. Automatic owner redaction is not enough: manifests and shell scripts
 contain source URLs, and prior-work citations can contain author identifiers.
 
 Keep the five repository names off the term list. Section 0 of
-`bin/verify_pins.sh` finds each pin by grepping `MANIFEST.md` for a table row
+`bin/verify_pins.sh` (and, for `rdb-binaries`, `bin/reproduce_remeasure.sh`) finds each pin by grepping `MANIFEST.md` for a table row
 that begins with the repository name and `checkout.sh` for a variable named
 after it; redacting those names leaves the pins undeclared and step 4 below
 fails on a mirror that is otherwise correct.
@@ -94,8 +93,8 @@ anchoring on the repository name alone; verified against the redacted manifest.
 
 After all mirrors exist, replace the placeholders in
 `paper-arXiv/debs/references.bib` with the randomized URLs. Cite the artifact
-entry point plus the experiment mirror; expose the engine and both documentation
-mirrors from the entry point. Keep the full revisions visible in the anonymized
+entry point plus the experiment mirror; expose the engine and the documentation
+mirror from the entry point. Keep the full revisions visible in the anonymized
 manifest. Do not claim availability before the acceptance trial below passes.
 
 ## Unauthenticated acceptance trial
@@ -122,7 +121,7 @@ session:
    minutes, so pace it.
 3. Search paths and text for all configured identifying terms.
 4. Arrange the extracted directories as siblings under one workspace, named
-   `retractordb`, `rdb-experiment`, `dokumentacja-rdb` and `documentation-rdb`,
+   `retractordb`, `rdb-experiment` and `documentation-rdb`,
    and run the mirror mode of the pin checker from the artifact entry point:
 
    ```bash
@@ -158,7 +157,7 @@ availability and integrity of the delivered bytes. The claim that step 5 support
 
 ## Moving a pin
 
-A pin moves forward only, one source repository at a time, and the package must not declare a revision its mirror does not serve. `bin/move_pin.sh` does the local part; the mirror and the trial stay manual. The paper pin is the tag `artifact/K9b` and moves with the tag, not with this procedure.
+A pin moves forward only, one source repository at a time, and the package must not declare a revision its mirror does not serve. `bin/move_pin.sh` does the local part; the mirror and the trial stay manual. The paper pin is an annotated tag, `artifact/594` since 2026-11-09; it moves to a new annotated tag, never by re-tagging and never with this procedure, and the earlier tags stay as the record of earlier trials.
 
 1. **Dry run.** Copy the term list of `paper-arXiv/debs/procedura_anonimizacji.md` (section 4) to a file outside every repository and run `RDB_REDACTION_TERMS_FILE=<file> bin/move_pin.sh <repository> <new-sha>`. It needs a local clone of the source repository next to this one (or `RDB_SOURCES`) holding both revisions. It must end with `RESULT: dry run, 0 finding(s), 0 skipped`. A text file of 1.2 MB or more without a `.gz` copy is a finding: fix it by a commit in the source repository and start again from the new SHA. Every file it lists under *identifying terms* goes on the search list of step 4; one that is also an input of the analytic path is named with a `note`, because the mirror will serve it redacted and `INPUTS.tsv` will give it the `masked` check.
 2. **Apply, commit, push** - only when step 3 can follow in the same session. `RDB_REDACTION_TERMS_FILE=<file> bin/move_pin.sh <repository> <new-sha> --apply` writes the four declarations of the pin (`MANIFEST.md` section 1, `bin/verify_pins.sh`, `bin/checkout.sh`, the table in *Sources and revisions* above), clones a fresh pinned workspace into a temporary directory and runs `verify_pins.sh snapshot` there. It then renews `INPUTS.tsv` with `bin/make_inputs.sh`: `reproduce_analytic.sh` runs over that workspace under `strace`, which records the inputs actually read and the counts to expect, and the new list replaces the old one only after `bin/review.sh` passes with it on a simulated mirror of the new pins. Products stay outside this repository. `--apply` needs the terms file and `strace`, and refuses to start while any of the five files has uncommitted changes. Commit those five files together with a paragraph in `MANIFEST.md` section 1 saying what the new revision adds, and push.
