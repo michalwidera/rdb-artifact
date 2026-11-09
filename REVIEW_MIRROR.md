@@ -24,7 +24,7 @@ nothing blocks its mirror any more.
 
 The bundles mirror carries only the `.tar.gz` engine bundles of `MANIFEST.md` §7, their `build-info.txt` and `SHA256SUMS`. It serves the archives byte for byte, as it serves the raw archives of the experiment mirror, and the redaction never reaches inside them; `bin/build_bundle.sh --terms` checks every binary for the identifying terms before the bundles are committed. It is the one mirror not created on 2026-08-26: it was created on 2026-11-09 and expires on 2027-08-25, like the others.
 
-The source mirrors were created on 2026-08-26 and expire on 2027-08-25. One more, of the Polish documentation `dokumentacja-rdb`, existed from 2026-08-26 to 2026-11-09; it was removed to make room for the bundles mirror within the service's limit of five repositories, and the Polish documentation left the package (`MANIFEST.md` §1, *Removal of 2026-11-09*).
+The source mirrors were created on 2026-08-26 and expire on 2027-08-25. One more, of the Polish documentation `dokumentacja-rdb`, existed from 2026-08-26 to 2026-11-09; it was removed to make room for the bundles mirror within the limit of five repositories of the service's free plan, and the Polish documentation left the package (`MANIFEST.md` §1, *Removal of 2026-11-09*).
 The mirror ID is chosen, not generated: it is the repository name, unless that
 name does not say what the repository is, in which case it takes a
 `retractordb-` prefix.
@@ -153,7 +153,7 @@ session:
 
 Only after all six steps pass may the paper say that the artifact is available
 to reviewers through an anonymized mirror. The claim that step 4 supports is
-availability and integrity of the delivered bytes. The claim that step 5 supports is that a reviewer can regenerate the analytic products from the mirrors alone, without git or a clone; its run from the archive of the re-pointed `retractordb-artifact` mirror passed on 2026-11-08 (*Seventh trial*). The `--remeasure` run of step 5 supports a third claim: that a reviewer can measure the deterministic quantities again from the mirrors alone, without git or a compiler, on x86_64 and on aarch64. It has passed only against a simulated mirror of the pins; the run from the mirrors is pending `[#594]`, and until it passes the paper must not make the third claim.
+availability and integrity of the delivered bytes. The claim that step 5 supports is that a reviewer can regenerate the analytic products from the mirrors alone, without git or a clone; its run from the archive of the re-pointed `retractordb-artifact` mirror passed on 2026-11-08 (*Seventh trial*). The `--remeasure` run of step 5 supports a third claim: that a reviewer can measure the deterministic quantities again from the mirrors alone, without git or a compiler, on x86_64 and on aarch64. Its run from the mirrors alone, the archive of the re-pointed `retractordb-artifact` mirror with the bundles of `retractordb-binaries`, passed on 2026-11-09 on both platforms (*Eighth trial*).
 
 ## Moving a pin
 

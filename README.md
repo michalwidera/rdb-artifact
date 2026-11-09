@@ -74,12 +74,9 @@ The repository was created as step **K9b** of the research plan
   measurement machine with the control host cut off; evidence in
   [`tables/w1/`](tables/w1/);
 * raw archives — **18 of 18 in the experiment repository**, one of them in parts;
-* five frozen reviewer mirrors — **done**: created on 2026-08-26, checked
-  without credentials and valid until 2027-08-25; the full verdict, the
-  omissions and the checksums are recorded in
-  [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
+* five frozen reviewer mirrors — **done**: four created on 2026-08-26 and the bundles mirror `retractordb-binaries` on 2026-11-09, which took the place of the Polish documentation mirror (the free plan of the service allows five); checked without credentials and valid until 2027-08-25; the full verdict, the omissions and the checksums are recorded in [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md);
 * the analytic path from the reviewer mirror without git (`bin/review.sh`) — **done**, run against the live experiment mirror and, on 2026-11-08, from the ZIP of the re-pointed `retractordb-artifact` mirror alone (*Seventh trial* of [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md));
-* remeasurement of the deterministic quantities from prebuilt engine bundles (`bin/review.sh --remeasure`, bundles in `rdb-binaries`) — **done** on x86_64 and aarch64 against a simulated mirror of the pins on 2026-11-08; the run from the mirrors alone is pending `[#594]`;
+* remeasurement of the deterministic quantities from prebuilt engine bundles (`bin/review.sh --remeasure`, bundles in `rdb-binaries`) — **done** on x86_64 and aarch64 against a simulated mirror of the pins on 2026-11-08, and on 2026-11-09 on both platforms from the mirrors alone (*Eighth trial* of [`MIRROR_TRIAL.md`](MIRROR_TRIAL.md));
 * open: the DOI (decision D-2), before the paper is submitted.
 
 The paper repository `paper-arXiv` is pinned but **private until review** and is
