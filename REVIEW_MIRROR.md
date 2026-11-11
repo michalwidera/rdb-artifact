@@ -19,7 +19,7 @@ nothing blocks its mirror any more.
 | Artifact entry point | `rdb-artifact` | HEAD at mirror creation -- see below | `retractordb-artifact` |
 | Engine snapshot | `retractordb` | `16c516f9eb76c473d5ff8510a2a812b8c23a893d` | `retractordb-engine` |
 | Experiments and data | `rdb-experiment` | `84fee502acb77b111b0f83bb07a2104b7477e560` | `retractordb-experiment` |
-| Documentation | `documentation-rdb` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | `documentation-rdb` |
+| Documentation | `documentation-rdb` | `00e571783c232e635bce924e294b99bd43033919` | `documentation-rdb` |
 | Engine bundles for `--remeasure` | `rdb-binaries` | `50f6c7057ba09e709dae32fe637b117eb73208f2` | `retractordb-binaries` |
 
 The bundles mirror carries only the `.tar.gz` engine bundles of `MANIFEST.md` §7, their `build-info.txt` and `SHA256SUMS`. It serves the archives byte for byte, as it serves the raw archives of the experiment mirror, and the redaction never reaches inside them; `bin/build_bundle.sh --terms` checks every binary for the identifying terms before the bundles are committed. It is the one mirror not created on 2026-08-26: it was created on 2026-11-09 and expires on 2027-08-25, like the others.
