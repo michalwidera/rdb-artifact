@@ -22,9 +22,9 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENGINE_SNAPSHOT="16c516f9eb76c473d5ff8510a2a812b8c23a893d"
 EXPERIMENT_SNAPSHOT="6720ed21ed2fbbf386f4086a4e626c537e0a1a79"
 DOCS_EN_SNAPSHOT="00e571783c232e635bce924e294b99bd43033919"
-PAPER_SNAPSHOT="3cf8e19dd40c9517ee0376e94d520320f5aa2c8c"
+PAPER_SNAPSHOT="3cc9905821762163c356a11f6964f80593133d43"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
-PAPER_TAG="artifact/594b"
+PAPER_TAG="artifact/618"
 SRC_TREE_K24E="5ddad0fc7d56fb9b468d31905a6689e9896ddb39"
 
 # An anonymized reviewer mirror is served as a snapshot without .git, so every
@@ -240,7 +240,7 @@ check_head documentation-rdb "$DOCS_EN" "$DOCS_EN_SNAPSHOT"
 if [[ "$PAPER_PRESENT" == yes ]]; then
   check_head paper-arXiv "$PAPER" "$PAPER_SNAPSHOT"
   # The pin names a tag, so the tag has to be what it says it is. Without this,
-  # re-tagging artifact/594b onto a later commit would leave the manifest quietly
+  # re-tagging artifact/618 onto a later commit would leave the manifest quietly
   # describing a revision nobody can reach by that name any more -- and because
   # this repository is private, no stranger's run would ever notice.
   paper_tag_target="$(git -C "$PAPER" rev-parse -q --verify "${PAPER_TAG}^{commit}" 2>/dev/null)"
