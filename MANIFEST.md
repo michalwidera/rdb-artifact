@@ -108,7 +108,7 @@ The pin was bumped on 2026-11-11 from `e389edd3596e4b83b6f3f4a9e238905a91c667b4`
 - each of the 27 `.rql` programs in `examples/` compiles with all five optimizer switches on and with all five off, and the printed plans of both modes are byte-identical; three positive controls give different printouts, so the comparison can see a difference;
 - the full analytic run on a fresh workspace at the final pins regenerated eight groups out of eight, `fig:qrs` included, with its QRS complexes at `x=122` and `x=365`;
 - the proof mode of `REPRODUCE.md` §6: `proof_drift` and `ut_proofOracle` pass, and the engine-level coverage of the theorems is 41 of 41 (`MAP.md`, *Formal proofs*);
-- the remeasure path from the bundles of `16c516f9` (§7): every deterministic quantity is identical to the stored result, and `bin/review.sh --remeasure` on a simulated mirror of the new pins, with no git, compiler or cmake on `PATH`, passes on x86_64 with 14 of 14 COUNT lines unchanged from `e389edd3`;
+- the remeasure path from the bundles of `16c516f9` (§7): every deterministic quantity is identical to the stored result, and `bin/review.sh --remeasure` on a simulated mirror of the new pins, with no git, compiler or cmake on `PATH`, passes on x86_64 (3707 s) and on aarch64 (the pi400, from a copy of the same simulated mirror, 6849 s) with the same 14 of 14 COUNT lines on both, unchanged from `e389edd3`;
 - the 360 Hz timing anchor was re-measured on `16c516f9` (R618 K18c, §3).
 
 The pin was bumped on 2026-11-07 from
