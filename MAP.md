@@ -88,7 +88,7 @@ context, never as evidence of the present performance boundary.
 
 None of these carries a claim of the paper on its own; `MANIFEST.md` §4.3 lists
 their archives. The R593 rows are the control replication of retractordb #593 on
-newer engine revisions; R593 K18b is the 360 Hz anchor the paper text calls the
+newer engine revisions; R618 re-checks the paper's products on the engine pin `16c516f9` against `e389edd3`, and R618 K18c is the 360 Hz anchor the paper text calls the
 current revision. The other rows are engine-development measurements of
 retractordb #376, #600, #603 and #607 on a use-case corpus that is not yet
 published; their READMEs say so, and only checksum indexes of their raw data are
@@ -100,7 +100,9 @@ in the repository.
 | `results_20261103_R593_H9` | R593 H9 | Do the three K26v3 families stay supported at Q=8 on engine `dfcc42d2`? | **control** — 3 of 3 supported, prices 0.921 / 0.992 / 0.751; the Flink comparison was not repeated |
 | `results_20261104_R593_K18` | R593 K18 | Replay stability, round-trip exactness and the 360 Hz timing anchor on engine `dfcc42d2` | **superseded as the current-revision anchor by R593 K18b**; replay 67 files without difference, round-trip exact, E1 median 885.7 us |
 | `results_20261104_R593_K22v5` | R593 K22v5 | Do the K22v5 oracle runs at zero tolerance pass on engine `dfcc42d2`? | **control, not confirmed** — 9 of 15 cells pass; the six failures are field alignment in a window join after `5f310515`, not arithmetic; K22v5 stays a result of `dd733e3` |
-| `results_20261107_R593_K18b` | R593 K18b | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `e389edd3` | **current** — the current-revision anchor; replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 916.4 us, queue-emission max 1426.1 us (51.3% of the slot budget) |
+| `results_20261107_R593_K18b` | R593 K18b | Replay stability, round-trip exactness and the 360 Hz timing anchor on engine `e389edd3` | **superseded as the current-revision anchor by R618 K18c**; replay 67 files without difference, round-trip exact, E1 median 916.4 us |
+| `results_20261111_R618` | R618 | Do the paper's products carry over from engine `e389edd3` to `16c516f9` (closed form of the interleave tail)? | **control** — confirmed: K24e and K24f byte for byte on both seeds, backward-compatibility check without unaccepted divergence in seven groups, 27 of 27 examples identical with the optimizer switches on and off |
+| `results_20261111_R618_K18c` | R618 K18c | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `16c516f9` | **current** — the current-revision anchor; replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 851.6 us, queue-emission max 1351.5 us (48.7% of the slot budget) |
 | `results_20261104_R376` | R376 | retractordb #376: slot delay when a client connects, before and after #283 | **control** — engine-development measurement on the unpublished use-case corpus |
 | `results_20261107_R376b` | R376b | retractordb #376: repetition of one family of R376 | **control** — engine-development measurement on the unpublished use-case corpus |
 | `results_20261104_R600` | R600 | retractordb #600: releasing an abandoned client queue off the slot thread | **control** — engine-development measurement on the unpublished use-case corpus |
@@ -201,11 +203,15 @@ counterpart).
 | `SumCommutativity` | commutativity of stream sum | 3 | 0 | 0 |
 | `ShiftMatching` | rate-matched shift (R1) | 5 | 0 | 6 |
 | `CausalShift` | R1 extended to causal shift, logical origins and record availability | 13 | 0 | 0 |
-| `InterleaveTailExact` | exactness of the interleave tail as an availability bound | 4 | 0 | 9 |
-| **total** | 78 theorems | **40** | **0** | **38** |
+| `InterleaveTailExact` | exactness of the interleave tail as an availability bound, and its closed form | 5 | 0 | 14 |
+| **total** | 84 theorems | **41** | **0** | **43** |
 
-Coverage is 40 of the 40 theorems that concern the engine (100.0%), as printed
-by `proof_drift` at the engine pin `e389edd3`. At the previous pin `40c28dbe` it
+Coverage is 41 of the 41 theorems that concern the engine (100.0%), as printed
+by `proof_drift` at the engine pin `16c516f9`. At `e389edd3` it was 40 of 40; the
+theorem added since is `exactInterleaveTail_closed` (the closed form of the
+interleave tail that the engine computes since retractordb #617 equals the
+maximum over the phase period), with a test in `ut_proofOracle`, and five helper
+lemmas of its proof, out of scope. At the pin `40c28dbe` it
 was 22 of 38 (57.9%): sixteen theorems were uncovered because the logical origin
 of interleaving, the tail and read of the shift operator and the sample index of
 stream sum are computed inline in the compiler and in `dataModel`, with no
