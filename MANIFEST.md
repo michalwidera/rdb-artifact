@@ -12,7 +12,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
-| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `e389edd3596e4b83b6f3f4a9e238905a91c667b4` | engine and fixed tooling | `retractordb-engine` |
+| `retractordb` | `https://github.com/michalwidera/retractordb.git` | `16c516f9eb76c473d5ff8510a2a812b8c23a893d` | engine and fixed tooling | `retractordb-engine` |
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `84fee502acb77b111b0f83bb07a2104b7477e560` | campaigns and data | `retractordb-experiment` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `aa9f9d45c744c9effa09c7885b81e0641cc86793` | EN documentation (derived) | `documentation-rdb` |
 | `rdb-binaries` | `https://github.com/michalwidera/rdb-binaries.git` | `50f6c7057ba09e709dae32fe637b117eb73208f2` | prebuilt engine bundles for `--remeasure` (§7) | `retractordb-binaries` |
