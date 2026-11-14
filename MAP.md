@@ -145,7 +145,7 @@ the plan") was misleading here. The primary measured quantity is the cumulative
 canonical width of records appended to or overwritten in materialized substrates,
 divided by the number of public records. That is a logical write volume, not a
 peak resident state size. Plan size as a cost measure **failed** on its own — K6c
-showed it (0/13 cells, tokens smaller by 8–28% with no improvement in slot cost).
+showed it (0/13 cells, tokens smaller by 1.6–30.0% with no improvement in slot cost).
 Taken together the two campaigns therefore say that a node count does not
 suffice, and that what must be measured is materialization traffic or work
 performed. Corrected 2026-08-26.
