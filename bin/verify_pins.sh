@@ -20,7 +20,7 @@ PAPER="${RDB_PAPER:-$WORKSPACE/paper-arXiv}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ENGINE_SNAPSHOT="16c516f9eb76c473d5ff8510a2a812b8c23a893d"
-EXPERIMENT_SNAPSHOT="6720ed21ed2fbbf386f4086a4e626c537e0a1a79"
+EXPERIMENT_SNAPSHOT="ff5a116b5e51002cc6b27c6a6300e526538a07c7"
 DOCS_EN_SNAPSHOT="00e571783c232e635bce924e294b99bd43033919"
 PAPER_SNAPSHOT="3cc9905821762163c356a11f6964f80593133d43"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
@@ -316,15 +316,15 @@ if [[ "$SELECTION" != snapshot ]]; then
   echo "SKIP  snapshot-level invariant; run 'verify_pins.sh snapshot' to check it"
 else
 # A mirror has no index of tracked files, but it also has no untracked ones,
-# so walking the tree counts the same 28 entries: 16 of the paper's campaigns
-# and 12 of the later ones (MANIFEST.md section 4.3).
+# so walking the tree counts the same 29 entries: 16 of the paper's campaigns
+# and 13 of the later ones (MANIFEST.md section 4.3).
 if [[ "$MIRROR" == 1 ]]; then
 index_count="$(find "$EXPERIMENT" -type f -iname '*raw.index.tsv' | wc -l)"
 else
 index_count="$(git -C "$EXPERIMENT" ls-files | grep -Ei 'raw\.index\.tsv$' | wc -l)"
 fi
-[[ "$index_count" -eq 28 ]] && ok "index files = 28" \
-  || bad "index files = $index_count, expected 28"
+[[ "$index_count" -eq 29 ]] && ok "index files = 29" \
+  || bad "index files = $index_count, expected 29"
 
 PRESENT=$(cat <<'RAW_EOF'
 results_20260728_K4/results/raw.tar.gz 407cb32400c57fdc7c9f969821de134062120bce57399ac051c6162618d79968
@@ -413,7 +413,7 @@ if [[ -n "$MISSING" ]]; then
       || bad "$path now exists; MANIFEST.md must be updated"
   done <<<"$MISSING"
 else
-  ok "no archive is declared lost (26 of 27 checked in git; W8 in four tracked parts; six outside git by design, MANIFEST.md section 4.3)"
+  ok "no archive is declared lost (26 of 27 checked in git; W8 in four tracked parts; seven outside git by design, MANIFEST.md section 4.3)"
 fi
 fi
 

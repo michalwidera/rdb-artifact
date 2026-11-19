@@ -14,7 +14,7 @@ DOCS_EN_URL="${RDB_DOCS_EN_URL:-https://github.com/michalwidera/documentation-rd
 PAPER_URL="${RDB_PAPER_URL:-https://github.com/michalwidera/paper-arXiv.git}"
 
 ENGINE_SNAPSHOT="16c516f9eb76c473d5ff8510a2a812b8c23a893d"
-EXPERIMENT_SNAPSHOT="6720ed21ed2fbbf386f4086a4e626c537e0a1a79"
+EXPERIMENT_SNAPSHOT="ff5a116b5e51002cc6b27c6a6300e526538a07c7"
 DOCS_EN_SNAPSHOT="00e571783c232e635bce924e294b99bd43033919"
 PAPER_SNAPSHOT="3cc9905821762163c356a11f6964f80593133d43"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
