@@ -22,9 +22,9 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENGINE_SNAPSHOT="758be53b3b8339d176dc678f9a75a259b8926925"
 EXPERIMENT_SNAPSHOT="b3ca436f620cce39f2958d69d16f629ab4b9d9ee"
 DOCS_EN_SNAPSHOT="00e571783c232e635bce924e294b99bd43033919"
-PAPER_SNAPSHOT="3cc9905821762163c356a11f6964f80593133d43"
+PAPER_SNAPSHOT="3acd046e86b78aa60f58d702a675563386e1c266"
 # Milestone tag, not a branch head -- see MANIFEST.md section 1.
-PAPER_TAG="artifact/618"
+PAPER_TAG="artifact/632"
 SRC_TREE_K24E="5ddad0fc7d56fb9b468d31905a6689e9896ddb39"
 
 # An anonymized reviewer mirror is served as a snapshot without .git, so every
