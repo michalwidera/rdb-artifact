@@ -20,7 +20,7 @@ nothing blocks its mirror any more.
 | Engine snapshot | `retractordb` | `758be53b3b8339d176dc678f9a75a259b8926925` | `retractordb-engine` |
 | Experiments and data | `rdb-experiment` | `b3ca436f620cce39f2958d69d16f629ab4b9d9ee` | `retractordb-experiment` |
 | Documentation | `documentation-rdb` | `00e571783c232e635bce924e294b99bd43033919` | `documentation-rdb` |
-| Engine bundles for `--remeasure` | `rdb-binaries` | `29e86204339b833cc42e01bd7cdb0f85d0825210` | `retractordb-binaries` |
+| Engine bundles for `--remeasure` | `rdb-binaries` | `f0195915597f5fe9dce9ca5cee9f917c85df143c` | `retractordb-binaries` |
 
 The bundles mirror carries only the `.tar.gz` engine bundles of `MANIFEST.md` §7, their `build-info.txt` and `SHA256SUMS`. It serves the archives byte for byte, as it serves the raw archives of the experiment mirror, and the redaction never reaches inside them; `bin/build_bundle.sh --terms` checks every binary for the identifying terms before the bundles are committed. It is the one mirror not created on 2026-08-26: it was created on 2026-11-09 and expires on 2027-08-25, like the others.
 
