@@ -89,7 +89,7 @@ context, never as evidence of the present performance boundary.
 None of these carries a claim of the paper on its own; `MANIFEST.md` §4.3 lists
 their archives. The R593 rows are the control replication of retractordb #593 on
 newer engine revisions; R618 re-checks the paper's products on the engine pin `16c516f9` against `e389edd3`, and R618 K18c is the 360 Hz anchor the paper text calls the
-current revision. The other rows are engine-development measurements of
+current revision. R631 re-checks them on the engine pin `758be53b` against `16c516f9`, and R631 K18d re-measures the 360 Hz anchor on that pin; the pinned paper text (`artifact/618`) still cites R618 K18c. The other rows are engine-development measurements of
 retractordb #376, #600, #603 and #607 on a use-case corpus that is not yet
 published; their READMEs say so, and only checksum indexes of their raw data are
 in the repository.
@@ -102,7 +102,9 @@ in the repository.
 | `results_20261104_R593_K22v5` | R593 K22v5 | Do the K22v5 oracle runs at zero tolerance pass on engine `dfcc42d2`? | **control, not confirmed** — 9 of 15 cells pass; the six failures are field alignment in a window join after `5f310515`, not arithmetic; K22v5 stays a result of `dd733e3` |
 | `results_20261107_R593_K18b` | R593 K18b | Replay stability, round-trip exactness and the 360 Hz timing anchor on engine `e389edd3` | **superseded as the current-revision anchor by R618 K18c**; replay 67 files without difference, round-trip exact, E1 median 916.4 us |
 | `results_20261111_R618` | R618 | Do the paper's products carry over from engine `e389edd3` to `16c516f9` (closed form of the interleave tail)? | **control** — confirmed: K24e and K24f byte for byte on both seeds, backward-compatibility check without unaccepted divergence in seven groups, 27 of 27 examples identical with the optimizer switches on and off |
-| `results_20261111_R618_K18c` | R618 K18c | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `16c516f9` | **current** — the current-revision anchor; replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 851.6 us, queue-emission max 1351.5 us (48.7% of the slot budget) |
+| `results_20261111_R618_K18c` | R618 K18c | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `16c516f9` | **current in the paper** — the anchor the pinned paper text calls the current revision; replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 851.6 us, queue-emission max 1351.5 us (48.7% of the slot budget) |
+| `results_20261121_R631` | R631 | Do the paper's products carry over from engine `16c516f9` to `758be53b` (Lean proofs of the plan composition, R1 guard for `VAR`, deinterleave interval validation)? | **control** — confirmed: K24e and K24f byte for byte on both seeds, backward-compatibility check without unaccepted divergence in seven groups (709 plans), 27 of 27 examples identical with the optimizer switches on and off, proof mode 86 of 86 |
+| `results_20261122_R631_K18d` | R631 K18d | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `758be53b` | **current on the engine pin** — replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 870.6 us, queue-emission max 1372.4 us (49.4% of the slot budget); not yet cited by the paper |
 | `results_20261104_R376` | R376 | retractordb #376: slot delay when a client connects, before and after #283 | **control** — engine-development measurement on the unpublished use-case corpus |
 | `results_20261107_R376b` | R376b | retractordb #376: repetition of one family of R376 | **control** — engine-development measurement on the unpublished use-case corpus |
 | `results_20261104_R600` | R600 | retractordb #600: releasing an abandoned client queue off the slot thread | **control** — engine-development measurement on the unpublished use-case corpus |
@@ -204,11 +206,21 @@ counterpart).
 | `ShiftMatching` | rate-matched shift (R1) | 5 | 0 | 6 |
 | `CausalShift` | R1 extended to causal shift, logical origins and record availability | 13 | 0 | 0 |
 | `InterleaveTailExact` | exactness of the interleave tail as an availability bound, and its closed form | 5 | 0 | 14 |
-| **total** | 84 theorems | **41** | **0** | **43** |
+| `StartupBoundaries` | exactness of the startup boundaries of Table 1 for an affine read map: sum, difference, deinterleaving (Θ and ~Θ), AGSE window, projection | 22 | 0 | 10 |
+| `PlanComposition` | composition of the boundaries in a plan: exact logical origins, least admissible tails, tails monotone in the source tails | 5 | 0 | 3 |
+| `PlanInstances` | each row of Table 1 as a node of the plan model, with its tail and origin rules | 15 | 0 | 6 |
+| `PlanValues` | composition of values: a rewrite that is R1-admissible at its frontier preserves records at every unchanged node downstream, public outputs included | 3 | 0 | 3 |
+| **total** | 151 theorems | **86** | **0** | **65** |
 
-Coverage is 41 of the 41 theorems that concern the engine (100.0%), as printed
-by `proof_drift` at the engine pin `16c516f9`. At `e389edd3` it was 40 of 40; the
-theorem added since is `exactInterleaveTail_closed` (the closed form of the
+Coverage is 86 of the 86 theorems that concern the engine (100.0%), as printed
+by `proof_drift` at the engine pin `758be53b`. At `16c516f9` it was 41 of 41; the
+four files of the plan composition (retractordb #630) add 67 theorems: 45 about
+the engine, each with a test in `ut_proofOracle`, and 22 helper lemmas of their
+proofs, out of scope. The emission time of the plan model
+is a definition checked against the engine, and the locality of evaluation
+(`EvalLocal`) is an assumption, not a result; `REPRODUCE.md` §6 lists both and
+what the model leaves out. At `e389edd3` it was 40 of 40; the
+theorem added between `e389edd3` and `16c516f9` is `exactInterleaveTail_closed` (the closed form of the
 interleave tail that the engine computes since retractordb #617 equals the
 maximum over the phase period), with a test in `ut_proofOracle`, and five helper
 lemmas of its proof, out of scope. At the pin `40c28dbe` it

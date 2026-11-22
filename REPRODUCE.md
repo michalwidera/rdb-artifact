@@ -325,7 +325,12 @@ The engine snapshot carries a Lean 4 formalization of the stream-rate operators
 in `retractordb/math_proofs/`: interleaving as a sequential covering,
 deinterleaving and its exact inversion over the rationals, the event-order
 counterexample, sum commutativity, rate-matched shift and the exact interleave
-tail. `math_proofs/README.md` lists which statement lives in which file.
+tail; since the engine pin `758be53b`, also the startup boundaries of the
+operators of Table 1 and their composition in a plan: exact logical origins,
+least admissible tails and their monotonicity over the whole plan, and the
+preservation of records by an R1 rewrite at every node downstream of it, public
+outputs included. `math_proofs/README.md` lists which statement lives in which
+file.
 
 ```bash
 cd artifact-workspace/retractordb/math_proofs
@@ -356,9 +361,40 @@ for those theorems the test compiles a small plan from RQL, runs it and compares
 the result with the model on bounded horizons. That is testing against a
 checked model, not a verification of the implementation.
 
+**Plan composition: what is proved and what is assumed.** In
+`PlanComposition.lean` a node of interval `Δ` and tail `W` writes record `n` at
+time `(n+1+W)·Δ` (`emitTime`). That is a definition of the model, not a result;
+the engine's agreement with it is checked by the test
+`ProofOracle.plan_emission_schedule`. `PlanValues.lean` assumes `EvalLocal`:
+record `n` of a node depends only on the records its read map `reads n` names.
+This is an assumption about the engine, not a theorem, and it is the
+counterpart of the sentence of Theorem 4.3 that restricts it to the fragment of
+RQL without `VAR`; `VAR` and `DO SET` carry state between records and break it.
+Outside the model are the schema `σ_U`, the gaps `G_U`, the materialization
+contract `M_U`, the R1 pass itself in `compiler.cpp` (the proof compares two
+plans, it does not follow the compiler), R2, `VAR` and `DO SET`, ad hoc
+instances, plan reload, history eviction, late real-time slots and `DEVICE`
+jitter. For Θ and ~Θ the model covers only an input that is an interleave
+(`theta_ratio`). The equality of records past an R1 rewrite in the chain of
+Table 1 is checked on the engine by `ProofOracle.r1_plan_admissible`.
+
+The engine comparison needs a Debug build of the snapshot and its test target;
+without the target, `ut_proofOracle` ends as `Not Run`. `-LE valgrind` leaves
+out the Valgrind twin `ut_proofOracle-valgrind`, which the selection would
+otherwise also pick:
+
 ```bash
-ctest --test-dir artifact-workspace/retractordb/build/Debug -R 'proof_drift|ut_proofOracle'
+cd artifact-workspace/retractordb
+conan install . -s build_type=Debug --build missing
+cmake -S . -B build/Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+      -DCMAKE_TOOLCHAIN_FILE="$PWD/build/Debug/generators/conan_toolchain.cmake"
+cmake --build build/Debug --target test_proofOracle
+ctest --test-dir build/Debug -R 'proof_drift|ut_proofOracle' -LE valgrind
 ```
+
+At the engine pin this gives three tests passed, 54 of 54 `ut_proofOracle`
+cases among them, and `proof_drift` reports 151 theorems: 86 TEST, 0 uncovered,
+65 out of scope.
 
 `proof_drift` needs no Lean, which is why it also runs in CI. It fails when a
 theorem has no row in `test/proof_manifest.tsv`, and when the oracle tables are
