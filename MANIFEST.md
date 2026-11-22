@@ -13,7 +13,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | Repository | URL | Default snapshot SHA | Role | Reviewer mirror |
 |---|---|---|---|---|
 | `retractordb` | `https://github.com/michalwidera/retractordb.git` | `758be53b3b8339d176dc678f9a75a259b8926925` | engine and fixed tooling | `retractordb-engine` |
-| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `ff5a116b5e51002cc6b27c6a6300e526538a07c7` | campaigns and data | `retractordb-experiment` |
+| `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `b3ca436f620cce39f2958d69d16f629ab4b9d9ee` | campaigns and data | `retractordb-experiment` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `00e571783c232e635bce924e294b99bd43033919` | EN documentation (derived) | `documentation-rdb` |
 | `rdb-binaries` | `https://github.com/michalwidera/rdb-binaries.git` | `29e86204339b833cc42e01bd7cdb0f85d0825210` | prebuilt engine bundles for `--remeasure` (§7) | `retractordb-binaries` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `3cc9905821762163c356a11f6964f80593133d43` — tag `artifact/618` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
