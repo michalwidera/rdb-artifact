@@ -102,6 +102,18 @@ esac
 # question before anything runs, not 2 minutes in.
 if pgrep -af '[x]retractor' >/dev/null; then
   pgrep -af '[x]retractor' | cut -c1-160 >&2
+  # The usual match is not an engine but the shell that started this run, when its
+  # command line names the word (a check such as `pgrep -a <word>` in the same command).
+  anc=" "; p=$$
+  while [ -n "$p" ] && [ "$p" -gt 1 ] 2>/dev/null; do
+    anc="$anc$p "
+    p="$(sed -E 's/.*\) [A-Za-z] ([0-9]+) .*/\1/' "/proc/$p/stat" 2>/dev/null)" || break
+  done
+  for m in $(pgrep -f '[x]retractor'); do
+    case "$anc" in
+      *" $m "*) fail "the command that started this run names xretractor (process $m above, an ancestor of this script); start it from a command line without that word, for example by writing it as '[x]retractor'" ;;
+    esac
+  done
   fail "a process whose command line names xretractor is running (above); run_main_rdb.sh refuses to start next to it"
 fi
 
