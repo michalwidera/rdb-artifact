@@ -17,7 +17,7 @@ nothing blocks its mirror any more.
 | Role | Source repository | Revision to mirror | Mirror ID |
 |---|---|---|---|
 | Artifact entry point | `rdb-artifact` | HEAD at mirror creation -- see below | `retractordb-artifact` |
-| Engine snapshot | `retractordb` | `758be53b3b8339d176dc678f9a75a259b8926925` | `retractordb-engine` |
+| Engine snapshot | `retractordb` | `7e5659f4c070b39f1c1a711217fb98548ca60cf4` | `retractordb-engine` |
 | Experiments and data | `rdb-experiment` | `b3ca436f620cce39f2958d69d16f629ab4b9d9ee` | `retractordb-experiment` |
 | Documentation | `documentation-rdb` | `00e571783c232e635bce924e294b99bd43033919` | `documentation-rdb` |
 | Engine bundles for `--remeasure` | `rdb-binaries` | `f0195915597f5fe9dce9ca5cee9f917c85df143c` | `retractordb-binaries` |

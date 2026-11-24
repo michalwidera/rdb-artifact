@@ -13,7 +13,7 @@ EXPERIMENT_URL="${RDB_EXPERIMENT_URL:-https://github.com/michalwidera/rdb-experi
 DOCS_EN_URL="${RDB_DOCS_EN_URL:-https://github.com/michalwidera/documentation-rdb.git}"
 PAPER_URL="${RDB_PAPER_URL:-https://github.com/michalwidera/paper-arXiv.git}"
 
-ENGINE_SNAPSHOT="758be53b3b8339d176dc678f9a75a259b8926925"
+ENGINE_SNAPSHOT="7e5659f4c070b39f1c1a711217fb98548ca60cf4"
 EXPERIMENT_SNAPSHOT="b3ca436f620cce39f2958d69d16f629ab4b9d9ee"
 DOCS_EN_SNAPSHOT="00e571783c232e635bce924e294b99bd43033919"
 PAPER_SNAPSHOT="3acd046e86b78aa60f58d702a675563386e1c266"
