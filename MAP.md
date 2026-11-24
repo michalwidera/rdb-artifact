@@ -89,7 +89,7 @@ context, never as evidence of the present performance boundary.
 None of these carries a claim of the paper on its own; `MANIFEST.md` §4.3 lists
 their archives. The R593 rows are the control replication of retractordb #593 on
 newer engine revisions; R618 re-checks the paper's products on the engine pin `16c516f9` against `e389edd3`, and R618 K18c is the 360 Hz anchor the paper text calls the
-current revision. R631 re-checks them on the engine pin `758be53b` against `16c516f9`, and R631 K18d re-measures the 360 Hz anchor on that pin. R648 re-checks them on the engine pin `7e5659f4` against `758be53b`, and R648 K18e re-measures the 360 Hz anchor on that pin; the pinned paper text (`artifact/618`) still cites R618 K18c. The other rows are engine-development measurements of
+current revision. R631 re-checks them on the engine pin `758be53b` against `16c516f9`, and R631 K18d re-measures the 360 Hz anchor on that pin. R648 re-checks them on the engine pin `7e5659f4` against `758be53b`, and R648 K18e re-measures the 360 Hz anchor on that pin; the pinned paper text (`artifact/632`) still cites R618 K18c. The other rows are engine-development measurements of
 retractordb #376, #600, #603 and #607 on a use-case corpus that is not yet
 published; their READMEs say so, and only checksum indexes of their raw data are
 in the repository.
