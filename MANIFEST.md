@@ -15,7 +15,7 @@ current HEAD. This is a separate axis from the historical campaign provenance of
 | `retractordb` | `https://github.com/michalwidera/retractordb.git` | `7e5659f4c070b39f1c1a711217fb98548ca60cf4` | engine and fixed tooling | `retractordb-engine` |
 | `rdb-experiment` | `https://github.com/michalwidera/rdb-experiment.git` | `0517298e5c3e8dca4156fa5c2901fe5c8661f895` | campaigns and data | `retractordb-experiment` |
 | `documentation-rdb` | `https://github.com/michalwidera/documentation-rdb.git` | `00e571783c232e635bce924e294b99bd43033919` | EN documentation (derived) | `documentation-rdb` |
-| `rdb-binaries` | `https://github.com/michalwidera/rdb-binaries.git` | `f0195915597f5fe9dce9ca5cee9f917c85df143c` | prebuilt engine bundles for `--remeasure` (§7) | `retractordb-binaries` |
+| `rdb-binaries` | `https://github.com/michalwidera/rdb-binaries.git` | `f00dddabeeb92c68573b35f3bbd1697128d217df` | prebuilt engine bundles for `--remeasure` (§7) | `retractordb-binaries` |
 | `paper-arXiv` | `https://github.com/michalwidera/paper-arXiv.git` | `3acd046e86b78aa60f58d702a675563386e1c266` — tag `artifact/632` | paper and research plan — **optional, private until review** (D-6) | — not mirrored |
 
 The `rdb-artifact` repository is the entry point, so it does not pin its own SHA
@@ -518,14 +518,14 @@ Each bundle is one profile of the H9 campaign (`rdb-experiment/results_20261103_
 
 | Archive | Profile | Architecture | SHA-256 |
 |---|---|---|---|
-| `rdb-758be53b3b83-h9-DEFAULT-linux-aarch64.tar.gz` | DEFAULT | aarch64 | `2556e61d23667a2896abf641eb94224ef40abf3f3b75a115a577f50bd2d91c0c` |
-| `rdb-758be53b3b83-h9-NO_R2_CANON-linux-aarch64.tar.gz` | NO_R2_CANON | aarch64 | `4106fdc23850aa6127265629a313347f450098d4e6e43a6f443ca8846e1f4d1e` |
-| `rdb-758be53b3b83-h9-NO_R1_FACTOR-linux-aarch64.tar.gz` | NO_R1_FACTOR | aarch64 | `1e9859410714d3fc6272dc26cfd87e7196e03f6a31b5998491828204e35ebac5` |
-| `rdb-758be53b3b83-h9-NO_R1_NO_R2-linux-aarch64.tar.gz` | NO_R1_NO_R2 | aarch64 | `2153a21f74de91d841bc266a2ae86a356d062cc3ebe5102c6f067ddeda8f0e44` |
-| `rdb-758be53b3b83-h9-DEFAULT-linux-x86_64.tar.gz` | DEFAULT | x86_64 | `bb15a319425b052aae61203d10e3e46da6655087ec119fd17d96f132f30818bd` |
-| `rdb-758be53b3b83-h9-NO_R2_CANON-linux-x86_64.tar.gz` | NO_R2_CANON | x86_64 | `9d77757318e94bf061ad42d2f094de4b342d52f89cba08b46f8325d961028df4` |
-| `rdb-758be53b3b83-h9-NO_R1_FACTOR-linux-x86_64.tar.gz` | NO_R1_FACTOR | x86_64 | `a50dd1cd0819598d76a38d6f4a113ff8fbf66d13af2075d3279aa913652c237b` |
-| `rdb-758be53b3b83-h9-NO_R1_NO_R2-linux-x86_64.tar.gz` | NO_R1_NO_R2 | x86_64 | `644aed01d978ad4415893f3fb7c0d395892f8275cfce3eea517948b3a16e7b91` |
+| `rdb-7e5659f4c070-h9-DEFAULT-linux-aarch64.tar.gz` | DEFAULT | aarch64 | `4d0b7b6580cc54fd0d2f36b0ecf736b76c0d57c07d34442ad3c8cf9808ae7eea` |
+| `rdb-7e5659f4c070-h9-NO_R2_CANON-linux-aarch64.tar.gz` | NO_R2_CANON | aarch64 | `dc3aba045fc1d098af47d2ac24dc46046442a9fec1a9c649f5e60c51df3911cf` |
+| `rdb-7e5659f4c070-h9-NO_R1_FACTOR-linux-aarch64.tar.gz` | NO_R1_FACTOR | aarch64 | `f8894f79389277bf1dfe82e0c9bf5808e9ee6f657818d85de59861c60b926a61` |
+| `rdb-7e5659f4c070-h9-NO_R1_NO_R2-linux-aarch64.tar.gz` | NO_R1_NO_R2 | aarch64 | `4f41d8ac5ad98bbdc1e92edc8d6c82c7426376686b365b9e2ac4b4eb0e6ca03e` |
+| `rdb-7e5659f4c070-h9-DEFAULT-linux-x86_64.tar.gz` | DEFAULT | x86_64 | `d04e34cc32720d2f5bf14ad85ed4b51958c007002d0f3860eeb220bd0cf111d7` |
+| `rdb-7e5659f4c070-h9-NO_R2_CANON-linux-x86_64.tar.gz` | NO_R2_CANON | x86_64 | `1035425add4f2edfa1b6cc780d632d34d38182c65b8e52c9c8ccc009c154b066` |
+| `rdb-7e5659f4c070-h9-NO_R1_FACTOR-linux-x86_64.tar.gz` | NO_R1_FACTOR | x86_64 | `025fa2f865ce048c72d565363c35d8f9ef570cbf75c1870e9d7e548ceb8da43b` |
+| `rdb-7e5659f4c070-h9-NO_R1_NO_R2-linux-x86_64.tar.gz` | NO_R1_NO_R2 | x86_64 | `85422d1e940acc57199c75390c747ec6622cfe529cfd3d3a1762273a95d8db46` |
 
 The archives sit in `rdb-binaries` under the directory named by the full engine SHA, with `SHA256SUMS` and each bundle's `build-info.txt` beside them. `bin/reproduce_remeasure.sh` takes the four bundles of the machine's architecture and accepts a bundle only when its SHA-256 equals this table, each of its three binaries reports the engine pin in `--help` (`bin/verify_binary.sh`) and `xretractor --build-info` equals the profile row byte for byte. Any other bundle stops the run before anything is measured, with the reason named: a SHA-256 that differs, a revision that differs, or the switches that differ.
 
