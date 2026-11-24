@@ -89,7 +89,7 @@ context, never as evidence of the present performance boundary.
 None of these carries a claim of the paper on its own; `MANIFEST.md` §4.3 lists
 their archives. The R593 rows are the control replication of retractordb #593 on
 newer engine revisions; R618 re-checks the paper's products on the engine pin `16c516f9` against `e389edd3`, and R618 K18c is the 360 Hz anchor the paper text calls the
-current revision. R631 re-checks them on the engine pin `758be53b` against `16c516f9`, and R631 K18d re-measures the 360 Hz anchor on that pin; the pinned paper text (`artifact/618`) still cites R618 K18c. The other rows are engine-development measurements of
+current revision. R631 re-checks them on the engine pin `758be53b` against `16c516f9`, and R631 K18d re-measures the 360 Hz anchor on that pin. R648 re-checks them on the engine pin `7e5659f4` against `758be53b`, and R648 K18e re-measures the 360 Hz anchor on that pin; the pinned paper text (`artifact/618`) still cites R618 K18c. The other rows are engine-development measurements of
 retractordb #376, #600, #603 and #607 on a use-case corpus that is not yet
 published; their READMEs say so, and only checksum indexes of their raw data are
 in the repository.
@@ -104,7 +104,9 @@ in the repository.
 | `results_20261111_R618` | R618 | Do the paper's products carry over from engine `e389edd3` to `16c516f9` (closed form of the interleave tail)? | **control** — confirmed: K24e and K24f byte for byte on both seeds, backward-compatibility check without unaccepted divergence in seven groups, 27 of 27 examples identical with the optimizer switches on and off |
 | `results_20261111_R618_K18c` | R618 K18c | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `16c516f9` | **current in the paper** — the anchor the pinned paper text calls the current revision; replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 851.6 us, queue-emission max 1351.5 us (48.7% of the slot budget) |
 | `results_20261121_R631` | R631 | Do the paper's products carry over from engine `16c516f9` to `758be53b` (Lean proofs of the plan composition, R1 guard for `VAR`, deinterleave interval validation)? | **control** — confirmed: K24e and K24f byte for byte on both seeds, backward-compatibility check without unaccepted divergence in seven groups (709 plans), 27 of 27 examples identical with the optimizer switches on and off, proof mode 86 of 86 |
-| `results_20261122_R631_K18d` | R631 K18d | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `758be53b` | **current on the engine pin** — replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 870.6 us, queue-emission max 1372.4 us (49.4% of the slot budget); not yet cited by the paper |
+| `results_20261122_R631_K18d` | R631 K18d | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `758be53b` | **superseded as the engine-pin anchor by R648 K18e** — replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 870.6 us, queue-emission max 1372.4 us (49.4% of the slot budget); not cited by the paper |
+| `results_20261124_R648` | R648 | Do the paper's products carry over from engine `758be53b` to `7e5659f4` (layer A of the Lean proofs, arithmetic range corrections #635 to #647)? | **control** — confirmed: K24e and K24f byte for byte on both seeds, backward-compatibility check without unaccepted divergence in seven groups (712 plans), 27 of 27 examples identical with the optimizer switches on and off, proof mode 118 of 118 |
+| `results_20261124_R648_K18e` | R648 K18e | Replay stability, round-trip exactness and the 360 Hz timing anchor on the engine pin `7e5659f4` | **current on the engine pin** — replay 67 files without difference, round-trip exact, 360 Hz with 19,999 intervals, E1 median 864.4 us, queue-emission max 1363.7 us (49.1% of the slot budget); not yet cited by the paper |
 | `results_20261104_R376` | R376 | retractordb #376: slot delay when a client connects, before and after #283 | **control** — engine-development measurement on the unpublished use-case corpus |
 | `results_20261107_R376b` | R376b | retractordb #376: repetition of one family of R376 | **control** — engine-development measurement on the unpublished use-case corpus |
 | `results_20261104_R600` | R600 | retractordb #600: releasing an abandoned client queue off the slot thread | **control** — engine-development measurement on the unpublished use-case corpus |
@@ -210,10 +212,21 @@ counterpart).
 | `PlanComposition` | composition of the boundaries in a plan: exact logical origins, least admissible tails, tails monotone in the source tails | 5 | 0 | 3 |
 | `PlanInstances` | each row of Table 1 as a node of the plan model, with its tail and origin rules | 15 | 0 | 6 |
 | `PlanValues` | composition of values: a rewrite that is R1-admissible at its frontier preserves records at every unchanged node downstream, public outputs included | 3 | 0 | 3 |
-| **total** | 151 theorems | **86** | **0** | **65** |
+| `CppArith` | the C++ arithmetic of `SOperations.hpp` as checked arithmetic: `int`, `int64`, `__int128` and `boost::rational<int>`, with `none` where C++ has undefined behaviour | 0 | 0 | 19 |
+| `EngineRules` | the functions of `SOperations.hpp` (helpers, read maps, startup rules) rewritten over that arithmetic: under explicit range conditions each rewrite gives `some` and equals the model's definition, saturated to `INT64_MAX` where the code saturates | 32 | 0 | 31 |
+| **total** | 233 theorems | **118** | **0** | **115** |
 
-Coverage is 86 of the 86 theorems that concern the engine (100.0%), as printed
-by `proof_drift` at the engine pin `758be53b`. At `16c516f9` it was 41 of 41; the
+Coverage is 118 of the 118 theorems that concern the engine (100.0%), as printed
+by `proof_drift` at the engine pin `7e5659f4`. At `758be53b` it was 86 of 86; layer A of
+retractordb #634 adds 82 theorems in two files: `CppArith`, 19 lemmas of the checked
+arithmetic, all out of scope, and `EngineRules`, 32 about the engine, each with a
+test `ProofOracle.<f>Cpp_table` in `ut_proofOracle`, and 31 helper lemmas, out of
+scope. For `EngineRules` a TEST row says less than for the other files: the theorem
+is about the Lean rewrite of a C++ function, not about the function, and the test
+shows that the rewrite equals the code on a grid that includes `INT_MAX` and
+`INT64_MAX`. The faithfulness of the rewrite to the C++ code rests on review and on
+that test, not on a proof; `REPRODUCE.md` §6 lists the other limits of layer A.
+At `16c516f9` it was 41 of 41; the
 four files of the plan composition (retractordb #630) add 67 theorems: 45 about
 the engine, each with a test in `ut_proofOracle`, and 22 helper lemmas of their
 proofs, out of scope. The emission time of the plan model

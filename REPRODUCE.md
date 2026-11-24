@@ -329,27 +329,39 @@ tail; since the engine pin `758be53b`, also the startup boundaries of the
 operators of Table 1 and their composition in a plan: exact logical origins,
 least admissible tails and their monotonicity over the whole plan, and the
 preservation of records by an R1 rewrite at every node downstream of it, public
-outputs included. `math_proofs/README.md` lists which statement lives in which
-file.
+outputs included; since the engine pin `7e5659f4`, also the functions of
+`src/include/SOperations.hpp` rewritten in Lean over checked C++ arithmetic
+(`Profs/CppArith.lean`, `Profs/EngineRules.lean`, layer A of retractordb #634) and
+a check of the axioms every theorem depends on (`AxiomCheck.lean`).
+`math_proofs/README.md` lists which statement lives in which file.
 
 ```bash
 cd artifact-workspace/retractordb/math_proofs
 ./install-lean.sh --no-upgrade-check   # elan, the pinned Lean, Mathlib cache, pandoc, TeX Live
-./render.sh                            # expect the last line: DOWODY: OK
+./render.sh                            # expect AKSJOMATY: OK, then the last line: DOWODY: OK
 ```
 
 `--no-upgrade-check` keeps the versions pinned in `lean-toolchain`, `lakefile.lean`
 and `lake-manifest.json`; without it the installer offers a newer Lean/Mathlib,
 which is not the checked configuration. `render.sh` builds with `--wfail`, so a
 `sorry` (which Lean reports only as a warning) fails the run just like an error,
-and prints `DOWODY: BLAD`. The products — HTML, plain text and a PDF — are
+and prints `DOWODY: BLAD`. Before that last line it prints `AKSJOMATY: OK`:
+`AxiomCheck.lean` checks that every theorem of the `Profs.*` modules depends at
+most on `propext`, `Classical.choice` and `Quot.sound`, the axioms of an ordinary
+Mathlib proof; any other (`sorryAx`, an own `axiom`, `Lean.ofReduceBool` from
+`native_decide`) also ends in `DOWODY: BLAD`. The count in that line (307 at the
+engine pin) is every non-internal theorem constant of those modules, including
+those Lean generates itself. It is not the 233 theorems of
+`test/proof_manifest.tsv` below, which counts the `theorem` and `lemma`
+declarations in the source text; the two numbers measure different things.
+The products — HTML, plain text and a PDF — are
 written under `math_proofs/build/verso/`.
 
 What this costs: about 7 GB for Mathlib and its downloaded build cache, and a
 Debian/Ubuntu host for the TeX Live packages the installer adds with `apt-get`.
 Checking the proofs needs no engine build; the engine comparison below does.
 
-**What the proofs establish, and what they do not.** The theorems are about a
+**What the proofs establish, and what they do not.** Most theorems are about a
 mathematical model of the operators, not about the C++ code. The link to the
 engine is differential: `math_proofs/gen-oracle.sh` evaluates the model's
 definitions into `test/UnitTest/proofOracle.hpp`, and `ut_proofOracle` compares
@@ -360,6 +372,33 @@ sample index of stream sum are computed by the compiler and by `dataModel`, so
 for those theorems the test compiles a small plan from RQL, runs it and compares
 the result with the model on bounded horizons. That is testing against a
 checked model, not a verification of the implementation.
+
+**Layer A: the functions of `SOperations.hpp`.** `EngineRules.lean` rewrites each
+function of `SOperations.hpp` in Lean, in the same order of operations and with the
+same types, over the checked arithmetic of `CppArith.lean`: an operation on `int`,
+`int64` or `__int128` gives `none` where C++ has undefined behaviour (a value out
+of range, a division by zero), and `boost::rational<int>` is a pair under the Boost
+invariant. Each theorem says that under explicit range conditions the rewrite
+gives `some` and a value equal to the model's definition, saturated to
+`INT64_MAX` where the code saturates, so the rewrite has no undefined behaviour
+there. The range conditions are the `assert()`s of the code and what the plan
+compiler guarantees (positive, normalized intervals; a record index in
+`[0, INT_MAX]`); a Release build has no assertions, so the compiler enforces
+them, not the function. What layer A does not establish:
+
+- the theorems are about the rewrite, not about the C++ code. The faithfulness of
+  the rewrite is checked by review and by the test `ProofOracle.<f>Cpp_table`,
+  which compares the rewrite with the C++ function on a grid, `INT_MAX` and
+  `INT64_MAX` included; that is a test, not a proof about the code;
+- `std::gcd` is modelled as `Int.gcd`; the Euclid loop is not rewritten;
+- linking `ThetaStartupLatency` with the read map `Div`, and
+  `NThetaStartupLatency` with `Mod`, needs the relation `s = t*o/(t+o)` between
+  the two intervals `s` and `t` of the rule and the deinterleave parameter `o`.
+  The code does not check it, so in the theorems it is a hypothesis;
+- outside layer A are `compiler::computeStartupLatency()`,
+  `computeLogicalOrigin()` and `dataModel::processRows()`, which apply these
+  functions to a whole plan; the composition theorems below are about the plan
+  model, not about that code.
 
 **Plan composition: what is proved and what is assumed.** In
 `PlanComposition.lean` a node of interval `Δ` and tail `W` writes record `n` at
@@ -392,9 +431,9 @@ cmake --build build/Debug --target test_proofOracle
 ctest --test-dir build/Debug -R 'proof_drift|ut_proofOracle' -LE valgrind
 ```
 
-At the engine pin this gives three tests passed, 54 of 54 `ut_proofOracle`
-cases among them, and `proof_drift` reports 151 theorems: 86 TEST, 0 uncovered,
-65 out of scope.
+At the engine pin this gives three tests passed, 72 of 72 `ut_proofOracle`
+cases among them, and `proof_drift` reports 233 theorems: 118 TEST, 0 uncovered,
+115 out of scope.
 
 `proof_drift` needs no Lean, which is why it also runs in CI. It fails when a
 theorem has no row in `test/proof_manifest.tsv`, and when the oracle tables are
